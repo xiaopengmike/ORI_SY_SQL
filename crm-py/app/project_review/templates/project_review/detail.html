@@ -19,7 +19,7 @@
         border-collapse: collapse;
     }
     .TableContent {
-        background-color: #f2f2f2;
+        background-color: #ffffff;
         padding: 8px;
         text-align: right;
         width: 15%;
@@ -86,13 +86,13 @@
             </tr>
             <tr>
                 <td colspan="6">
-                    {% include "project_review/detail/customer_info.html" %}
-                    {% include "project_review/detail/project_situation.html" %}
-                    {% include "project_review/detail/bidding_strategy.html" %}
+                    {% include "project_review/templates/project_review/detail/customer_info.html" %}
+                    {% include "project_review/templates/project_review/detail/project_situation.html" %}
+                    {% include "project_review/templates/project_review/detail/bidding_strategy.html" %}
                     {% if main.get('status') == 'Y' and operate == 'detail' %}
-                        {% include "project_review/detail/approve_opinion.html" %}
+                        {% include "project_review/templates/project_review/detail/approve_opinion.html" %}
                     {% else %}
-                        {% include "project_review/detail/approve_opinion.html" %}
+                        {% include "project_review/templates/project_review/detail/approve_opinion.html" %}
                     {% endif %}
                 </td>
             </tr>

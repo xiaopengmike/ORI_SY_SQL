@@ -22,7 +22,7 @@
         border-collapse: collapse;
     }
     .TableContent {
-        background-color: #f2f2f2;
+        background-color: #ffffff;
         padding: 8px;
         text-align: right;
         width: 15%;
@@ -70,6 +70,20 @@
                     <img alt="" src="/static/images/{{ company }}/project_review_{{ company }}.jpg" style="width: 34%; height: auto;" />
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <div class="noprint">
+                        <p>
+                            填写说明：<br />
+                            <p>1、选择联系人后，会自动填充客户信息登记表中的"客户代码"、相应的"客户所在国"、"联系人"、"联系人电话"、"联系人邮箱"、"客户简介"等字段，填充后的内容可以修改。</p>
+                            <b><p>2、项目信息：项目名称、项目代码、项目等级</p></b>
+                            <p>2.1、项目名称：客户信息登记表的客户名称，可选择客户为自己登记或已共享客户。</p>
+                            <p>2.2、项目代码：填写三位字母大写格式字段，系统会自动生成，也可通过获取自动生成，如：ABC</p>
+                            <p>2.3、项目等级：项目的等级，等级越多，级别越高，用于后续流程和邮件发送使用；</p>
+                        </p>
+                    </div>
+                </td>
+            </tr>
         </table>
         
         <br />
@@ -83,22 +97,10 @@
                 <td class="TableData" id="currentDate"></td>
             </tr>
             <tr>
-                <td class="TableContent" width="15%">标题：</td>
-                <td class="TableData" colspan="5">
-                    <input type="text" name="title" id="title" class="layui-input" placeholder="请输入标题" />
-                </td>
-            </tr>
-            <tr>
-                <td class="TableContent">备注：</td>
-                <td class="TableData" colspan="5">
-                    <textarea class="layui-textarea" name="remark" id="remark"></textarea>
-                </td>
-            </tr>
-            <tr>
                 <td colspan="6">
-                    {% include "project_review/form_modules/customer_info.html" %}
-                    {% include "project_review/form_modules/project_situation.html" %}
-                    {% include "project_review/form_modules/bidding_strategy.html" %}
+                    {% include "project_review/templates/project_review/form_modules/customer_info.html" %}
+                    {% include "project_review/templates/project_review/form_modules/project_situation.html" %}
+                    {% include "project_review/templates/project_review/form_modules/bidding_strategy.html" %}
                 </td>
             </tr>
         </table>
@@ -108,6 +110,67 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
 <script>
+// 动态行添加/删除功能
+function removeLine(obj) {
+    var table = obj.parentNode.parentNode.parentNode;
+    table.removeChild(obj.parentNode.parentNode);
+}
+
+var detailNum = 0;
+
+function addLine(domId, obj, product_type) {
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        var html = '';
+        detailNum = parseInt($("#" + domId + "Count").val()) || 0;
+
+        if (domId == 'addProjectDetail') {
+            detailNum++;
+            html = '<tr align="center">';
+            html += '<input type="hidden" name="type' + detailNum + '" value="' + product_type + '" />';
+            html += '<td class="TableData" width="10%"><input type="text" class="layui-input" id="product" name="product' + detailNum + '" /></td>';
+            html += '<td class="TableData" width="10%"><input type="text" class="layui-input" id="price" name="price' + detailNum + '" /></td>';
+            html += '<td class="TableData" width="10%"><input type="text" class="layui-input" id="first_price" name="first_price' + detailNum + '" /></td>';
+            html += '<td class="TableData" width="40%"><input type="text" class="layui-input" id="standard" name="standard' + detailNum + '" /></td>';
+            html += '<td class="TableData" width="6%"><input type="text" class="layui-input" id="number" lay-verify="checknum" name="number' + detailNum + '" />';
+            html += '<td class="TableData"><input id="project_detail_attach' + detailNum + '" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />';
+            html += '<a href="javascript:;" onclick="removeLine(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a></td>';
+            html += '</tr>';
+        }
+        
+        $("#" + domId + "Count").val(detailNum);
+        $(obj).parent().parent().before(html);
+        
+        // 初始化附件上传
+        if (typeof layui.attach !== 'undefined') {
+            layui.attach.init({
+                elem: "#project_detail_attach" + detailNum,
+                uploadUrl: "/project_review/attachment/upload?type=project_detail_attach" + detailNum + "&url=common"
+            });
+        }
+        
+        form.render();
+    });
+}
+
+// 文本域自适应高度
+function makeExpandingArea(container) {
+    var area = container;
+    if (!area) return;
+    
+    if (area.addEventListener) {
+        area.addEventListener('input', function() {
+            area.style.height = '';
+            area.style.height = area.scrollHeight + 'px';
+        }, false);
+    }
+    
+    // 初始化高度
+    area.style.height = '';
+    area.style.height = area.scrollHeight + 'px';
+}
+
 $(function() {
     // 设置当前日期
     var now = new Date();
@@ -119,9 +182,66 @@ $(function() {
         String(now.getSeconds()).padStart(2, '0');
     $('#currentDate').text(dateStr);
     
-    layui.use(['form', 'layer'], function() {
+    layui.extend({
+        attach: '/static/js/extends/attach'
+    }).use(['form', 'layer', 'laydate'], function() {
         var form = layui.form;
         var layer = layui.layer;
+        var laydate = layui.laydate;
+        
+        // 表单验证规则
+        form.verify({
+            checknum: function(value, item) {
+                var numreg = /(^$)|^[1-9]\d*$/;
+                if (!numreg.test(value)) {
+                    return "只能填写正整数";
+                }
+            }
+        });
+        
+        // 日期控件初始化
+        $(".date").each(function() {
+            laydate.render({
+                elem: this,
+                theme: '#027AFF',
+                range: false
+            });
+        });
+        
+        // 文本域自适应
+        $.each($("textarea"), function(i, n) {
+            $(n).css("width", "100%");
+            $(n).css("height", "auto");
+            $(n).css("margin", "auto");
+            $(n).css("resize", "none");
+            $(n).css("overflow", "hidden");
+            makeExpandingArea(document.getElementById(n.id));
+        });
+        
+        // 附件上传初始化
+        if (typeof layui.attach !== 'undefined') {
+            $(".btn-upload").each(function() {
+                layui.attach.init({
+                    elem: "#" + this.id,
+                    uploadUrl: "/project_review/attachment/upload?type=" + this.id + "&url=common"
+                });
+            });
+        }
+        
+        // 项目级别选择显示
+        form.on('select(project_level)', function(data) {
+            var starCount = data.value;
+            var html = "";
+            var starShow = "";
+            if (parseInt(starCount) < 5 && parseInt(starCount) > 0) {
+                for (var i = 0; i < parseInt(starCount) + 1; i++) {
+                    starShow += "★";
+                }
+            }
+            html = '<font style="color: red;font-size:20px">' + starShow + '</font>';
+            $("#star_icon").html(html);
+            form.render('select', 'project_level');
+        });
         
         // 客户选择变化时，自动填充客户信息
         form.on('select(customer_name)', function(data) {
@@ -133,20 +253,23 @@ $(function() {
                 id: cusId
             }, function(res) {
                 if (res.code == '200') {
-                    var data = res.data;
-                    $("#customer_id" + cusCount).val(data.short_name || '');
-                    $("#country" + cusCount).val(data.country_desc || '');
-                    $("#contact" + cusCount).val(data.contact_name || '');
-                    $("#phone" + cusCount).val(data.contact_phone || '');
-                    $("#email" + cusCount).val(data.email || '');
-                    var text = (data.summarize || '').replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
+                    var customerData = res.data;
+                    $("#customer_id" + cusCount).val(customerData.short_name || '');
+                    $("#country" + cusCount).val(customerData.country_desc || '');
+                    $("#contact" + cusCount).val(customerData.contact_name || '');
+                    $("#phone" + cusCount).val(customerData.contact_phone || '');
+                    $("#email" + cusCount).val(customerData.email || '');
+                    // 处理换行符转换
+                    var text = (customerData.summarize || '').replace(/\r\n/g, "<br>").replace(/\n/g, "<br>").replace(/\s/g, "").replace(/<br>/g, '\r\n');
                     $("#introduction" + cusCount).val(text);
+                    // 重新初始化文本域
+                    makeExpandingArea(document.getElementById("introduction" + cusCount));
                 }
-                form.render('select');
+                form.render('select', 'customer_name');
             });
         });
         
-        // 项目代码验证
+        // 项目代码验证和选择
         $("#project_code").blur(function() {
             var url = "/project_review/action?action=Retrieve";
             if (this.value != '') {
@@ -155,55 +278,144 @@ $(function() {
                     user_bu: $("#user_bu").val(),
                     projectCode: this.value
                 }, function(res) {
-                    if (res.code == '200' && res.data.code == '200') {
-                        layer.msg('项目代码已存在');
-                        $("#project_code").val('');
+                    if (res.code == '200') {
+                        if (res.data && res.data.code == '200') {
+                            layer.msg('项目代码已存在');
+                            $("#project_code").val('');
+                            $("#temp_project_code").val('');
+                        }
                     }
                 });
             }
         }).click(function() {
-            // 打开项目代码选择窗口
-            layer.open({
+            var index = layer.open({
                 title: "获取系统项目代码",
                 type: 2,
                 area: ['600px', '500px'],
-                content: "/project_review/get_project_code?company=" + $('#user_bu').val()
+                content: "/project_review/get_project_code?company=" + $('#user_bu').val(),
+                success: function(layero, index) {
+                    setTimeout(function() {
+                        layer.tips('点击此处关闭列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    }, 500);
+                }
             });
         });
         
+        // 必填字段背景色设置
+        setTimeout(function() {
+            $('select[lay-verify="required"]').next().find('.layui-select-title input').css({'background-color': '#f9fbd5'});
+        }, 500);
+        
         // 表单提交
         form.on('submit(submit)', function(data) {
-            var actionType = $(data.elem).attr('actionType');
-            submitForm(actionType);
+            var btnVal = data.elem.value;
+            var actionType = $(data.elem).attr("actionType");
+            var url = "/project_review/action?action=" + actionType;
+            
+            // 提交之后禁用按钮，防止重复提交
+            if (actionType == 'Submit' || actionType == 'Save') {
+                $('[name="btn_submit"]').addClass('layui-btn-disabled');
+                $('[name="btn_submit"]').attr('disabled', 'disabled');
+                $('[name="btn_save"]').addClass('layui-btn-disabled');
+                $('[name="btn_save"]').attr('disabled', 'disabled');
+            }
+            
+            $.post(url, $("#mainForm").serializeArray(), function(res) {
+                var reJson = res;
+                try {
+                    if (reJson.code == "200") {
+                        // 保存form_id值
+                        $("#form_id").val(reJson.data);
+                        if (actionType == 'Submit') {
+                            // 提交后需要选择审批人（这里简化处理）
+                            layer.alert(btnVal + "成功！", {
+                                icon: 1
+                            }, function(index, layero) {
+                                parent.layer.close(index);
+                                parent.closeIframe();
+                                if (window.opener) {
+                                    window.opener.location.reload();
+                                }
+                                window.close();
+                            });
+                        } else {
+                            layer.alert(btnVal + "成功！", {
+                                icon: 1
+                            }, function(index, layero) {
+                                parent.layer.close(index);
+                                parent.closeIframe();
+                                if (window.opener) {
+                                    window.opener.location.reload();
+                                }
+                                window.close();
+                            });
+                        }
+                    } else {
+                        var fail_msg = reJson.msg ? reJson.msg : btnVal + '失败';
+                        layer.alert(fail_msg, {
+                            icon: 5
+                        });
+                        $('[name="btn_submit"]').removeClass('layui-btn-disabled');
+                        $('[name="btn_submit"]').removeAttr('disabled');
+                        $('[name="btn_save"]').removeClass('layui-btn-disabled');
+                        $('[name="btn_save"]').removeAttr('disabled');
+                    }
+                } catch (e) {
+                    layer.alert('操作异常: ' + e, {
+                        icon: 5
+                    });
+                    $('[name="btn_submit"]').removeClass('layui-btn-disabled');
+                    $('[name="btn_submit"]').removeAttr('disabled');
+                    $('[name="btn_save"]').removeClass('layui-btn-disabled');
+                    $('[name="btn_save"]').removeAttr('disabled');
+                }
+            }).fail(function() {
+                layer.alert('操作失败', {
+                    icon: 5
+                });
+                $('[name="btn_submit"]').removeClass('layui-btn-disabled');
+                $('[name="btn_submit"]').removeAttr('disabled');
+                $('[name="btn_save"]').removeClass('layui-btn-disabled');
+                $('[name="btn_save"]').removeAttr('disabled');
+            });
+            
+            setTimeout(function() {
+                $('[name="btn_submit"]').removeClass('layui-btn-disabled');
+                $('[name="btn_submit"]').removeAttr('disabled');
+                $('[name="btn_save"]').removeClass('layui-btn-disabled');
+                $('[name="btn_save"]').removeAttr('disabled');
+            }, 5000);
+            
             return false;
         });
+        
+        form.render();
     });
 });
 
-function submitForm(actionType) {
-    var formData = $('#mainForm').serialize();
-    formData += '&action=' + (actionType == 'Submit' ? 'Submit' : 'Save');
-    
-    $.ajax({
-        url: '/project_review/action',
-        type: 'POST',
-        data: formData,
-        success: function(res) {
+// 项目代码回调函数（从get_project_code页面调用）
+function returnProjectCode(projectCode, temp_project_code) {
+    $("#project_code").val(projectCode);
+    $("#temp_project_code").val(temp_project_code);
+    var url = "/project_review/action?action=Retrieve";
+    // 验证系统项目代码
+    if (projectCode != '') {
+        $.post(url, {
+            dataType: 'verifyProjectCode',
+            projectCode: projectCode,
+            user_bu: $("#user_bu").val()
+        }, function(res) {
             if (res.code == '200') {
-                layui.layer.msg('操作成功');
-                if (actionType == 'Submit') {
-                    setTimeout(function() {
-                        window.close();
-                    }, 1000);
+                if (res.data && res.data.code == '200') {
+                    layui.layer.msg('项目代码已存在');
+                    $("#project_code").val('');
+                    $("#temp_project_code").val('');
                 }
-            } else {
-                layui.layer.msg(res.msg || '操作失败');
             }
-        },
-        error: function() {
-            layui.layer.msg('操作失败');
-        }
-    });
+        });
+    }
 }
 </script>
 {% endblock %}

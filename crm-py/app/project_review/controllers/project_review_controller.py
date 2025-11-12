@@ -182,6 +182,12 @@ def _render_add_page(company, user_id, dept_id, is_inhenergy=False, is_witlink=F
     elif is_witlink:
         template_name = 'project_review/templates/project_review/add_witlink.html'
     
+    # 初始化空数据对象（用于新增页面）
+    customer_data = {}
+    project = {}
+    main = {}
+    bidding = {}
+    
     return render_template(template_name,
                          select_arr=select_arr,
                          product_detail_types=product_detail_types,
@@ -192,7 +198,11 @@ def _render_add_page(company, user_id, dept_id, is_inhenergy=False, is_witlink=F
                          if_project_manager=if_project_manager,
                          user_id=user_id,
                          user_name=get_login_user_name(),
-                         dept_id=dept_id)
+                         dept_id=dept_id,
+                         customer_data=customer_data,
+                         project=project,
+                         main=main,
+                         bidding=bidding)
 
 @project_review_bp.route('/get_project_code')
 @login_required

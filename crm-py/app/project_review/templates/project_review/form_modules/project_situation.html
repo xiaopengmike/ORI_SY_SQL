@@ -27,8 +27,9 @@
                     <option value=''>请选择</option>
                     {% if select_arr and 'project_type' in select_arr %}
                     {% for val in select_arr['project_type'] %}
-                    {% if val.get('user_bu') == 'INHENERGY' %}{% continue %}{% endif %}
+                    {% if not val.get('user_bu') == 'INHENERGY' %}
                     <option value="{{ val.get('paras_value', '') }}" {% if project.get('project_type') == val.get('paras_value') %}selected{% endif %}>{{ val.get('paras_desc', '') }}</option>
+                    {% endif %}
                     {% endfor %}
                     {% endif %}
                 </select>
@@ -80,10 +81,12 @@
     <tr>
         <td class="TableContent" colspan="4">10.项目涉及产品及市场参考价格及客户目标价格</td>
     </tr>
-    {% if product_detail_types %}
-    {% for product_type in product_detail_types %}
+    {% if select_arr and 'product_detail_type' in select_arr %}
+    {% set line_num = 0 %}
+    {% for product_type in select_arr['product_detail_type'] %}
+    {% set line_num = line_num + 1 %}
     <tr>
-        <td class="TableContent" colspan="4">{{ product_type }}</td>
+        <td class="TableContent" colspan="4">{{ product_type.get('paras_desc', '') }}</td>
     </tr>
     <tr>
         <td colspan="4">
@@ -96,25 +99,59 @@
                     <td>预计数量</td>
                     <td>操作</td>
                 </tr>
-                <tr class="project-detail-row" data-type="{{ product_type }}">
-                    <td><input type="text" name="product1" class="layui-input" /></td>
-                    <td><input type="text" name="price1" class="layui-input" /></td>
-                    <td><input type="text" name="first_price1" class="layui-input" /></td>
-                    <td><input type="text" name="supplier1" class="layui-input" /></td>
-                    <td><input type="text" name="number1" class="layui-input" /></td>
-                    <td><button type="button" class="layui-btn layui-btn-xs add-detail-row">添加</button></td>
+                <tr align="center">
+                    <input type="hidden" name="type{{ line_num }}" value="{{ product_type.get('paras_value', '') }}" />
+                    <td class="TableData" width="10%"><input type="text" name="product{{ line_num }}" id="product" class="layui-input" /></td>
+                    <td class="TableData" width="10%"><input type="text" name="price{{ line_num }}" id="price" class="layui-input" /></td>
+                    <td class="TableData" width="10%"><input type="text" name="first_price{{ line_num }}" id="first_price" class="layui-input" /></td>
+                    <td class="TableData" width="40%"><input type="text" name="standard{{ line_num }}" id="standard" class="layui-input" /></td>
+                    <td class="TableData" width="6%"><input type="text" name="number{{ line_num }}" id="number" lay-verify="checknum" class="layui-input" /></td>
+                    <td class="TableData">
+                        <input id="project_detail_attach{{ line_num }}" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                        <a href="javascript:;" onclick="removeLine(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    </td>
+                </tr>
+                <tr align="left" id="addProjectDetail">
+                    <td class="TableData" colspan="6">
+                        <input value="添加" type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="addLine('addProjectDetail', this, '{{ product_type.get('paras_value', '') }}'); return false;" />
+                    </td>
                 </tr>
             </table>
         </td>
     </tr>
     {% endfor %}
     {% endif %}
+    <input type="hidden" id="addProjectDetailCount" name="addProjectDetailCount" value="{{ select_arr.get('product_detail_type', [])|length if select_arr and 'product_detail_type' in select_arr else 0 }}" />
     <tr>
-        <td class="TableContent">11.服务</td>
+        <td class="TableContent">11.服务要求（如：安装、培训等）：</td>
         <td class="TableData" colspan="3">
             <textarea class="layui-textarea" id="service" name="service">{{ project.get('service', '') }}</textarea>
         </td>
     </tr>
+    <tr>
+        <td class="TableContent">是否为集体项目</td>
+        <td class="TableData" colspan="3">
+            <div class="layui-input-inline mandatory">
+                <select id="is_collective" name="is_collective" lay-search lay-verify="required">
+                    <option value=''>请选择</option>
+                    {% if select_arr and 'yes_or_no' in select_arr %}
+                    {% for val in select_arr['yes_or_no'] %}
+                    <option value="{{ val.get('paras_value', '') }}" {% if main.get('is_collective', '') == val.get('paras_value', '') %}selected{% endif %}>{{ val.get('paras_desc', '') }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">过往类似项目代码</td>
+        <td class="TableData">
+            <textarea class="layui-textarea required_field" id="past_pcode" name="past_pcode" placeholder="此字段必填，没有也要填写" lay-verify="required">{{ main.get('past_pcode', '') }}</textarea>
+        </td>
+        <td class="TableContent">过往类似客户和/或终止项目代码</td>
+        <td class="TableData">
+            <textarea class="layui-textarea required_field" id="c_past_pcode" name="c_past_pcode" placeholder="此字段必填，没有也要填写" lay-verify="required">{{ main.get('c_past_pcode', '') }}</textarea>
+        </td>
+    </tr>
 </table>
-<input type="hidden" id="addProjectDetailCount" name="addProjectDetailCount" value="0" />
 

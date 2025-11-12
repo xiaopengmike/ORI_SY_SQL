@@ -176,25 +176,82 @@ class DataModel:
         Returns:
             dict: 客户ID到客户名称的字典映射
         """
-        where_clauses = ["1=1"]
-        params = []
+        user_id = param.get('user_id', '')
+        if not user_id:
+            return {}
         
-        if param.get('user_id'):
-            where_clauses.append("(k.user_id = %s OR k.share_user LIKE %s)")
-            params.extend([param['user_id'], f"%{param['user_id']}%"])
-        
-        sql = f"""
-            SELECT k.id, k.customer_name 
-            FROM inhe_customer_data k 
-            WHERE {' AND '.join(where_clauses)}
-            ORDER BY k.customer_name
-        """
-        result = Database.execute_query(sql, tuple(params))
-        
-        # 转换为字典格式
         customer_dict = {}
-        for item in result:
-            customer_dict[str(item['id'])] = item.get('customer_name', '')
+        
+        # 1. 查询用户自己创建的客户
+        sql1 = """
+            SELECT k.id, k.customer_name, k.version, k.form_id 
+            FROM inhe_customer_data k 
+            WHERE 1=1 
+            AND k.status IN ('R', 'Y') 
+            AND k.user_id = %s 
+            AND k.type = 'customer_data'
+            ORDER BY k.id DESC
+        """
+        result1 = Database.execute_query(sql1, (user_id,))
+        
+        for item in result1:
+            customer_id = item['id']
+            customer_name = item['customer_name']
+            version = item.get('version', 0)
+            form_id = item.get('form_id', '')
+            
+            # 如果有版本号，查询变更记录
+            if version > 0:
+                change_sql = """
+                    SELECT k.id, k.customer_name, k.version 
+                    FROM inhe_customer_data k 
+                    WHERE 1=1 
+                    AND k.type = 'customer_data_change' 
+                    AND k.status IN ('R', 'Y') 
+                    AND k.version = %s 
+                    AND k.related_id = %s
+                """
+                change_result = Database.execute_query(change_sql, (version, form_id))
+                if change_result:
+                    item = change_result[0]
+                    customer_id = item['id']
+                    customer_name = item['customer_name']
+            
+            customer_dict[str(customer_id)] = customer_name
+        
+        # 2. 查询分享给该用户的客户
+        sql2 = """
+            SELECT DISTINCT k.id, k.customer_name, k.version, k.form_id 
+            FROM inhe_customer_share a 
+            JOIN inhe_customer_data k ON a.customer_id = k.id 
+            WHERE a.user_ids = %s
+        """
+        result2 = Database.execute_query(sql2, (user_id,))
+        
+        for item in result2:
+            customer_id = item['id']
+            customer_name = item['customer_name']
+            version = item.get('version', 0)
+            form_id = item.get('form_id', '')
+            
+            # 如果有版本号，查询变更记录
+            if version > 0:
+                change_sql = """
+                    SELECT k.id, k.customer_name, k.version 
+                    FROM inhe_customer_data k 
+                    WHERE 1=1 
+                    AND k.type = 'customer_data_change' 
+                    AND k.status IN ('R', 'Y') 
+                    AND k.version = %s 
+                    AND k.related_id = %s
+                """
+                change_result = Database.execute_query(change_sql, (version, form_id))
+                if change_result:
+                    item = change_result[0]
+                    customer_id = item['id']
+                    customer_name = item['customer_name']
+            
+            customer_dict[str(customer_id)] = customer_name
         
         return customer_dict
     
@@ -225,7 +282,7 @@ class DataModel:
         对应原PHP的DataModel::getTempCode()
         
         Args:
-            param (dict): 参数字典，包含user_id等
+            param (dict): 参数字典，包含user_id, temp_code等
             
         Returns:
             list: 临时项目代码列表
@@ -233,17 +290,28 @@ class DataModel:
         where_clauses = ["1=1"]
         params = []
         
+        if param.get('temp_code'):
+            where_clauses.append("m.temp_code = %s")
+            params.append(param['temp_code'])
+        
         if param.get('user_id'):
-            where_clauses.append("k.user_id = %s")
+            where_clauses.append("m.user_id = %s")
             params.append(param['user_id'])
         
         sql = f"""
-            SELECT k.* 
-            FROM inhe_temp_project_code k 
+            SELECT DISTINCT m.*, d.dept_name AS realDeptName, c.company AS company_desc 
+            FROM inhe_temp_code m 
+            LEFT JOIN department d ON d.dept_id = m.dept_id 
+            LEFT JOIN company c ON c.user_bu = m.company 
             WHERE {' AND '.join(where_clauses)}
-            ORDER BY k.id DESC
         """
         result = Database.execute_query(sql, tuple(params))
+        
+        # 处理部门名称（如果有realDeptName则使用，否则使用原dept_name）
+        for item in result:
+            if item.get('realDeptName'):
+                item['dept_name'] = item['realDeptName']
+        
         return result
     
     def get_customer_list2(self):

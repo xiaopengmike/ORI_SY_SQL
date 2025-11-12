@@ -107,7 +107,11 @@ def action():
     
     elif action_type == 'Add':
         result = service.add(params)
-        result = ResponseCode.success(params.get('form_id')) if result else ResponseCode.failed(False, '添加失败')
+        if result:
+            form_id = params.get('form_id', '')
+            result = ResponseCode.success(form_id)
+        else:
+            result = ResponseCode.failed(False, '添加失败')
     
     elif action_type == 'Submit':
         result = service.submit(params)

@@ -123,7 +123,7 @@
     <tr>
         <td class="TableContent">15.合作伙伴分析（合作伙伴，合作伙伴能力，合作伙伴关系）</td>
         <td class="TableData">
-            <textarea class="layui-textarea" id="partner_analysis" name="partner_analysis">{{ bidding.get('partner_analysis', '') }}</textarea>
+            <textarea class="layui-textarea" id="partner_analysis" name="partner_analysis" lay-verify="required">{{ bidding.get('partner_analysis', '') }}</textarea>
         </td>
         <td class="TableContent" width="15%">添加附件</td>
         <td class="TableData">
@@ -133,7 +133,7 @@
     <tr>
         <td class="TableContent">16.关系（与招标方/业主的关系，与合作伙伴的关系）</td>
         <td class="TableData">
-            <textarea class="layui-textarea" id="relationship" name="relationship">{{ bidding.get('relationship', '') }}</textarea>
+            <textarea class="layui-textarea" id="relationship" name="relationship" lay-verify="required">{{ bidding.get('relationship', '') }}</textarea>
         </td>
         <td class="TableContent" width="15%">添加附件</td>
         <td class="TableData">
@@ -143,7 +143,7 @@
     <tr>
         <td class="TableContent">17.市场分析（市场情况，竞争对手分析，竞争优势）</td>
         <td class="TableData">
-            <textarea class="layui-textarea" id="market_analysis" name="market_analysis">{{ bidding.get('market_analysis', '') }}</textarea>
+            <textarea class="layui-textarea" id="market_analysis" name="market_analysis" lay-verify="required">{{ bidding.get('market_analysis', '') }}</textarea>
         </td>
         <td class="TableContent" width="15%">添加附件</td>
         <td class="TableData">
@@ -153,7 +153,7 @@
     <tr>
         <td class="TableContent">18.策略分析（投标策略，价格策略，技术策略）</td>
         <td class="TableData">
-            <textarea class="layui-textarea" id="strategy_analysis" name="strategy_analysis">{{ bidding.get('strategy_analysis', '') }}</textarea>
+            <textarea class="layui-textarea" id="strategy_analysis" name="strategy_analysis" lay-verify="required">{{ bidding.get('strategy_analysis', '') }}</textarea>
         </td>
         <td class="TableContent" width="15%">添加附件</td>
         <td class="TableData">
@@ -161,9 +161,15 @@
         </td>
     </tr>
     <tr>
-        <td class="TableContent">19.可行性分析（技术可行性，商业可行性，风险分析）</td>
+        <td class="TableContent">19.项目成功关键（成功关键因素，关键风险，风险控制措施）</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="key_to_success" name="key_to_success" lay-verify="required">{{ bidding.get('key_to_success', '') }}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">20.项目可行性分析（技术可行性，商业可行性，风险分析）</td>
         <td class="TableData">
-            <textarea class="layui-textarea" id="feasibility_analysis" name="feasibility_analysis">{{ bidding.get('feasibility_analysis', '') }}</textarea>
+            <textarea class="layui-textarea" id="feasibility_analysis" name="feasibility_analysis" lay-verify="required">{{ bidding.get('feasibility_analysis', '') }}</textarea>
         </td>
         <td class="TableContent" width="15%">添加附件</td>
         <td class="TableData">
@@ -171,47 +177,42 @@
         </td>
     </tr>
     <tr>
-        <td class="TableContent">20.成功关键（成功关键因素，关键风险，风险控制措施）</td>
-        <td class="TableData">
-            <textarea class="layui-textarea" id="key_to_success" name="key_to_success">{{ bidding.get('key_to_success', '') }}</textarea>
-        </td>
-        <td class="TableContent" width="15%">添加附件</td>
-        <td class="TableData">
-            <input id="key_to_success_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
-        </td>
-    </tr>
-    <tr>
-        <td class="TableContent">21.个人意见（个人建议，个人评估）</td>
-        <td class="TableData">
-            <textarea class="layui-textarea" id="personal_opinion" name="personal_opinion">{{ bidding.get('personal_opinion', '') }}</textarea>
-        </td>
-        <td class="TableContent" width="15%">添加附件</td>
-        <td class="TableData">
-            <input id="personal_opinion_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
-        </td>
-    </tr>
-    <tr>
-        <td class="TableContent">22.项目级别</td>
-        <td class="TableData">
-            <select id="project_level" name="project_level">
-                <option value=''>请选择</option>
-                {% if select_arr and 'project_level' in select_arr %}
-                {% for item in select_arr['project_level'] %}
-                <option value="{{ item.get('paras_value', '') }}" {% if bidding.get('project_level') == item.get('paras_value') %}selected{% endif %}>{{ item.get('paras_desc', '') }}</option>
-                {% endfor %}
-                {% endif %}
-            </select>
-        </td>
-        <td class="TableContent">23.是否有项目经理</td>
-        <td class="TableData">
-            <select id="have_manager" name="have_manager">
-                <option value=''>请选择</option>
-                {% if select_arr and 'yes_or_no' in select_arr %}
-                {% for item in select_arr['yes_or_no'] %}
-                <option value="{{ item.get('paras_value', '') }}" {% if bidding.get('have_manager') == item.get('paras_value') %}selected{% endif %}>{{ item.get('paras_desc', '') }}</option>
-                {% endfor %}
-                {% endif %}
-            </select>
+        <td class="TableContent" rowspan="3">综合意见</td>
+        <td colspan="3">
+            <table id="tab31" width="100%" style="text-align: center;">
+                <tr>
+                    <td colspan="6" class="TableData">
+                        <textarea class="layui-textarea" id="personal_opinion" name="personal_opinion">{{ bidding.get('personal_opinion', '') }}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">项目等级</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="project_level" name="project_level" lay-filter="project_level" lay-search lay-verify="required">
+                                <option value=''>请选择</option>
+                                {% if select_arr and 'project_level' in select_arr %}
+                                {% for val in select_arr['project_level'] %}
+                                <option value="{{ val.get('paras_value', '') }}" {% if bidding.get('project_level') == val.get('paras_value', '') %}selected{% endif %}>{{ val.get('paras_desc', '') }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">等级图标</td>
+                    <td class="TableData" width="15%">
+                        <div id="star_icon"></div>
+                    </td>
+                    <td class="TableContent">是否需项目经理审批：</td>
+                    <td class="TableData" align="left">
+                        <input type="radio" name="have_manager" value="01" title="否" {% if bidding.get('have_manager', '') == '01' or not if_project_manager %}checked{% endif %}>
+                        <input type="radio" name="have_manager" value="02" title="是" {% if bidding.get('have_manager', '') == '02' and if_project_manager %}checked{% endif %}>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="TableData" align="left"><input type="text" name="signature" id="signature" class="layui-input" readonly /></td>
+                </tr>
+            </table>
         </td>
     </tr>
 </table>

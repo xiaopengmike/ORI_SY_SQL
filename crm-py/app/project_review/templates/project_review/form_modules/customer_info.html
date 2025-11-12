@@ -53,6 +53,16 @@
         </td>
     </tr>
     <tr>
+        <td class="TableContent">合作历史 请说明：首次合作和采购上/经销商。首次合作和采购上/经销商，请展示实际合作和采购信息，如果没有上/经销商，请注明：没有上/经销商，并注意：合作和采购的项目和成功项目。</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="cooperate_history" name="cooperate_history" lay-verify="required">{{ project.get('cooperate_history', '') }}</textarea>
+        </td>
+        <td class="TableContent">添加附件</td>
+        <td class="TableData" style="text-align: left;">
+            <input id="cooperate_history_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
         <td class="TableHeader" colspan="8" style="text-align:left">2. 招标方/业主方基本信息（投标项目必填）</td>
     </tr>
     <tr>
