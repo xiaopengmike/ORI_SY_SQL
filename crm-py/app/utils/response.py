@@ -24,7 +24,7 @@ class ResponseCode:
             dict: 响应字典
         """
         return {
-            'code': '10000',  # 修改为10000以匹配前端JavaScript期望
+            'code': '200',  # 使用200作为成功码，符合HTTP标准和前端期望
             'status': 'success',
             'msg': msg,
             'data': data

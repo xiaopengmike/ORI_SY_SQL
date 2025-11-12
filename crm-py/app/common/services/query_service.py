@@ -663,7 +663,7 @@ class QueryService:
     def query_project_review_list(self, param):
         """
         查询项目评审列表
-        对应原PHP的get_data.php和list.php的查询逻辑
+        对应原PHP的query_page.php的查询逻辑
         
         Args:
             param (dict): 查询参数字典
@@ -673,6 +673,14 @@ class QueryService:
         """
         user_id = get_login_user_id()
         dept_id = get_login_dept_id()
+        
+        # 获取系统类型
+        system_id = param.get('type', 'project_review')
+        
+        # 获取管理员权限信息
+        admin_data = get_admin_data_query(user_id, dept_id, system_id)
+        is_admin = admin_data.get('isAdmin', False)
+        system_admin = admin_data.get('systemAdmin', False)
         
         # 获取通用参数
         from app.common.data_model import DataModel
@@ -703,53 +711,121 @@ class QueryService:
         
         # 表单ID
         if param.get('form_id'):
-            where_clauses.append("m.form_id LIKE %s")
-            sql_params.append(f"%{param['form_id']}%")
+            where_clauses.append("k.form_id LIKE %s")
+            sql_params.append(f"%{param['form_id'].strip()}%")
         
         # 项目代码
         if param.get('project_code'):
-            where_clauses.append("m.project_code LIKE %s")
-            sql_params.append(f"%{param['project_code']}%")
+            where_clauses.append("k.project_code LIKE %s")
+            sql_params.append(f"%{param['project_code'].strip()}%")
         
         # 国家
         if param.get('country'):
-            where_clauses.append("p.country = %s")
-            sql_params.append(param['country'])
+            where_clauses.append("info.country LIKE %s")
+            sql_params.append(f"%{param['country'].strip()}%")
+        
+        # 创建人
+        if param.get('create_user_name'):
+            where_clauses.append("u.user_name LIKE %s")
+            sql_params.append(f"%{param['create_user_name']}%")
+        
+        # 创建时间
+        if param.get('create_time'):
+            where_clauses.append("k.write_time LIKE %s")
+            sql_params.append(f"%{param['create_time']}%")
         
         # 状态
         if param.get('status'):
-            where_clauses.append("m.status = %s")
+            where_clauses.append("k.status = %s")
             sql_params.append(param['status'])
+        
+        # 类型
+        if param.get('type'):
+            where_clauses.append("k.type = %s")
+            sql_params.append(param['type'])
+        else:
+            where_clauses.append("k.type = %s")
+            sql_params.append('project_review')
         
         # 公司
         if param.get('user_bu'):
-            where_clauses.append("m.user_bu = %s")
+            where_clauses.append("k.user_bu = %s")
             sql_params.append(param['user_bu'])
         
-        # 类型 - 固定为project_review
-        where_clauses.append("m.type = %s")
-        sql_params.append('project_review')
+        # change_star过滤条件
+        if param.get('change_star'):
+            where_clauses.append("k.change_star = %s")
+            sql_params.append(param['change_star'])
+        else:
+            # 默认排除change_star='1'的记录
+            where_clauses.append("(k.change_star != '1' OR k.change_star IS NULL)")
         
-        # 权限控制 - 只能查看自己创建的项目
-        where_clauses.append("m.user_id = %s")
+        # 权限控制
+        permission_clauses = []
+        if is_admin:
+            # 管理员权限：可查看自己创建的、审批的、同公司/同部门/同用户组的记录
+            permission_clauses.append("k.user_id = %s")
+            sql_params.append(user_id)
+            
+            # 审批中的记录
+            permission_clauses.append("(SELECT id FROM inhe_flow_opinion WHERE form_id=k.form_id AND approve_user=%s LIMIT 1)")
+            sql_params.append(user_id)
+            
+            # 同公司
+            user_bu = admin_data.get('userBu', '')
+            if user_bu:
+                permission_clauses.append(f"k.user_bu IN ({user_bu})")
+            
+            # 同部门
+            dept_ids = admin_data.get('deptIds', '')
+            if dept_ids:
+                permission_clauses.append(f"k.organ_id IN ({dept_ids})")
+            
+            # 同用户组
+            user_ids = admin_data.get('userIds', '')
+            if user_ids:
+                permission_clauses.append(f"k.user_id IN ({user_ids})")
+                # 特殊用户可查看审批记录
+                if user_id == "INHE-0036":
+                    permission_clauses.append(f"(SELECT id FROM inhe_flow_opinion WHERE form_id=k.form_id AND approve_user IN ({user_ids}) LIMIT 1)")
+        else:
+            # 非管理员权限：只能查看审批中的记录
+            permission_clauses.append("(SELECT id FROM inhe_flow_opinion WHERE form_id=k.form_id AND approve_user=%s LIMIT 1)")
+            sql_params.append(user_id)
+        
+        # 项目参与者权限：可查看参与的项目
+        permission_clauses.append("""EXISTS (
+            SELECT b.project_code 
+            FROM inhe_project_participant b 
+            LEFT JOIN inhe_project_participant_item a ON a.form_id=b.form_id 
+            WHERE b.status='Y' 
+            AND b.project_code=k.project_code 
+            AND b.USER_BU=k.USER_BU 
+            AND (b.leader_id=%s OR a.user_id=%s)
+        )""")
         sql_params.append(user_id)
+        sql_params.append(user_id)
+        
+        if permission_clauses:
+            where_clauses.append(f"({' OR '.join(permission_clauses)})")
         
         # 排序
         from app.utils.sql_validator import sanitize_field_name
-        order_by = "ORDER BY m.id DESC"
+        order_by = "ORDER BY k.id DESC"
         if param.get('sort_field') and param.get('sort_way'):
             sort_field = param['sort_field']
             sort_way = param['sort_way'].upper()
+            # 处理字段名，确保安全
             if '.' in sort_field:
                 table_alias, field = sort_field.split('.', 1)
                 sanitize_field_name(field)
-                sort_field = f"{table_alias}.`{field}`"
+                sort_field = f"k.`{field}`"
             else:
                 sanitize_field_name(sort_field)
-                sort_field = f"`{sort_field}`"
+                sort_field = f"k.`{sort_field}`"
             if sort_way not in ['ASC', 'DESC']:
                 sort_way = 'ASC'
-            order_by = f"ORDER BY {sort_field} {sort_way}, m.id DESC"
+            order_by = f"ORDER BY {sort_field} {sort_way}"
         
         # 分页
         try:
@@ -762,42 +838,69 @@ class QueryService:
             page_size = 10
         limit = f"LIMIT {(page - 1) * page_size}, {page_size}"
         
-        # 查询总数
-        count_sql = f"""
-            SELECT COUNT(*) AS cnt 
-            FROM inhe_project_main m
-            LEFT JOIN inhe_project_info p ON p.form_id = m.form_id
-            WHERE {' AND '.join(where_clauses)}
+        # 构建查询SQL - 包含审批信息
+        base_sql = """
+            SELECT k.*,
+                   info.country,
+                   u.user_name AS createUserName,
+                   d.dept_name AS deptName,
+                   o.approve_user,
+                   o.step,
+                   o.id AS opinion_id
+            FROM inhe_project_main k
+            LEFT JOIN inhe_project_info info ON info.form_id = k.form_id
+            LEFT JOIN user u ON u.user_id = k.user_id
+            LEFT JOIN department d ON d.dept_id = k.organ_id
+            LEFT JOIN inhe_flow_opinion o ON o.form_id=k.form_id AND o.status='U' AND o.approve_user=%s
         """
+        sql_params_with_user = [user_id] + sql_params
+        
+        where_str = ' AND '.join(where_clauses)
+        total_query = base_sql + f" WHERE {where_str}"
+        query = total_query + f" {order_by} {limit}"
+        
+        # 查询总数 - 使用单独的COUNT查询
+        count_sql = """
+            SELECT COUNT(*) AS cnt
+            FROM inhe_project_main k
+            LEFT JOIN inhe_project_info info ON info.form_id = k.form_id
+            LEFT JOIN user u ON u.user_id = k.user_id
+            LEFT JOIN department d ON d.dept_id = k.organ_id
+            WHERE """ + where_str
         count_result = Database.execute_query(count_sql, tuple(sql_params))
         total = count_result[0]['cnt'] if count_result else 0
         
         # 查询数据
-        data_sql = f"""
-            SELECT m.*,
-                   u.user_name AS create_user_name,
-                   d.dept_name AS dept_name,
-                   p.country AS country
-            FROM inhe_project_main m
-            LEFT JOIN user u ON u.user_id = m.user_id
-            LEFT JOIN department d ON d.dept_id = m.organ_id
-            LEFT JOIN inhe_project_info p ON p.form_id = m.form_id
-            WHERE {' AND '.join(where_clauses)}
-            {order_by}
-            {limit}
-        """
-        data_result = Database.execute_query(data_sql, tuple(sql_params))
+        data_result = Database.execute_query(query, tuple(sql_params_with_user))
+        
+        # 系统管理员特殊处理：可查看所有审批步骤
+        if system_admin:
+            for item in data_result:
+                form_id = item.get('form_id', '')
+                item_type = item.get('type', '')
+                if form_id and item_type:
+                    sql2 = "SELECT * FROM inhe_flow_opinion WHERE form_id=%s AND type=%s AND status='U' AND step='1'"
+                    res2 = Database.execute_query(sql2, (form_id, item_type))
+                    if res2:
+                        item['opinion_id'] = res2[0].get('id', '')
         
         # 添加额外字段
         for item in data_result:
             item['project_star_desc'] = project_star.get(item.get('project_star', ''), '')
             item['star_icon'] = star_icon.get(item.get('project_star', ''), '')
             item['company'] = company.get(item.get('user_bu', ''), '')
+            # 确保字段名一致
+            if 'createUserName' in item:
+                item['create_user_name'] = item['createUserName']
+            if 'deptName' in item:
+                item['dept_name'] = item['deptName']
         
         return {
             'list': data_result,
             'total': total,
             'page': page,
-            'page_size': page_size
+            'page_size': page_size,
+            'isAdmin': is_admin,
+            'systemAdmin': system_admin
         }
 

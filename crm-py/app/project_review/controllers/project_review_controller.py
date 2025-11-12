@@ -34,6 +34,15 @@ def list_page():
         user_id = get_login_user_id()
         dept_id = get_login_dept_id()
         
+        # 获取系统类型
+        system_id = 'project_review'
+        
+        # 获取管理员权限信息
+        from app.utils.auth import get_admin_data_query
+        admin_data = get_admin_data_query(user_id, dept_id, system_id)
+        is_admin = admin_data.get('isAdmin', False)
+        system_admin = admin_data.get('systemAdmin', False)
+        
         # 获取数据模型
         data_model = DataModel()
         user_model = UserModel()
@@ -44,7 +53,7 @@ def list_page():
         # 获取通用参数
         select_param = {
             'is_used': '1',
-            'type': 'crm_process_sort'
+            'type': 'crm_process_sort,crm_process_type'
         }
         select_arr = data_model.get_common_param(select_param)
         
@@ -54,10 +63,19 @@ def list_page():
             for item in select_arr['crm_process_sort']:
                 crm_process_sort[item['paras_value']] = item
         
+        # 处理crm_process_type
+        crm_process_type = {}
+        if 'crm_process_type' in select_arr and select_arr['crm_process_type']:
+            for item in select_arr['crm_process_type']:
+                crm_process_type[item['paras_value']] = item.get('paras_desc', '')
+        
         return render_template('project_review/templates/project_review/list.html',
                              crm_process_sort=crm_process_sort,
+                             crm_process_type=crm_process_type.get(system_id, ''),
                              user_bu=company or '',
-                             user_id=user_id or '')
+                             user_id=user_id or '',
+                             is_admin=is_admin,
+                             system_admin=system_admin)
     except Exception as e:
         print(f"渲染项目评审列表页面错误: {str(e)}")
         import traceback
