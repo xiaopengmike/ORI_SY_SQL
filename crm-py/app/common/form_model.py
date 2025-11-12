@@ -30,8 +30,6 @@ class FormModel:
     FORM_ACTION_TYPE = {
         'update_approver': 'updateFormFlow',
         'customer_share': 'addCustomerShare',
-        'project_code_link': 'makeProjectCodeLink',
-        'temp_code': 'addTempCode',
         'change_approve_user': 'updateFlowOpinionApprover',
         'urgent_notify': 'urgentNotify',
     }

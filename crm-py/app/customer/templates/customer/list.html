@@ -1,0 +1,783 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}客户信息列表 - CRM系统{% endblock %}
+
+{% block page_title %}客户信息列表{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        background-color: #f5f5f5;
+    }
+        .drop-btn {
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            z-index: 9999;
+            background-color: lightgray;
+            min-width: 154px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #027AFF;
+            color: white;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .layui-table {
+            margin-top: 10px;
+        }
+        .layui-btn-oa {
+            background-color: #1E9FFF;
+            color: white;
+        }
+        .newColor {
+            color: #1E9FFF;
+            cursor: pointer;
+        }
+        .newColor:hover {
+            text-decoration: underline;
+        }
+        .query-form {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .button-area {
+            margin: 10px 0;
+            text-align: right;
+        }
+        .status-T { color: #FFB800; }
+        .status-P { color: #1E9FFF; }
+        .status-R { color: #5FB878; }
+        .status-Y { color: #5FB878; }
+        .status-N { color: #FF5722; }
+        /* 跟进记录备注样式 */
+        .table .remarks-content {
+            white-space: pre-line;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            cursor: pointer;
+            max-width: 200px;
+        }
+        table {
+            table-layout: fixed;
+            word-wrap: break-word;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Tab 导航 -->
+    <div class="layui-tab layui-tab-brief" lay-filter="customerTab" style="margin: 10px 0;">
+        <ul class="layui-tab-title">
+            <li {% if not current_tab or current_tab == 'list' %}class="layui-this"{% endif %} lay-id="list">★客户信息列表</li>
+            <li {% if current_tab == 'change' %}class="layui-this"{% endif %} lay-id="change">★客户信息登记变更</li>
+            <li {% if current_tab == 'share' %}class="layui-this"{% endif %} lay-id="share">★客户信息共享</li>
+            <li {% if current_tab == 'flow' %}class="layui-this"{% endif %} lay-id="flow">★跟进记录</li>
+        </ul>
+    </div>
+    
+    <form id="tab" class="layui-form">
+        <input type="hidden" id="type" name="type" value="customer_data" />
+        <input type="hidden" id="current_tab" name="current_tab" value="{{ current_tab or 'list' }}" />
+        <input type="hidden" id="sort_way" name="sort_way" value="" />
+        <input type="hidden" id="sort_field" name="sort_field" value="" />
+        <input type="hidden" id="page_size" name="page_size" value="10" />
+        <input type="hidden" id="checkedIds" name="checkedIds" value="" />
+        <input type="hidden" name="user_byid" id="user_byid" class="layui-input" value="" />
+        <input type="hidden" name="starting_time" id="starting_time" class="layui-input" value="" />
+        <input type="hidden" name="ending_time" id="ending_time" class="layui-input" value="" />
+        <input type="hidden" name="data_flow" id="data_flow" class="layui-input" value="" />
+        <input type="hidden" name="order_will" id="order_will" class="layui-input" value="" />
+        
+        <div class="query-form">
+            <table style="width: 100%;">
+                <!-- tab=list: 8个搜索字段 -->
+                <tbody id="search-list" class="search-tab" style="display: none;">
+                    <tr>
+                        <td align="right" width="10%">登记单号：</td>
+                        <td width="15%">
+                            <input type="text" name="form_id" id="form_id" class="layui-input" placeholder="请输入登记单号">
+                        </td>
+                        <td align="right" width="10%">状态：</td>
+                        <td width="15%">
+                            <div class="layui-input-inline">
+                                <select id="status" name="status">
+                                    <option value="">请选择</option>
+                                    <option value="T">待提交</option>
+                                    <option value="P">审批中</option>
+                                    <option value="R">已通过</option>
+                                    <option value="Y">已通过</option>
+                                    <option value="N">退回</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right" width="10%">客户名称：</td>
+                        <td width="15%">
+                            <input type="text" name="customer_name" id="customer_name" class="layui-input" placeholder="请输入客户名称">
+                        </td>
+                        <td align="right" width="10%">跟进距今天数：</td>
+                        <td width="15%">
+                            <input type="text" name="flow_date" id="flow_date" class="layui-input" placeholder="天数">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">简称：</td>
+                        <td>
+                            <input type="text" name="short_name" id="short_name" class="layui-input" placeholder="请输入简称">
+                        </td>
+                        <td align="right">是否有效：</td>
+                        <td>
+                            <div class="layui-input-inline">
+                                <select id="is_vaild" name="is_vaild">
+                                    <option value="">请选择</option>
+                                    <option value="01">是</option>
+                                    <option value="02">否</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td nowrap align="right">公司：</td>
+                        <td>
+                            <div class="layui-input-inline">
+                                <select id="user_bu" name="user_bu" lay-search>
+                                    <option value="">请选择</option>
+                                    {% for company, item in crm_process_sort.items() %}
+                                    <option value="{{ company }}">{{ item.get('paras_desc', company) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right">是否成交订单：</td>
+                        <td>
+                            <div class="layui-input-inline">
+                                <select id="own_orders" name="own_orders">
+                                    <option value="">请选择</option>
+                                    <option value="Y">是</option>
+                                    <option value="N">否</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" align="right">
+                            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="queryList();return false;" style="margin-left: 10px;">查询</button>
+                        </td>
+                    </tr>
+                </tbody>
+                
+                <!-- tab=change: 4个搜索字段 -->
+                <tbody id="search-change" class="search-tab" style="display: none;">
+                    <tr>
+                        <td align="right" width="10%">登记单号：</td>
+                        <td width="20%">
+                            <input type="text" name="form_id" class="layui-input" placeholder="请输入登记单号">
+                        </td>
+                        <td align="right" width="10%">客户名称：</td>
+                        <td width="20%">
+                            <input type="text" name="customer_name" class="layui-input" placeholder="请输入客户名称">
+                        </td>
+                        <td nowrap align="right" width="10%">公司：</td>
+                        <td width="15%">
+                            <div class="layui-input-inline">
+                                <select name="user_bu" lay-search>
+                                    <option value="">请选择</option>
+                                    {% for company, item in crm_process_sort.items() %}
+                                    <option value="{{ company }}">{{ item.get('paras_desc', company) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right" width="10%">状态：</td>
+                        <td width="15%">
+                            <div class="layui-input-inline">
+                                <select name="status">
+                                    <option value="">请选择</option>
+                                    <option value="T">待提交</option>
+                                    <option value="P">审批中</option>
+                                    <option value="R">已通过</option>
+                                    <option value="Y">已通过</option>
+                                    <option value="N">退回</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right">
+                            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="queryList();return false;" style="margin-left: 10px;">查询</button>
+                        </td>
+                    </tr>
+                </tbody>
+                
+                <!-- tab=share: 1个搜索字段 -->
+                <tbody id="search-share" class="search-tab" style="display: none;">
+                    <tr>
+                        <td align="right" width="10%">客户名称：</td>
+                        <td width="20%">
+                            <input type="text" name="customer_name" class="layui-input" placeholder="请输入客户名称">
+                        </td>
+                        <td align="right">
+                            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="queryList();return false;" style="margin-left: 10px;">查询</button>
+                        </td>
+                    </tr>
+                </tbody>
+                
+                <!-- tab=flow: 3个搜索字段 -->
+                <tbody id="search-flow" class="search-tab" style="display: none;">
+                    <tr>
+                        <td align="right" width="10%">客户名称：</td>
+                        <td width="20%">
+                            <input type="text" name="customer_name" class="layui-input" placeholder="请输入客户名称">
+                        </td>
+                        <td align="right" width="10%">跟进人员：</td>
+                        <td width="20%">
+                            <input type="text" name="user_name" class="layui-input" placeholder="请输入跟进人员">
+                        </td>
+                        <td align="right" width="15%">是否有意向订单：</td>
+                        <td width="15%">
+                            <div class="layui-input-inline">
+                                <select name="order_will">
+                                    <option value="">请选择</option>
+                                    <option value="Y">是</option>
+                                    <option value="N">否</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right">
+                            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="queryList();return false;" style="margin-left: 10px;">查询</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+    
+    <div class="button-area">
+        <div style="float: left;">
+            <div class="dropdown">
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm drop-btn">新增</button>
+                <div class="dropdown-content" align="center">
+                    {% for company, item in crm_process_sort.items() %}
+                    <a href="javascript:void(0);" class="newColor" onclick="addCustomer('{{ company }}', '{{ item.get('paras_desc', company) }}');return false;">{{ item.get('paras_desc', company) }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm drop-btn">共享</button>
+                <div class="dropdown-content" align="center">
+                    {% for company, item in crm_process_sort.items() %}
+                    <a href="javascript:void(0);" class="newColor" onclick="shareCustomer('{{ company }}', '{{ item.get('paras_desc', company) }}');return false;">{{ item.get('paras_desc', company) }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="button" style="margin-left:0px" class="layui-btn layui-btn-oa layui-btn-sm" onclick="startChangeForm();return false;">变更</button>
+        </div>
+        <div id="pagination" style="float: right;"></div>
+    </div>
+    
+    <div id="tableList" style="width:100%;text-align:center;margin-top: 10px;">
+        <div><img src="https://unpkg.com/layui@2.8.0/dist/css/images/loading-0.gif" align="absmiddle" /> 数据加载中...</div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+        var currentPage = 1;
+        var totalCount = 0;
+        var pageSize = 10;
+        
+        // Tab类型映射
+        var tabTypeMap = {
+            'list': 'customer_data',
+            'change': 'customer_data_change',
+            'share': 'customer_share',
+            'flow': 'customer_flow'
+        };
+        
+        // 从URL获取当前tab
+        function getCurrentTab() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var tab = urlParams.get('tab') || 'list';
+            return tab;
+        }
+        
+        // 更新URL中的tab参数
+        function updateUrlTab(tab) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('tab', tab);
+            window.history.replaceState({}, '', url);
+        }
+        
+        $(function() {
+            layui.use(['form', 'layer', 'laypage', 'element'], function() {
+                var form = layui.form;
+                var layer = layui.layer;
+                var laypage = layui.laypage;
+                var element = layui.element;
+                
+                // 显示对应tab的搜索表单
+                function showSearchForm(tabId) {
+                    // 隐藏所有搜索表单
+                    $('.search-tab').hide();
+                    // 显示对应tab的搜索表单
+                    $('#search-' + tabId).show();
+                }
+                
+                // 初始化当前tab
+                var currentTab = getCurrentTab();
+                $('#current_tab').val(currentTab);
+                $('#type').val(tabTypeMap[currentTab] || 'customer_data');
+                
+                // 显示对应的搜索表单
+                showSearchForm(currentTab);
+                
+                // 切换到对应的tab - 根据索引切换
+                var tabIndex = currentTab === 'list' ? 0 : 
+                              currentTab === 'change' ? 1 : 
+                              currentTab === 'share' ? 2 : 3;
+                element.tabChange('customerTab', tabIndex);
+                
+                // 监听tab切换
+                element.on('tab(customerTab)', function(data) {
+                    var tabId = data.index === 0 ? 'list' : 
+                               data.index === 1 ? 'change' : 
+                               data.index === 2 ? 'share' : 'flow';
+                    
+                    $('#current_tab').val(tabId);
+                    $('#type').val(tabTypeMap[tabId] || 'customer_data');
+                    updateUrlTab(tabId);
+                    
+                    // 显示对应的搜索表单
+                    showSearchForm(tabId);
+                    
+                    // 重新渲染表单（Layui需要重新渲染select等组件）
+                    form.render();
+                    
+                    // 切换tab时重新加载列表
+                    currentPage = 1;
+                    loadList(1);
+                });
+                
+                // 初始化加载列表
+                loadList(1);
+                
+                // 大洲选择变化时，更新国家列表（仅在list tab需要，但为了兼容性保留）
+                form.on('select(continent)', function(data) {
+                    updateCountryList(data.value);
+                });
+                
+                // 备注点击弹窗显示完整内容（跟进记录）
+                $(document).on("click", ".remarks-content", function(e) {
+                    if (this.offsetWidth < this.scrollWidth || this.innerHTML.length >= 1) {
+                        var text = $(this).attr('title');
+                        layer.alert(text, {
+                            title: '商谈事项',
+                            area: ['600px', 'auto'],
+                            maxWidth: 600
+                        });
+                    }
+                });
+                
+                form.render();
+            });
+        });
+        
+        // 查询列表
+        function queryList() {
+            var pattern = /^\d+$/;
+            var flowDate = $("#flow_date").val();
+            if (flowDate && !pattern.test(flowDate)) {
+                layer.msg('流程天数只能填写数字');
+                return false;
+            }
+            loadList(1);
+        }
+        
+        // 加载列表数据
+        function loadList(page) {
+            currentPage = page || 1;
+            $("#tableList").html('<div><img src="https://unpkg.com/layui@2.8.0/dist/css/images/loading-0.gif" align="absmiddle" /> 数据加载中...</div>');
+            
+            var params = $("#tab").serialize() + "&page=" + currentPage;
+            
+            $.ajax({
+                url: '/customer/query',
+                type: 'POST',
+                data: params,
+                dataType: 'json',
+                success: function(response) {
+                    console.log('查询响应:', response); // 添加调试日志
+                    if (response && response.code === '10000') {
+                        renderTable(response.data.list || []);
+                        totalCount = response.data.total || 0;
+                        renderPagination();
+                    } else {
+                        console.error('查询失败:', response); // 添加错误日志
+                        layer.msg(response.msg || '查询失败');
+                        $("#tableList").html('<div style="text-align: center;padding: 20px;">暂无数据</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX请求失败:', status, error, xhr.responseText); // 添加详细错误日志
+                    layer.msg('请求失败，请稍后重试');
+                    $("#tableList").html('<div style="text-align: center;padding: 20px;">加载失败: ' + error + '</div>');
+                }
+            });
+        }
+        
+        // 渲染表格
+        function renderTable(data) {
+            var currentTab = $('#current_tab').val() || 'list';
+            var html = '<table class="layui-table" style="width: 98%;margin:auto;">';
+            html += '<thead><tr class="layui-bg-gray">';
+            
+            // 根据不同的tab显示不同的表头
+            if (currentTab === 'list') {
+                html += '<th style="text-align: center; width: 3%"><input type="checkbox" id="check-all" /></th>';
+                html += '<th style="text-align: center; width: 3%">序号</th>';
+                html += '<th style="text-align: center;">登记单号</th>';
+                html += '<th style="text-align: center;">客户名称</th>';
+                html += '<th style="text-align: center;">大洲</th>';
+                html += '<th style="text-align: center;">国家</th>';
+                html += '<th style="text-align: center;">制单人</th>';
+                html += '<th style="text-align: center;">制单时间</th>';
+                html += '<th style="text-align: center;">跟进距今天数</th>';
+                html += '<th style="text-align: center;">办理状态</th>';
+                html += '<th style="text-align: center;">操作</th>';
+            } else if (currentTab === 'change') {
+                html += '<th style="text-align: center; width: 3%"><input type="checkbox" id="check-all" /></th>';
+                html += '<th style="text-align: center; width: 3%">序号</th>';
+                html += '<th style="text-align: center;">登记单号</th>';
+                html += '<th style="text-align: center;">客户名称</th>';
+                html += '<th style="text-align: center;">公司</th>';
+                html += '<th style="text-align: center;">状态</th>';
+                html += '<th style="text-align: center;">操作</th>';
+            } else if (currentTab === 'share') {
+                html += '<th style="text-align: center; width: 3%">序号</th>';
+                html += '<th style="text-align: center;">客户名称</th>';
+                html += '<th style="text-align: center;">共享业务人员</th>';
+                html += '<th style="text-align: center;">登记人</th>';
+            } else if (currentTab === 'flow') {
+                html += '<th style="text-align: center; width: 3%">序号</th>';
+                html += '<th style="text-align: center;">客户名称</th>';
+                html += '<th style="text-align: center;">跟进人员</th>';
+                html += '<th style="text-align: center;">跟进日期</th>';
+                html += '<th style="text-align: center;">联系人</th>';
+                html += '<th style="text-align: center;">是否有意向订单</th>';
+                html += '<th style="text-align: center;">订单数</th>';
+                html += '<th style="text-align: center;">创建时间</th>';
+                html += '<th style="text-align: center;">备注</th>';
+                html += '<th style="text-align: center;">操作</th>';
+            }
+            
+            html += '</tr></thead><tbody>';
+            
+            if (data.length === 0) {
+                // 计算列数：list tab固定11列：选择、序号、登记单号、客户名称、大洲、国家、制单人、制单时间、跟进距今天数、办理状态、操作
+                var colCount = 11; // list tab固定11列
+                if (currentTab === 'change') colCount = 7;
+                else if (currentTab === 'share') colCount = 4;
+                else if (currentTab === 'flow') colCount = 10;
+                html += '<tr><td colspan="' + colCount + '" style="text-align: center;padding: 20px;">暂无数据</td></tr>';
+            } else {
+                for (var i = 0; i < data.length; i++) {
+                    var item = data[i];
+                    var line = (currentPage - 1) * pageSize + i + 1;
+                    
+                    if (currentTab === 'list') {
+                        var statusText = {'T': '待提交', 'P': '审批中', 'R': '已通过', 'Y': '已通过', 'N': '退回'}[item.status] || '';
+                        var statusClass = 'status-' + item.status;
+                        
+                        html += '<tr>';
+                        html += '<td align="center"><input type="checkbox" name="cb_list" value="' + (item.form_id || '') + '" title="' + (item.status || '') + '" /></td>';
+                        html += '<td align="center">' + line + '</td>';
+                        html += '<td align="center">' + (item.form_id || '') + '</td>';
+                        html += '<td align="center">' + (item.customer_name || '') + '</td>';
+                        // 大洲：根据语言显示中文或英文
+                        var continentDisplay = '';
+                        {% if lang == 'EN' %}
+                        continentDisplay = (item.continent_en_name || item.continent || '');
+                        {% else %}
+                        continentDisplay = (item.continent_name || item.continent || '');
+                        {% endif %}
+                        html += '<td align="center">' + continentDisplay + '</td>';
+                        // 国家：根据语言显示中文或英文
+                        var countryDisplay = '';
+                        {% if lang == 'EN' %}
+                        countryDisplay = (item.country_en_name || item.country || '');
+                        {% else %}
+                        countryDisplay = (item.country_name || item.country || '');
+                        {% endif %}
+                        html += '<td align="center">' + countryDisplay + '</td>';
+                        // 制单人：部门名 + 用户名
+                        var creatorDisplay = ((item.dept_name || '') + ' ' + (item.create_user_name || '')).trim();
+                        html += '<td align="center">' + creatorDisplay + '</td>';
+                        html += '<td align="center">' + (item.write_time || '') + '</td>';
+                        html += '<td align="center">' + (item.flow_date && item.flow_date != '9999' ? item.flow_date : '') + '</td>';
+                        html += '<td align="center"><span class="' + statusClass + '">' + statusText + '</span></td>';
+                        html += '<td align="center" nowrap>';
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="viewDetail(\'' + (item.form_id || '') + '\');return false;">详情</a>&nbsp;';
+                        {% if user_bu != 'INHENERGY' %}
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="viewProcess(\'' + (item.form_id || '') + '\');return false;">查看流程</a>&nbsp;';
+                        {% endif %}
+                        // 修改和删除按钮（仅创建人且状态为待提交或退回时显示）
+                        if (item.user_id === '{{ user_id }}' && (item.status === 'T' || item.status === 'N')) {
+                            html += '<a href="javascript:void(0);" class="newColor" onclick="modifyCustomer(\'' + (item.form_id || '') + '\');return false;">修改</a>&nbsp;';
+                            html += '<a href="javascript:void(0);" class="newColor" onclick="deleteCustomer(\'' + (item.form_id || '') + '\');return false;">删除</a>&nbsp;';
+                        }
+                        // 审批按钮（仅当前审批人且状态为审批中时显示）
+                        if (item.status === 'P' && item.approve_user === '{{ user_id }}') {
+                            html += '<a href="javascript:void(0);" class="newColor" onclick="approveCustomer(\'' + (item.form_id || '') + '\', \'' + (item.step || '') + '\');return false;">审批</a>&nbsp;';
+                        }
+                        // 变更按钮（INHENERGY公司且状态为已通过时显示）
+                        {% if user_bu == 'INHENERGY' %}
+                        if ((item.status === 'R' || item.status === 'Y') && currentTab === 'list') {
+                            html += '<a href="javascript:void(0);" class="newColor" onclick="changeCustomer(\'' + (item.form_id || '') + '\');return false;">变更</a>&nbsp;';
+                        }
+                        {% endif %}
+                        // 跟进按钮（INHENERGY或HKNERGY公司且状态为已通过时显示）
+                        {% if user_bu == 'INHENERGY' or user_bu == 'HKNERGY' %}
+                        if ((item.status === 'R' || item.status === 'Y') && (item.user_bu === 'INHENERGY' || item.user_bu === 'HKNERGY') && currentTab === 'list') {
+                            html += '<a href="javascript:void(0);" class="newColor" onclick="addFlow(\'' + (item.form_id || '') + '\');return false;">跟进</a>&nbsp;';
+                        }
+                        {% endif %}
+                        html += '</td>';
+                        html += '</tr>';
+                    } else if (currentTab === 'change') {
+                        var statusText = {'T': '待提交', 'P': '审批中', 'R': '已通过', 'Y': '已通过', 'N': '退回'}[item.status] || '';
+                        var statusClass = 'status-' + item.status;
+                        
+                        html += '<tr>';
+                        html += '<td align="center"><input type="checkbox" name="cb_list" value="' + (item.form_id || '') + '" /></td>';
+                        html += '<td align="center">' + line + '</td>';
+                        html += '<td align="center">' + (item.form_id || '') + '</td>';
+                        html += '<td align="center">' + (item.customer_name || '') + '</td>';
+                        html += '<td align="center">' + (item.user_bu || '') + '</td>';
+                        html += '<td align="center"><span class="' + statusClass + '">' + statusText + '</span></td>';
+                        html += '<td align="center" nowrap>';
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="viewDetail(\'' + (item.form_id || '') + '\');return false;">详情</a>&nbsp;';
+                        html += '</td>';
+                        html += '</tr>';
+                    } else if (currentTab === 'share') {
+                        html += '<tr>';
+                        html += '<td align="center">' + line + '</td>';
+                        html += '<td align="center">' + (item.customer_name || '') + '</td>';
+                        html += '<td align="center">' + (item.userNameList || '') + '</td>';
+                        html += '<td align="center">' + (item.createUserName || '') + '</td>';
+                        html += '</tr>';
+                    } else if (currentTab === 'flow') {
+                        html += '<tr>';
+                        html += '<td align="center" width="3%">' + line + '</td>';
+                        html += '<td align="center">' + (item.customer_name || '') + '</td>';
+                        html += '<td align="center">' + (item.user_name || '') + '</td>';
+                        html += '<td align="center">' + (item.flow_date || '') + '</td>';
+                        html += '<td align="center">' + (item.contract_name || '') + '</td>';
+                        html += '<td align="center">' + (item.order_will === 'Y' ? '是' : '否') + '</td>';
+                        html += '<td align="center">' + (item.order_num || '') + '</td>';
+                        html += '<td align="center">' + (item.create_time || '') + '</td>';
+                        // 备注字段：支持点击查看完整内容
+                        var remarkText = (item.remark || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                        html += '<td nowrap align="left"><p class="remarks-content" title="' + remarkText + '">' + (item.remark || '') + '</p></td>';
+                        html += '<td align="center" nowrap>';
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="viewFlowDetail(\'' + (item.id || '') + '\');return false;">详情</a>&nbsp;';
+                        {% if user_id == 'admin' or user_id == 'INHE-1008' %}
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="modifyFlow(\'' + (item.id || '') + '\');return false;">修改</a>&nbsp;';
+                        html += '<a href="javascript:void(0);" class="newColor" onclick="deleteFlow(\'' + (item.id || '') + '\');return false;">删除</a>&nbsp;';
+                        {% endif %}
+                        html += '</td>';
+                        html += '</tr>';
+                    }
+                }
+            }
+            
+            html += '</tbody></table>';
+            $("#tableList").html(html);
+            
+            // 全选功能（仅在有checkbox时）
+            if (currentTab === 'list' || currentTab === 'change') {
+                $("#check-all").change(function() {
+                    var checked = $(this).prop('checked');
+                    $("input[name='cb_list']").prop('checked', checked);
+                });
+            }
+        }
+        
+        // 查看跟进记录详情
+        function viewFlowDetail(flowId) {
+            if (!flowId) {
+                layer.msg('记录ID不能为空');
+                return;
+            }
+            // 跳转到跟进记录详情页面（后续可以创建专门的详情页面）
+            layer.msg('跟进记录详情功能开发中，ID: ' + flowId);
+            // window.location.href = '/customer/flow/detail/' + flowId;
+        }
+        
+        // 修改跟进记录
+        function modifyFlow(flowId) {
+            if (!flowId) {
+                layer.msg('记录ID不能为空');
+                return;
+            }
+            layer.msg('修改跟进记录功能开发中，ID: ' + flowId);
+            // window.location.href = '/customer/flow/modify/' + flowId;
+        }
+        
+        // 删除跟进记录
+        function deleteFlow(flowId) {
+            if (!flowId) {
+                layer.msg('记录ID不能为空');
+                return;
+            }
+            layer.confirm('确定要删除这条跟进记录吗？', {icon: 3, title: '提示'}, function(index) {
+                $.ajax({
+                    url: '/customer/flow/delete',
+                    type: 'POST',
+                    data: {
+                        id: flowId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        layer.close(index);
+                        if (response.code === '10000') {
+                            layer.msg('删除成功');
+                            loadList(currentPage);
+                        } else {
+                            layer.msg(response.msg || '删除失败');
+                        }
+                    },
+                    error: function() {
+                        layer.close(index);
+                        layer.msg('删除失败，请稍后重试');
+                    }
+                });
+            });
+        }
+        
+        // 渲染分页
+        function renderPagination() {
+            layui.use('laypage', function() {
+                var laypage = layui.laypage;
+                laypage.render({
+                    elem: 'pagination',
+                    count: totalCount,
+                    limit: pageSize,
+                    curr: currentPage,
+                    jump: function(obj, first) {
+                        if (!first) {
+                            loadList(obj.curr);
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 更新国家列表
+        function updateCountryList(continent) {
+            // 这里可以根据大洲筛选国家，暂时简化处理
+            layui.use('form', function() {
+                var form = layui.form;
+                form.render('select');
+            });
+        }
+        
+        // 新增客户
+        function addCustomer(company, companyName) {
+            window.location.href = '/customer/add?company=' + company;
+        }
+        
+        // 共享客户
+        function shareCustomer(company, companyName) {
+            layer.msg('共享功能开发中...');
+        }
+        
+        // 变更
+        function startChangeForm() {
+            var checked = $("input[name='cb_list']:checked");
+            if (checked.length === 0) {
+                layer.msg('请选择要变更的记录');
+                return false;
+            }
+            if (checked.length > 1) {
+                layer.msg('只能选择1条记录进行变更');
+                return false;
+            }
+            var formId = checked.val();
+            window.location.href = '/customer/change/' + formId;
+        }
+        
+        // 查看详情
+        function viewDetail(formId) {
+            window.location.href = '/customer/detail/' + formId;
+        }
+        
+        // 查看流程
+        function viewProcess(formId) {
+            layer.msg('查看流程功能开发中...');
+        }
+        
+        // 修改客户
+        function modifyCustomer(formId) {
+            window.location.href = '/customer/modify/' + formId;
+        }
+        
+        // 删除客户
+        function deleteCustomer(formId) {
+            layer.confirm('确定要删除这条记录吗？', {icon: 3, title: '提示'}, function(index) {
+                $.ajax({
+                    url: '/customer/action',
+                    type: 'POST',
+                    data: {
+                        action: 'Delete',
+                        id: formId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        layer.close(index);
+                        if (response.code === '10000') {
+                            layer.msg('删除成功');
+                            loadList(currentPage);
+                        } else {
+                            layer.msg(response.msg || '删除失败');
+                        }
+                    },
+                    error: function() {
+                        layer.close(index);
+                        layer.msg('删除失败，请稍后重试');
+                    }
+                });
+            });
+        }
+        
+        // 审批客户
+        function approveCustomer(formId, step) {
+            window.location.href = '/customer/detail/' + formId + '?operate=approve&step=' + step;
+        }
+        
+        // 变更客户
+        function changeCustomer(formId) {
+            window.location.href = '/customer/change/' + formId;
+        }
+        
+        // 添加跟进记录
+        function addFlow(formId) {
+            layer.msg('添加跟进记录功能开发中，formId: ' + formId);
+            // window.location.href = '/customer/flow/add?form_id=' + formId;
+        }
+</script>
+{% endblock %}

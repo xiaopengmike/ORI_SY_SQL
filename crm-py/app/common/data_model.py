@@ -198,24 +198,6 @@ class DataModel:
         
         return customer_dict
     
-    def get_temp_code(self, param):
-        """
-        获取临时项目代号列表
-        对应原PHP的DataModel::getTempCode()
-        
-        Args:
-            param (dict): 参数字典
-            
-        Returns:
-            list: 临时项目代号列表
-        """
-        sql = """
-            SELECT * FROM inhe_temp_project_code 
-            WHERE status = '1' 
-            ORDER BY create_time DESC
-        """
-        return Database.execute_query(sql)
-    
     def verify_project_manager(self, user_id):
         """
         验证用户是否为项目经理
