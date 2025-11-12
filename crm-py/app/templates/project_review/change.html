@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if change_star == '1' %}星级变更{% else %}立项申请变更{% endif %}</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f5f5f5; }
+        .form-container { background: white; padding: 20px; margin: 10px auto; max-width: 95%; border-radius: 4px; }
+        .TableContent { background-color: #f2f2f2; padding: 8px; text-align: right; width: 15%; }
+        .TableData { padding: 8px; text-align: left; }
+        .TableHeader { background-color: #f2f2f2; padding: 8px; font-weight: bold; }
+        .button-area { text-align: center; margin: 20px 0; }
+        .required_field { background-color: #f9fbd5; }
+    </style>
+</head>
+<body>
+    <form id="mainForm" class="layui-form">
+        <div class="form-container">
+            <div class="button-area">
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Submit">提交</button>
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Save">保存</button>
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.location.href='/project_review/list{% if change_star == '1' %}?tab=star{% else %}?tab=change{% endif %}';">返回</button>
+            </div>
+            
+            <input type="hidden" id="form_id" name="form_id" />
+            <input type="hidden" name="related_id" value="{{ related_id }}" />
+            <input type="hidden" name="type" value="project_review_change" />
+            <input type="hidden" name="user_bu" id="user_bu" value="{{ user_bu }}" />
+            <input type="hidden" name="change_star" value="{% if change_star == '1' %}1{% else %}0{% endif %}" />
+            <input type="hidden" name="fieldName" value="form_id" />
+            <input type="hidden" name="tableName" value="inhe_project_main" />
+            <input type="hidden" name="flowType" value="lxdj" />
+            <input type="hidden" name="reset" value="day" />
+            <input type="hidden" name="digit" value="2" />
+            
+            <table width="100%" align="center">
+                <tr>
+                    <td class="TableContent" width="15%" align="right">原表单单号：</td>
+                    <td class="TableData" width="18%">{{ related_id }}</td>
+                    <td class="TableContent" width="15%" align="right">原项目代号：</td>
+                    <td class="TableData" width="18%">{{ main.get('project_code', '') }}</td>
+                    <td class="TableContent" width="15%" align="right">原申请人：</td>
+                    <td class="TableData">{{ main.get('createUserName', main.get('user_name', '')) }}</td>
+                </tr>
+            </table>
+            <br />
+            
+            {% if change_star == '1' %}
+            <!-- 星级变更：仅显示星级选择 -->
+            <table width="100%" style="text-align: left;">
+                <tr><td class="TableHeader" colspan="8" style="color: red;text-align:center">星级变更</td></tr>
+                <tr>
+                    <td class="TableContent" width="15%">项目星级</td>
+                    <td class="TableData" width="35%">
+                        <div class="layui-input-inline">
+                            <select id="project_star" name="project_star" lay-verify="required">
+                                <option value="">请选择</option>
+                                {% if select_arr and select_arr.get('project_star') %}
+                                {% for val in select_arr['project_star'] %}
+                                <option value="{{ val.get('paras_value', '') }}" {% if main.get('project_star') == val.get('paras_value', '') %}selected{% endif %}>{{ val.get('paras_desc', '') }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">变更原因</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="remark" name="remark" lay-verify="required"></textarea>
+                    </td>
+                </tr>
+            </table>
+            {% else %}
+            <!-- 普通变更：显示完整表单 -->
+            <input type="hidden" name="project_code" value="{{ main.get('project_code', '') }}" />
+            
+            {% include 'project_review/form_modules/customer_info.html' %}
+            <br />
+            
+            <table width="100%" style="text-align: left;">
+                <tr><td class="TableHeader" colspan="8" style="color: red;text-align:center">第二部分：项目情况</td></tr>
+                <tr>
+                    <td class="TableContent">项目代号</td>
+                    <td class="TableData">{{ project.get('project_code', '') }}</td>
+                    <td class="TableContent">项目所在国</td>
+                    <td class="TableData">
+                        <input type="text" name="country" id="country" class="layui-input" value="{{ project.get('country', '') }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">项目范围</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="scope" name="scope">{{ project.get('scope', '') }}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">变更原因</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="remark" name="remark" lay-verify="required"></textarea>
+                    </td>
+                </tr>
+            </table>
+            {% endif %}
+        </div>
+    </form>
+    
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+    <script>
+    layui.use(['form', 'layer'], function(){
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        form.on('submit(submit)', function(data){
+            var actionType = $(data.elem).attr('actionType');
+            var formData = $('#mainForm').serialize();
+            formData += '&action=' + (actionType === 'Submit' ? 'Change' : 'ChangeSave');
+            
+            $.ajax({
+                url: '/project_review/action',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === '200') {
+                        layer.msg(actionType === 'Submit' ? '提交成功' : '保存成功', {icon: 1}, function(){
+                            {% if change_star == '1' %}
+                            window.location.href = '/project_review/list?tab=star';
+                            {% else %}
+                            window.location.href = '/project_review/list?tab=change';
+                            {% endif %}
+                        });
+                    } else {
+                        layer.msg(res.msg || '操作失败', {icon: 2});
+                    }
+                },
+                error: function() {
+                    layer.msg('操作失败，请重试', {icon: 2});
+                }
+            });
+            return false;
+        });
+        
+        form.render();
+    });
+    </script>
+</body>
+</html>
+

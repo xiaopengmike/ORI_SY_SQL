@@ -1,0 +1,343 @@
+/* 侧边栏样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+}
+
+/* 主容器布局 */
+.main-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 侧边栏容器 */
+.sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    transition: all 0.3s ease;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* 滚动条美化 */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #34495e;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #7f8c8d;
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #95a5a6;
+}
+
+/* 侧边栏收起状态 */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+/* 侧边栏头部 */
+.sidebar-header {
+    padding: 20px 15px;
+    background: #34495e;
+    border-bottom: 1px solid #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .sidebar-title {
+    opacity: 0;
+    width: 0;
+}
+
+/* 收起按钮 */
+.toggle-btn {
+    background: transparent;
+    border: none;
+    color: #ecf0f1;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+
+.toggle-btn:hover {
+    background: #2c3e50;
+    transform: scale(1.1);
+}
+
+/* 菜单容器 */
+.sidebar-menu {
+    list-style: none;
+    padding: 10px 0;
+}
+
+/* 一级菜单项 */
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.menu-link:hover {
+    background: #34495e;
+    padding-left: 25px;
+}
+
+.menu-link.active {
+    background: #3498db;
+}
+
+/* 菜单图标 */
+.menu-icon {
+    min-width: 25px;
+    font-size: 18px;
+    margin-right: 10px;
+    text-align: center;
+    transition: margin 0.3s;
+}
+
+.sidebar.collapsed .menu-icon {
+    margin-right: 0;
+}
+
+/* 菜单文字 */
+.menu-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .menu-text {
+    opacity: 0;
+    width: 0;
+}
+
+/* 展开/收起箭头 */
+.menu-arrow {
+    font-size: 12px;
+    transition: transform 0.3s;
+    margin-left: auto;
+}
+
+.menu-link.expanded .menu-arrow {
+    transform: rotate(90deg);
+}
+
+.sidebar.collapsed .menu-arrow {
+    opacity: 0;
+    width: 0;
+}
+
+/* 二级菜单容器 */
+.submenu {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: #1a252f;
+}
+
+.submenu.show {
+    max-height: 1000px;
+    transition: max-height 0.5s ease-in;
+}
+
+/* 二级菜单项 */
+.submenu-item {
+    position: relative;
+}
+
+.submenu-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px 10px 55px;
+    color: #bdc3c7;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+}
+
+.submenu-link:hover {
+    background: #2c3e50;
+    color: #ecf0f1;
+    border-left-color: #3498db;
+    padding-left: 60px;
+}
+
+.submenu-link.active {
+    background: #2c3e50;
+    color: #3498db;
+    border-left-color: #3498db;
+}
+
+/* 侧边栏收起时隐藏子菜单 */
+.sidebar.collapsed .submenu {
+    display: none;
+}
+
+/* 主内容区域 */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    background: #ecf0f1;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: 60px;
+}
+
+/* 内容区域内边距 */
+.content-wrapper {
+    padding: 20px;
+}
+
+/* Tooltip for collapsed state */
+.sidebar.collapsed .menu-item {
+    position: relative;
+}
+
+.sidebar.collapsed .menu-link::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #34495e;
+    color: #ecf0f1;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    margin-left: 10px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.sidebar.collapsed .menu-link:hover::after {
+    opacity: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    /* 移动端遮罩层 */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* 动画效果 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.menu-item {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* 菜单项序号动画 */
+.menu-item:nth-child(1) { animation-delay: 0.05s; }
+.menu-item:nth-child(2) { animation-delay: 0.1s; }
+.menu-item:nth-child(3) { animation-delay: 0.15s; }
+.menu-item:nth-child(4) { animation-delay: 0.2s; }
+.menu-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* 徽章样式（用于显示数量等） */
+.menu-badge {
+    background: #e74c3c;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    margin-left: auto;
+    min-width: 18px;
+    text-align: center;
+}
+
+.sidebar.collapsed .menu-badge {
+    display: none;
+}
+

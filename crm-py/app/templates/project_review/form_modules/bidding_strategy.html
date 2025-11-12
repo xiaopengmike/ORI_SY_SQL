@@ -1,0 +1,105 @@
+<table id="tab3" width="100%" style="text-align: left;">
+    <tr>
+        <td class="TableContent" width="15%">1.标号（Tender No.）</td>
+        <td class="TableData" width="35%">
+            <input type="text" name="tender_no" id="tender_no" class="layui-input" value="{{ bidding.get('tender_no', '') }}" />
+        </td>
+        <td class="TableContent" width="15%">2.投标截止时间</td>
+        <td class="TableData">
+            <input type="text" name="end_date" id="end_date" class="layui-input date" value="{{ bidding.get('end_date', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">3.项目名称（投标用）</td>
+        <td class="TableData" colspan="3">
+            <input type="text" name="project_name" id="project_name" class="layui-input" value="{{ bidding.get('project_name', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">4. 招标/合同主要要求说明</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="tender" name="tender">{{ bidding.get('tender', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="tender_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">5.投标资格要求说明（截止日期实际不参与）</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="bid_rule" name="bid_rule">{{ bidding.get('bid_rule', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="bid_rule_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">6.投标规则（联合投标，一家及LOT，一个总承包商授权给投标人）</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="biding_rule" name="biding_rule">{{ bidding.get('biding_rule', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="biding_rule_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">15.合作伙伴分析</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="partner_analysis" name="partner_analysis" lay-verify="required">{{ bidding.get('partner_analysis', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="partner_analysis_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">16.客户关系（一般/项目负责人，业务关系如何等）</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="relationship" name="relationship" lay-verify="required">{{ bidding.get('relationship', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="relationship_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">17.市场分析</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="market_analysis" name="market_analysis" lay-verify="required">{{ bidding.get('market_analysis', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="market_analysis_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">18.策略分析和产品分析</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="strategy_analysis" name="strategy_analysis" lay-verify="required">{{ bidding.get('strategy_analysis', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="strategy_analysis_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">19.项目成功关键因素和主要支持</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="key_to_success" name="key_to_success" lay-verify="required">{{ bidding.get('key_to_success', '') }}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">20.项目可行性分析会议纪要</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="feasibility_analysis" name="feasibility_analysis" lay-verify="required">{{ bidding.get('feasibility_analysis', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="feasibility_analysis_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+</table>
+

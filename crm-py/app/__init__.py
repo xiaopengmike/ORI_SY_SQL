@@ -29,10 +29,14 @@ def create_app(config_class=Config):
     from app.controllers.auth_controller import auth_bp
     from app.controllers.customer_controller import customer_bp
     from app.controllers.action_controller import action_bp
+    from app.controllers.project_code_controller import project_code_bp
+    from app.controllers.project_review_controller import project_review_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(customer_bp, url_prefix='/customer')
     app.register_blueprint(action_bp, url_prefix='/customer')
+    app.register_blueprint(project_code_bp, url_prefix='/project_code')
+    app.register_blueprint(project_review_bp, url_prefix='/project_review')
     
     # 添加根路径路由，重定向到客户列表
     @app.route('/')

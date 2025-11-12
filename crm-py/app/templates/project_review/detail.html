@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>立项申请详情</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f5f5f5; }
+        .form-container { background: white; padding: 20px; margin: 10px auto; max-width: 95%; border-radius: 4px; }
+        .TableContent { background-color: #f2f2f2; padding: 8px; text-align: right; width: 15%; }
+        .TableData { padding: 8px; text-align: left; }
+        .TableHeader { background-color: #f2f2f2; padding: 8px; font-weight: bold; }
+        .button-area { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="button-area">
+            {% if operate == 'approve' and approve_info %}
+            <button type="button" class="layui-btn layui-btn-oa" onclick="approveAction('pass');">通过</button>
+            <button type="button" class="layui-btn layui-btn-danger" onclick="approveAction('back');">退回</button>
+            {% endif %}
+            <button type="button" class="layui-btn layui-btn-oa" onclick="window.location.href='/project_review/list';">返回列表</button>
+        </div>
+        
+        {% if main %}
+        <table width="100%" align="center">
+            <tr>
+                <td class="TableContent" width="15%" align="right">提交部门：</td>
+                <td class="TableData" width="18%">{{ main.get('deptName', main.get('dept_name', '')) }}</td>
+                <td class="TableContent" width="15%" align="right">提交人：</td>
+                <td class="TableData" width="18%">{{ main.get('createUserName', main.get('user_name', '')) }}</td>
+                <td class="TableContent" width="15%" align="right">日期：</td>
+                <td class="TableData">{{ main.get('write_time', '') }}</td>
+            </tr>
+        </table>
+        <br />
+        
+        {% include 'project_review/form_modules/customer_info.html' %}
+        <br />
+        
+        <table width="100%" style="text-align: left;">
+            <tr><td class="TableHeader" colspan="8" style="color: red;text-align:center">第二部分：项目情况</td></tr>
+            <tr><td class="TableContent">项目代号</td><td class="TableData">{{ project.get('project_code', '') }}</td>
+                <td class="TableContent">项目所在国</td><td class="TableData">{{ project.get('country', '') }}</td></tr>
+            <tr><td class="TableContent">项目范围</td><td class="TableData" colspan="3">{{ project.get('scope', '') }}</td></tr>
+            <tr><td class="TableContent">项目类型</td><td class="TableData" colspan="3">{{ project_type.get(project.get('project_type', ''), '') }}</td></tr>
+        </table>
+        
+        {% if main.get('is_bidding_project') == '01' %}
+        <br />
+        {% include 'project_review/form_modules/bidding_strategy.html' %}
+        {% endif %}
+        {% endif %}
+    </div>
+    
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+</body>
+</html>
+

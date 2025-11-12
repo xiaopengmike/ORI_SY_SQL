@@ -1,0 +1,252 @@
+{% extends "common/base.html" %}
+
+{% block title %}项目代号取号 - CRM系统{% endblock %}
+
+{% block page_title %}项目代号取号{% endblock %}
+
+{% block extra_css %}
+<style>
+    .drop-btn {
+        cursor: pointer;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        background-color: lightgray;
+        min-width: 154px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-content a:hover {
+        background-color: #027AFF;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    .layui-table {
+        margin-top: 10px;
+    }
+    .layui-btn-oa {
+        background-color: #1E9FFF;
+        color: white;
+    }
+    .query-form {
+        background: white;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 4px;
+    }
+    .table-container {
+        background: white;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <form id="queryForm" class="layui-form query-form">
+        <input type="hidden" id="sort_way" name="sort_way" value="" />
+        <input type="hidden" id="sort_field" name="sort_field" value="" />
+        <input type="hidden" id="page_size" name="page_size" value="10" />
+        <table style="margin: 1%">
+            <tr>
+                <td align="right">项目代号</td>
+                <td>
+                    <input type="text" name="temp_code" id="temp_code" class="layui-input" placeholder="请输入项目代号">
+                </td>
+                <td align="right">项目范围</td>
+                <td>
+                    <div class="layui-input-inline">
+                        <select id="scope_code" name="scope_code" lay-search>
+                            <option value="">请选择</option>
+                            <option value="F" selected>国外项目</option>
+                            <option value="D">国内项目</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="loadList(1); return false;" style="margin-left: 10px;">查询</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    
+    <div class="table-container">
+        <div style="text-align: right; width: 98%; margin: auto;">
+            <div style="float: left;">
+                <button class="layui-btn layui-btn-oa layui-btn-sm" onclick="openAddPage(); return false;">新建</button>
+            </div>
+        </div>
+        <br />
+        <table id="dataTable" class="layui-table" style="width: 98%; margin: auto;">
+            <thead>
+                <tr class="layui-bg-head layui-bg-gray">
+                    <th nowrap style="text-align: center;">序号</th>
+                    <th nowrap style="text-align: center;">
+                        <span>项目代号</span>
+                        <span class="layui-table-sort layui-inline" lay-sort="" sort-field="temp_code">
+                            <i class="layui-edge layui-table-sort-asc" title="升序" sort-way="asc" onclick="sortList(this);"></i>
+                            <i class="layui-edge layui-table-sort-desc" title="降序" sort-way="desc" onclick="sortList(this);"></i>
+                        </span>
+                    </th>
+                    <th nowrap style="text-align: center;">项目名称</th>
+                    <th style="text-align: center;">项目所在地/国家代码</th>
+                    <th nowrap style="text-align: center;">所属公司</th>
+                    <th nowrap style="text-align: center;">业务负责人</th>
+                    <th nowrap style="text-align: center;">取号时间</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="7" style="text-align: center;">加载中...</td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="pagination" style="text-align: center; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+layui.use(['form', 'layer', 'laypage'], function(){
+    var form = layui.form;
+    var layer = layui.layer;
+    var laypage = layui.laypage;
+    
+    // 当前页码
+    var currentPage = 1;
+    var pageSize = 10;
+    var totalCount = 0;
+    
+    // 加载列表数据
+    function loadList(page) {
+        currentPage = page || 1;
+        var params = {
+            page: currentPage,
+            limit: pageSize
+        };
+        
+        // 获取查询条件
+        var tempCode = $('#temp_code').val();
+        if (tempCode) {
+            params.temp_code = tempCode;
+        }
+        var scopeCode = $('#scope_code').val();
+        if (scopeCode) {
+            params.scope_code = scopeCode;
+        }
+        
+        // 获取排序
+        var sortField = $('#sort_field').val();
+        var sortWay = $('#sort_way').val();
+        if (sortField && sortWay) {
+            params.sort_field = sortField;
+            params.sort_way = sortWay;
+        }
+        
+        $.ajax({
+            url: "{{ url_for('project_code.query_data') }}",
+            type: 'POST',
+            data: params,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    totalCount = res.count;
+                    renderTable(res.data);
+                    renderPagination();
+                } else {
+                    layer.msg('查询失败: ' + (res.msg || '未知错误'));
+                }
+            },
+            error: function(xhr, status, error) {
+                layer.msg('查询错误: ' + error);
+            }
+        });
+    }
+    
+    // 渲染表格
+    function renderTable(data) {
+        var tbody = $('#tableBody');
+        tbody.empty();
+        
+        if (!data || data.length === 0) {
+            tbody.append('<tr><td colspan="7" style="text-align: center;">暂无数据</td></tr>');
+            return;
+        }
+        
+        data.forEach(function(item, index) {
+            var row = '<tr class="TableLine' + ((index % 2 === 0) ? '2' : '1') + '">';
+            row += '<td align="center" width="3%">' + (index + 1 + (currentPage - 1) * pageSize) + '</td>';
+            row += '<td align="center">' + (item.temp_code || '') + '</td>';
+            row += '<td align="center">' + (item.project_name || '') + '</td>';
+            row += '<td align="center">' + (item.location || '') + '</td>';
+            row += '<td align="center">' + (item.company_name || item.company || '') + '</td>';
+            row += '<td align="center">' + (item.deptName || '') + ' ' + (item.createUserName || '') + '</td>';
+            row += '<td align="center">' + (item.create_time || '') + '</td>';
+            row += '</tr>';
+            tbody.append(row);
+        });
+    }
+    
+    // 渲染分页
+    function renderPagination() {
+        laypage.render({
+            elem: 'pagination',
+            count: totalCount,
+            curr: currentPage,
+            limit: pageSize,
+            layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+            jump: function(obj, first) {
+                if (!first) {
+                    loadList(obj.curr);
+                }
+            }
+        });
+    }
+    
+    // 排序
+    window.sortList = function(elem) {
+        var sortField = $(elem).closest('span').attr('sort-field');
+        var sortWay = $(elem).attr('sort-way');
+        $('#sort_field').val(sortField);
+        $('#sort_way').val(sortWay);
+        loadList(1);
+    };
+    
+    // 打开新增页面
+    window.openAddPage = function() {
+        layer.open({
+            type: 2,
+            title: '新建项目代号',
+            content: "{{ url_for('project_code.add') }}",
+            area: ['800px', '600px'],
+            end: function() {
+                loadList(currentPage);
+            }
+        });
+    };
+    
+    // 初始化加载
+    loadList(1);
+    
+    // 查询按钮事件
+    $('#queryForm').on('submit', function(e) {
+        e.preventDefault();
+        loadList(1);
+    });
+});
+</script>
+{% endblock %}
+

@@ -447,11 +447,19 @@ def change(form_id):
                          contacts=contacts,
                          company=company,
                          continent_arr=continent_arr,
-                         country_arr=country_arr,
-                         select_arr=select_arr,
-                         company_bu=company_bu,
-                         is_nergy=is_nergy,
-                         related_id=form_id,
-                         user_name=user_name,
-                         dept_name=dept_name)
+                        country_arr=country_arr,
+                        select_arr=select_arr,
+                        company_bu=company_bu,
+                        is_nergy=is_nergy,
+                        related_id=form_id,
+                        user_name=user_name,
+                        dept_name=dept_name)
+
+@customer_bp.route('/demo')
+def demo_sidebar():
+    """
+    侧边栏演示页面
+    展示新的左侧导航栏功能
+    """
+    return render_template('demo_sidebar.html')
 

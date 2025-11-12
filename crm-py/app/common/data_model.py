@@ -164,6 +164,78 @@ class DataModel:
         """
         result = Database.execute_query(sql, (form_id, change_type, version))
         return result[0] if result else {}
+    
+    def get_customer_list(self, param):
+        """
+        获取客户列表（用于下拉选择）
+        对应原PHP的DataModel::getCustomerList()
+        
+        Args:
+            param (dict): 参数字典，包含user_id等
+            
+        Returns:
+            dict: 客户ID到客户名称的字典映射
+        """
+        where_clauses = ["1=1"]
+        params = []
+        
+        if param.get('user_id'):
+            where_clauses.append("(k.user_id = %s OR k.share_user LIKE %s)")
+            params.extend([param['user_id'], f"%{param['user_id']}%"])
+        
+        sql = f"""
+            SELECT k.id, k.customer_name 
+            FROM inhe_customer_data k 
+            WHERE {' AND '.join(where_clauses)}
+            ORDER BY k.customer_name
+        """
+        result = Database.execute_query(sql, tuple(params))
+        
+        # 转换为字典格式
+        customer_dict = {}
+        for item in result:
+            customer_dict[str(item['id'])] = item.get('customer_name', '')
+        
+        return customer_dict
+    
+    def get_temp_code(self, param):
+        """
+        获取临时项目代号列表
+        对应原PHP的DataModel::getTempCode()
+        
+        Args:
+            param (dict): 参数字典
+            
+        Returns:
+            list: 临时项目代号列表
+        """
+        sql = """
+            SELECT * FROM inhe_temp_project_code 
+            WHERE status = '1' 
+            ORDER BY create_time DESC
+        """
+        return Database.execute_query(sql)
+    
+    def verify_project_manager(self, user_id):
+        """
+        验证用户是否为项目经理
+        对应原PHP的DataModel::verifyProjectManger()
+        
+        Args:
+            user_id (str): 用户ID
+            
+        Returns:
+            bool: True表示是项目经理，False表示不是
+        """
+        sql = """
+            SELECT COUNT(*) AS cnt 
+            FROM inhe_oa_paras 
+            WHERE type = 'project_manager' 
+            AND paras_value = %s 
+            AND is_used = '1'
+        """
+        result = Database.execute_query(sql, (user_id,))
+        return result[0]['cnt'] > 0 if result else False
 
 
 

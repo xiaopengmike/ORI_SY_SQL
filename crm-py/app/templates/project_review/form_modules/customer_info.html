@@ -1,0 +1,162 @@
+<table id="tab1" width="100%" style="text-align: center;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;">第一部分：客户信息</td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">1. 代理商/经销商基本信息</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">代理商/经销商名称</td>
+        <td class="TableData" width="18%" align="left">
+            <div class="layui-input-inline">
+                <select id="name1" name="name1" lay-search lay-filter="customer_name" title="1">
+                    <option value=''>请选择</option>
+                    {% if customer_select %}
+                    {% for cus_id, cus_name in customer_select.items() %}
+                    <option value="{{ cus_id }}" {% if customer.get('name1') == cus_id|string %}selected{% endif %}>{{ cus_name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </td>
+        <td class="TableContent" width="15%">客户代号</td>
+        <td class="TableData" width="18%">
+            <input type="text" name="customer_id1" id="customer_id1" class="layui-input" value="{{ customer.get('customer_id1', '') }}" />
+        </td>
+        <td class="TableContent" width="15%">代理商/经销商所在国</td>
+        <td class="TableData">
+            <input type="text" name="country1" id="country1" class="layui-input" value="{{ customer.get('country1', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact1" id="contact1" class="layui-input" value="{{ customer.get('contact1', '') }}" />
+        </td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">
+            <input type="text" name="phone1" id="phone1" class="layui-input" value="{{ customer.get('phone1', '') }}" />
+        </td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email1" id="email1" class="layui-input" value="{{ customer.get('email1', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">代理商/经销商简介</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="introduction1" name="introduction1">{{ customer.get('introduction1', '') }}</textarea>
+        </td>
+        <td class="TableContent">添加附件</td>
+        <td class="TableData" style="text-align: left;">
+            <input id="introduction1_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">合作历史</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="cooperate_history" name="cooperate_history" lay-verify="required">{{ project.get('cooperate_history', '') }}</textarea>
+        </td>
+        <td class="TableContent">添加附件</td>
+        <td class="TableData" style="text-align: left;">
+            <input id="cooperate_history_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">2. 招标方/业务方基本信息（仅投标项目填写）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">招标方/业务方名称</td>
+        <td class="TableData" align="left">
+            <div class="layui-input-inline">
+                <select id="name2" name="name2" lay-search lay-filter="customer_name" title="2">
+                    <option value=''>请选择</option>
+                    {% if customer_select %}
+                    {% for cus_id, cus_name in customer_select.items() %}
+                    <option value="{{ cus_id }}" {% if customer.get('name2') == cus_id|string %}selected{% endif %}>{{ cus_name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </td>
+        <td class="TableContent">客户代号</td>
+        <td class="TableData">
+            <input type="text" name="customer_id2" id="customer_id2" class="layui-input" value="{{ customer.get('customer_id2', '') }}" />
+        </td>
+        <td class="TableContent">招标方/业务方所在国</td>
+        <td class="TableData">
+            <input type="text" name="country2" id="country2" class="layui-input" value="{{ customer.get('country2', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact2" id="contact2" class="layui-input" value="{{ customer.get('contact2', '') }}" />
+        </td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">
+            <input type="text" name="phone2" id="phone2" class="layui-input" value="{{ customer.get('phone2', '') }}" />
+        </td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email2" id="email2" class="layui-input" value="{{ customer.get('email2', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">招标方/业务方简介</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="introduction2" name="introduction2">{{ customer.get('introduction2', '') }}</textarea>
+        </td>
+        <td class="TableContent">添加附件</td>
+        <td class="TableData" style="text-align: left;">
+            <input id="introduction2_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left;color:red">3. 付款方信息（最终客户，匹配销售合同和采购合同的付款方）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">付款方</td>
+        <td class="TableData" align="left">
+            <div class="layui-input-inline">
+                <select id="name3" name="name3" lay-search lay-filter="customer_name" title="3" lay-verify="required">
+                    <option value=''>请选择</option>
+                    {% if customer_select %}
+                    {% for cus_id, cus_name in customer_select.items() %}
+                    <option value="{{ cus_id }}" {% if customer.get('name3') == cus_id|string %}selected{% endif %}>{{ cus_name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </td>
+        <td class="TableContent">客户代号</td>
+        <td class="TableData">
+            <input type="text" name="customer_id3" id="customer_id3" class="layui-input" value="{{ customer.get('customer_id3', '') }}" />
+        </td>
+        <td class="TableContent">付款方所在国</td>
+        <td class="TableData">
+            <input type="text" name="country3" id="country3" class="layui-input" value="{{ customer.get('country3', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact3" id="contact3" class="layui-input" value="{{ customer.get('contact3', '') }}" />
+        </td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">
+            <input type="text" name="phone3" id="phone3" class="layui-input" value="{{ customer.get('phone3', '') }}" />
+        </td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email3" id="email3" class="layui-input" value="{{ customer.get('email3', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">付款方简介</td>
+        <td class="TableData" colspan="5">
+            <textarea class="layui-textarea" id="introduction3" name="introduction3">{{ customer.get('introduction3', '') }}</textarea>
+        </td>
+    </tr>
+</table>
+

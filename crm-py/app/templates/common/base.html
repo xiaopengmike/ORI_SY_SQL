@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRM系统{% endblock %}</title>
+    
+    <!-- Layui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    
+    <!-- 侧边栏样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式 -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        /* 顶部导航栏 */
+        .top-navbar {
+            background: #fff;
+            height: 60px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2c3e50;
+            margin-right: 15px;
+        }
+        
+        .navbar-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 1;
+        }
+        
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="main-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <!-- 侧边栏头部 -->
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <i class="fas fa-chart-line"></i> CRM系统
+                </div>
+                <button class="toggle-btn" title="收起/展开">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="sidebar-menu">
+                <ul>
+                    <!-- 客户关系 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-customer" data-title="客户关系">
+                            <i class="menu-icon fas fa-users"></i>
+                            <span class="menu-text">客户关系</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-customer">
+                            <li class="submenu-item">
+                                <a href="/customer/todo" class="submenu-link">待办工作</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/customer/flowchart" class="submenu-link">CRM流程图</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/customer/list" class="submenu-link">客户登记</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/customer/list?tab=share" class="submenu-link">客户共享记录</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/customer/transfer" class="submenu-link">客户转移记录</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/project_code/list" class="submenu-link">项目代号取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/project_review/list" class="submenu-link">立项申请</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/sales/contract-review" class="submenu-link">销售合同评审</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/production/notice" class="submenu-link">生产通知单</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/delivery/notice" class="submenu-link">发货通知单</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/sales/payment" class="submenu-link">销售收款登记</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/project/participants" class="submenu-link">项目参与人登记</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/project/code-participants" class="submenu-link">项目编号参与人登记</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 银河电力取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-yhpower" data-title="银河电力取号">
+                            <i class="menu-icon fas fa-bolt"></i>
+                            <span class="menu-text">银河电力取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-yhpower">
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/letter" class="submenu-link">正式信函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/sample-non-meter" class="submenu-link">非电表产品样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/sample-single" class="submenu-link">单相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/sample-three" class="submenu-link">三相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhpower/agreement" class="submenu-link">协议性质文件取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 银河电网取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-yhgrid" data-title="银河电网取号">
+                            <i class="menu-icon fas fa-network-wired"></i>
+                            <span class="menu-text">银河电网取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-yhgrid">
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/letter" class="submenu-link">正式信函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/agreement" class="submenu-link">协议性质文件取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/sample-primary" class="submenu-link">一次侧产品样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/yhgrid/sample-secondary" class="submenu-link">二次侧产品样机申请单取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 耐吉取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-naiji" data-title="耐吉取号">
+                            <i class="menu-icon fas fa-file-contract"></i>
+                            <span class="menu-text">耐吉取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-naiji">
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/letter" class="submenu-link">正式信函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/naiji/agreement" class="submenu-link">协议性质文件取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 慧联取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-huiliang" data-title="慧联取号">
+                            <i class="menu-icon fas fa-link"></i>
+                            <span class="menu-text">慧联取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-huiliang">
+                            <li class="submenu-item">
+                                <a href="/numbering/huiliang/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/huiliang/letter" class="submenu-link">正式函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/huiliang/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/huiliang/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/huiliang/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 江西分公司取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-jxbranch" data-title="江西分公司取号">
+                            <i class="menu-icon fas fa-building"></i>
+                            <span class="menu-text">江西分公司取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-jxbranch">
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/letter" class="submenu-link">正式函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/sample-non-meter" class="submenu-link">非电表产品样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/sample-single" class="submenu-link">单相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/sample-three" class="submenu-link">三相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxbranch/agreement" class="submenu-link">协议性质文件取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 江西银河表计取号 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-jxmeter" data-title="江西银河表计取号">
+                            <i class="menu-icon fas fa-tachometer-alt"></i>
+                            <span class="menu-text">江西银河表计取号</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-jxmeter">
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/contract" class="submenu-link">销售合同取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/letter" class="submenu-link">正式函取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/quotation" class="submenu-link">报价单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/invoice" class="submenu-link">形式发票取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/memo" class="submenu-link">备忘录取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/sample-non-meter" class="submenu-link">非电表产品样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/sample-single" class="submenu-link">单相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/sample-three" class="submenu-link">三相表样机申请单取号</a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="/numbering/jxmeter/agreement" class="submenu-link">协议性质文件取号</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 项目组成员 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-team" data-title="项目组成员">
+                            <i class="menu-icon fas fa-user-friends"></i>
+                            <span class="menu-text">项目组成员</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-team">
+                            <li class="submenu-item">
+                                <a href="/team/list" class="submenu-link">项目组名单</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- 项目进度 -->
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-submenu="submenu-progress" data-title="项目进度">
+                            <i class="menu-icon fas fa-tasks"></i>
+                            <span class="menu-text">项目进度</span>
+                            <i class="menu-arrow fas fa-chevron-right"></i>
+                        </a>
+                        <ul class="submenu" id="submenu-progress">
+                            <li class="submenu-item">
+                                <a href="/progress/register" class="submenu-link">进度登记</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 顶部导航栏 -->
+            <div class="top-navbar">
+                <button class="mobile-menu-btn" onclick="openMobileSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="navbar-title">
+                    {% block page_title %}CRM客户关系管理系统{% endblock %}
+                </div>
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ session.get('username', 'U')[0].upper() }}
+                        </div>
+                        <span>{{ session.get('username', '用户') }}</span>
+                    </div>
+                    <a href="/auth/logout" class="layui-btn layui-btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> 退出
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 页面内容 -->
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <!-- Layui JS -->
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+    
+    <!-- 侧边栏脚本 -->
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

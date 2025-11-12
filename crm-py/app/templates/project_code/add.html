@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>项目代号取号</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            background-color: #f5f5f5;
+        }
+        .xing {
+            color: red;
+            font-size: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .mandatory {
+            border: 1px solid #FF5722;
+        }
+        .layui-btn-oa {
+            background-color: #1E9FFF;
+            color: white;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            margin: 10px auto;
+            max-width: 80%;
+            border-radius: 4px;
+        }
+        .button-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .TableContent {
+            background-color: #f2f2f2;
+            padding: 8px;
+            text-align: right;
+            width: 15%;
+        }
+        .TableData {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; height: auto; margin: auto;">
+        <form id="mainForm" class="layui-form" lay-filter="mainForm">
+            <div class="r" style="height: auto;">
+                <div style="text-align: left;" class="layui-btn-group">
+                    <table id="tab" width="100%">
+                        <tr class="layui-bg-body">
+                            <td style="padding: 5px;">
+                                <input lay-submit lay-filter="submit" name="btn_submit" actionType="Submit" value="提交" type="button" class="layui-btn layui-btn-oa layui-btn-sm" />
+                                <input name="btn_close" value="关闭" type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.close(); return false;" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <br />
+            <div class="weadmin-body" style="width: 80%; margin: 1% 9%;">
+                <input type="hidden" name="form_type" id="form_type" value="temp_code" />
+                <input type="hidden" name="company" id="company" value="{{ company }}" />
+                <table class="TableBlock" width="100%" align="center">
+                    <tr>
+                        <td class="TableContent">项目代号</td>
+                        <td class="TableData">
+                            <input type="text" name="temp_code" id="temp_code" readonly class="layui-input" placeholder="系统自动生成" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent"><span class="xing">*</span>项目名称</td>
+                        <td class="TableData">
+                            <input type="text" name="project_name" id="project_name" class="layui-input mandatory" placeholder="项目名称" autocomplete="off" lay-verify="required" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent"><span class="xing">*</span>项目范围</td>
+                        <td class="TableData">
+                            <div class="layui-input-inline mandatory">
+                                <select id="scope_code" name="scope_code" lay-filter="scope_code" lay-search lay-verify="required">
+                                    <option value="">请选择</option>
+                                    <option value="F" selected>国外项目</option>
+                                    <option value="D">国内项目</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent"><span class="xing">*</span>项目所在地/国家代码</td>
+                        <td class="TableData">
+                            <input type="text" name="location" id="location" class="layui-input mandatory" placeholder="项目所在地" autocomplete="off" lay-verify="required" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent">取号申请人</td>
+                        <td class="TableData">
+                            <input type="hidden" name="user_id" id="user_id" class="layui-input" value="{{ user_id }}" />
+                            <input type="text" name="user_name" id="user_name" class="layui-input" value="{{ user_name }}" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent">取号时间</td>
+                        <td class="TableData">
+                            <input type="text" name="date" id="date" class="layui-input" value="" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent">备注</td>
+                        <td class="TableData">
+                            <textarea class="layui-textarea" id="remark" name="remark" placeholder="备注" autocomplete="off"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript">
+$(function() {
+    // 设置当前日期
+    var today = new Date();
+    var dateStr = today.getFullYear() + '-' + 
+                  String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(today.getDate()).padStart(2, '0');
+    $('#date').val(dateStr);
+    
+    layui.use(['form', 'layer', 'table'], function() {
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+
+        form.on('submit(submit)', function(data) {
+            var btnVal = data.elem.value;
+            var actionType = $(data.elem).attr("actionType");
+            var url = "{{ url_for('project_code.action') }}?action=" + actionType;
+            
+            $.post(url, $("#mainForm").serializeArray(), function(data) {
+                var reJson = null;
+                try {
+                    reJson = typeof data === 'string' ? JSON.parse(data) : data;
+                } catch (e) {
+                    layer.alert('数据解析异常: ' + e, {
+                        icon: 5
+                    });
+                    return;
+                }
+                if (reJson.code == "200" || reJson.code == 200) {
+                    layer.alert(btnVal + "成功!", {
+                        icon: 1
+                    }, function(index, layero) {
+                        if (window.opener) {
+                            window.opener.location.reload();
+                        }
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.alert(btnVal + '失败：' + (reJson.msg || '未知错误'), {
+                        icon: 5
+                    });
+                }
+            }).fail(function(xhr, status, error) {
+                layer.alert('提交失败: ' + error, {
+                    icon: 5
+                });
+            });
+            return false;
+        });
+
+        form.on('select(scope_code)', function(data) {
+            // 当选择项目范围时，可以在这里添加逻辑
+            // 例如：根据范围自动生成部分代号
+        });
+
+        $("#temp_code").blur(function() {
+            var url = "{{ url_for('project_code.action') }}?action=Retrieve";
+            // 验证系统项目代号
+            if (this.value != '') {
+                $.post(url, {
+                    dataType: 'verifyProjectCode',
+                    projectCode: this.value
+                }, function(data) {
+                    var reJson = null;
+                    try {
+                        reJson = typeof data === 'string' ? JSON.parse(data) : data;
+                    } catch (e) {
+                        return;
+                    }
+                    if (reJson.code == '200' || reJson.code == 200) {
+                        if (reJson.data) {
+                            layer.msg('项目代号已存在');
+                            $("#temp_code").val('');
+                        }
+                    }
+                });
+            }
+        });
+
+        form.render();
+    });
+});
+</script>
+
+</html>
+

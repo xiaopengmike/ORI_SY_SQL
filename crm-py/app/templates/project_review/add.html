@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增立项申请</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f5f5f5; }
+        .xing { color: red; font-size: 20px; display: inline-block; vertical-align: middle; }
+        .mandatory { border: 1px solid #FF5722; }
+        .layui-btn-oa { background-color: #1E9FFF; color: white; }
+        .form-container { background: white; padding: 20px; margin: 10px auto; max-width: 95%; border-radius: 4px; }
+        .button-area { text-align: center; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        .TableContent { background-color: #f2f2f2; padding: 8px; text-align: right; width: 15%; }
+        .TableData { padding: 8px; text-align: left; }
+        .TableHeader { background-color: #f2f2f2; padding: 8px; font-weight: bold; }
+        .required_field { background-color: #f9fbd5; }
+    </style>
+</head>
+<body>
+    <form id="mainForm" class="layui-form">
+        <div class="form-container">
+            <div class="button-area">
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Submit">提交</button>
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Save">保存</button>
+                <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.close();return false;">关闭</button>
+            </div>
+            
+            <input type="hidden" id="form_id" name="form_id" />
+            <input type="hidden" name="fieldName" value="form_id" />
+            <input type="hidden" name="tableName" value="inhe_project_main" />
+            <input type="hidden" name="flowType" value="lxdj" />
+            <input type="hidden" name="reset" value="day" />
+            <input type="hidden" name="digit" value="2" />
+            <input type="hidden" id="type" name="type" value="project_review" />
+            <input type="hidden" name="step" id="step" value="1" />
+            <input type="hidden" name="user_bu" id="user_bu" value="{{ user_bu }}" />
+            <input type="hidden" name="create_user_bu" value="{{ user_bu }}" />
+            
+            <table width="100%" align="center">
+                <tr>
+                    <td class="TableContent" width="15%" align="right">提交部门：</td>
+                    <td class="TableData" width="18%">{{ dept_id }}</td>
+                    <td class="TableContent" width="15%" align="right">提交人：</td>
+                    <td class="TableData" width="18%">{{ user_name }}</td>
+                    <td class="TableContent" width="15%" align="right">日期：</td>
+                    <td class="TableData">{{ current_time }}</td>
+                </tr>
+            </table>
+            <br />
+            
+            {% include 'project_review/form_modules/customer_info.html' %}
+            <br />
+            
+            <table id="tab2" width="100%" style="text-align: left;">
+                <tr>
+                    <td class="TableHeader" colspan="8" style="color: red;text-align:center">第二部分：项目情况</td>
+                </tr>
+                <tr>
+                    <td class="TableContent" width="15%">1.正式项目代号</td>
+                    <td class="TableData" width="35%">
+                        <input type="text" readonly name="project_code" id="project_code" class="layui-input required_field" autocomplete="off" lay-verify="required" />
+                        <input type="hidden" readonly name="temp_project_code" id="temp_project_code" class="layui-input" />
+                    </td>
+                    <td class="TableContent" width="15%">2.项目所在国</td>
+                    <td class="TableData">
+                        <input type="text" name="country" id="country" class="layui-input" placeholder="请输入项目所在国" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">3.项目范围（对应和服务内容：电表/AMI系统/EPC等）</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="scope" name="scope"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">4.正式项目类型</td>
+                    <td class="TableData" colspan="3">
+                        <div class="layui-input-inline mandatory">
+                            <select id="project_type" name="project_type" lay-search>
+                                <option value=''>请选择</option>
+                                {% if select_arr and select_arr.get('project_type') %}
+                                {% for val in select_arr['project_type'] %}
+                                {% if val.get('user_bu') != 'INHENERGY' %}
+                                <option value="{{ val.get('paras_value', '') }}">{{ val.get('paras_desc', '') }}</option>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">5.样机需求（包括数量和时间）</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="prototype" name="prototype"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">6.项目潜力（成长性和重要性）</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="potential" name="potential"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">7.项目来源（背景/社会经济状况）</td>
+                    <td class="TableData">
+                        <textarea class="layui-textarea" id="background" name="background"></textarea>
+                    </td>
+                    <td class="TableContent" width="15%">添加附件</td>
+                    <td class="TableData">
+                        <input id="background_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">8.EPC项目说明（总承包商和技术能力）</td>
+                    <td class="TableData">
+                        <textarea class="layui-textarea" id="explain_user" name="explain_user"></textarea>
+                    </td>
+                    <td class="TableContent" width="15%">添加附件</td>
+                    <td class="TableData">
+                        <input id="explain_user_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">9.EPC项目说明（项目背景，技术规格和要求）</td>
+                    <td class="TableData">
+                        <textarea class="layui-textarea" id="explain_project" name="explain_project"></textarea>
+                    </td>
+                    <td class="TableContent" width="15%">添加附件</td>
+                    <td class="TableData">
+                        <input id="explain_project_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">11.服务需求（培训、安装、调试等）</td>
+                    <td class="TableData" colspan="3">
+                        <textarea class="layui-textarea" id="service" name="service"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">是否为集抄项目</td>
+                    <td class="TableData" colspan="3">
+                        <div class="layui-input-inline mandatory">
+                            <select id="is_collective" name="is_collective" lay-search lay-verify="required">
+                                <option value=''>请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">本市场过往项目代号</td>
+                    <td class="TableData">
+                        <textarea class="layui-textarea required_field" id="past_pcode" name="past_pcode" placeholder="此字段必填，没有也要填写" lay-verify="required"></textarea>
+                    </td>
+                    <td class="TableContent">本市场不同客户曾经出现过的项目代号</td>
+                    <td class="TableData">
+                        <textarea class="layui-textarea required_field" id="c_past_pcode" name="c_past_pcode" placeholder="此字段必填，没有也要填写" lay-verify="required"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            
+            <table id="tab3" width="100%" style="text-align: left;">
+                <tr>
+                    <td class="TableHeader" colspan="8" style="color: red;text-align:center">第三部分：投标策略（投标项目填写）</td>
+                </tr>
+                <tr>
+                    <td class="TableContent" width="15%">是否招标项目</td>
+                    <td class="TableData" width="35%">
+                        <div class="layui-input-inline">
+                            <select id="is_bidding_project" name="is_bidding_project" lay-filter="is_bidding_project">
+                                <option value='02'>否</option>
+                                <option value='01'>是</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div id="bidding_strategy_section" style="display:none;">
+                {% include 'project_review/form_modules/bidding_strategy.html' %}
+            </div>
+        </div>
+    </form>
+    
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+    <script>
+    layui.use(['form', 'layer'], function(){
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 客户选择联动
+        form.on('select(customer_name)', function(data){
+            var cusId = data.value;
+            var cusCount = data.elem.title;
+            if (!cusId) return;
+            
+            $.ajax({
+                url: '/project_review/action?action=Retrieve',
+                type: 'POST',
+                data: {
+                    dataType: 'getCustomerDetail',
+                    id: cusId
+                },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === '200') {
+                        var customer = res.data;
+                        $('#customer_id' + cusCount).val(customer.short_name || '');
+                        $('#country' + cusCount).val(customer.countryName || customer.country || '');
+                        $('#contact' + cusCount).val(customer.contact_name || '');
+                        $('#phone' + cusCount).val(customer.contact_phone || '');
+                        $('#email' + cusCount).val(customer.email || '');
+                        var text = (customer.summarize || '').replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
+                        $('#introduction' + cusCount).val(text);
+                    }
+                }
+            });
+        });
+        
+        // 项目代号验证
+        $('#project_code').blur(function(){
+            var projectCode = $(this).val();
+            if (projectCode) {
+                $.ajax({
+                    url: '/project_review/action?action=Retrieve',
+                    type: 'POST',
+                    data: {
+                        dataType: 'verifyProjectCode',
+                        user_bu: $('#user_bu').val(),
+                        projectCode: projectCode
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.code === '200' && res.data.code === '200') {
+                            layer.msg('项目代号已存在');
+                            $('#project_code').val('');
+                        }
+                    }
+                });
+            }
+        }).click(function(){
+            layer.open({
+                title: "获取临时项目代号",
+                type: 2,
+                area: ['600px', '500px'],
+                content: '/project_code/list?select_mode=1&user_bu=' + $('#user_bu').val()
+            });
+        });
+        
+        // 是否招标项目切换
+        form.on('select(is_bidding_project)', function(data){
+            if (data.value === '01') {
+                $('#bidding_strategy_section').show();
+            } else {
+                $('#bidding_strategy_section').hide();
+            }
+        });
+        
+        // 表单提交
+        form.on('submit(submit)', function(data){
+            var actionType = $(data.elem).attr('actionType');
+            var formData = $('#mainForm').serialize();
+            formData += '&action=' + (actionType === 'Submit' ? 'Submit' : 'Save');
+            
+            $.ajax({
+                url: '/project_review/action',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === '200') {
+                        layer.msg(actionType === 'Submit' ? '提交成功' : '保存成功', {icon: 1}, function(){
+                            window.location.href = '/project_review/list';
+                        });
+                    } else {
+                        layer.msg(res.msg || '操作失败', {icon: 2});
+                    }
+                },
+                error: function() {
+                    layer.msg('操作失败，请重试', {icon: 2});
+                }
+            });
+            return false;
+        });
+        
+        form.render();
+    });
+    </script>
+</body>
+</html>
+

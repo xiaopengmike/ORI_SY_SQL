@@ -1,0 +1,418 @@
+{% extends "common/base.html" %}
+
+{% block title %}侧边栏演示 - CRM系统{% endblock %}
+
+{% block page_title %}侧边栏功能演示{% endblock %}
+
+{% block extra_css %}
+<style>
+    .demo-card {
+        background: white;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .demo-card h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .feature-list li {
+        padding: 10px 0;
+        border-bottom: 1px dashed #ecf0f1;
+    }
+    
+    .feature-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .feature-list i {
+        color: #27ae60;
+        margin-right: 10px;
+    }
+    
+    .demo-section {
+        margin: 20px 0;
+    }
+    
+    .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+    }
+    
+    .btn-group {
+        margin: 20px 0;
+    }
+    
+    .btn-group .layui-btn {
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    .stat-card.green {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    
+    .stat-card.orange {
+        background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+    }
+    
+    .stat-card.blue {
+        background: linear-gradient(135deg, #2196F3 0%, #21CBF3 100%);
+    }
+    
+    .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    
+    .alert-box {
+        padding: 15px;
+        border-radius: 4px;
+        margin: 15px 0;
+    }
+    
+    .alert-box.info {
+        background: #e3f2fd;
+        border-left: 4px solid #2196F3;
+        color: #1976D2;
+    }
+    
+    .alert-box.success {
+        background: #e8f5e9;
+        border-left: 4px solid #4CAF50;
+        color: #2E7D32;
+    }
+    
+    .alert-box.warning {
+        background: #fff3e0;
+        border-left: 4px solid #FF9800;
+        color: #E65100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="demo-card">
+    <h3><i class="fas fa-star"></i> 欢迎使用CRM系统侧边栏</h3>
+    <p>本页面展示了新的左侧导航栏功能。该导航栏为所有页面提供了统一的导航体验。</p>
+    
+    <div class="alert-box info">
+        <i class="fas fa-info-circle"></i>
+        <strong>提示：</strong> 点击左侧顶部的 ☰ 按钮可以收起或展开侧边栏。
+    </div>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-check-circle"></i> 主要特性</h3>
+    <ul class="feature-list">
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>二级菜单系统：</strong> 点击一级菜单可展开/收起二级菜单，组织结构清晰
+        </li>
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>侧边栏收起：</strong> 点击顶部按钮可将侧边栏收起，只显示图标，节省空间
+        </li>
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>状态记忆：</strong> 自动保存展开状态，页面刷新后保持不变
+        </li>
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>当前页高亮：</strong> 自动识别当前页面并高亮对应菜单项
+        </li>
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>响应式设计：</strong> 完美支持桌面端和移动端
+        </li>
+        <li>
+            <i class="fas fa-chevron-right"></i>
+            <strong>平滑动画：</strong> 所有交互都有流畅的动画效果
+        </li>
+    </ul>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-list-ul"></i> 菜单结构</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-sitemap" style="font-size: 24px;"></i>
+            <div class="stat-number">9</div>
+            <div class="stat-label">一级菜单</div>
+        </div>
+        <div class="stat-card green">
+            <i class="fas fa-list" style="font-size: 24px;"></i>
+            <div class="stat-number">60+</div>
+            <div class="stat-label">二级菜单</div>
+        </div>
+        <div class="stat-card orange">
+            <i class="fas fa-building" style="font-size: 24px;"></i>
+            <div class="stat-number">7</div>
+            <div class="stat-label">取号模块</div>
+        </div>
+        <div class="stat-card blue">
+            <i class="fas fa-users" style="font-size: 24px;"></i>
+            <div class="stat-number">13</div>
+            <div class="stat-label">客户管理功能</div>
+        </div>
+    </div>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-keyboard"></i> 快速测试</h3>
+    <p>点击以下按钮测试各种功能：</p>
+    
+    <div class="btn-group">
+        <button class="layui-btn layui-btn-normal" onclick="testToggleSidebar()">
+            <i class="fas fa-bars"></i> 切换侧边栏
+        </button>
+        <button class="layui-btn layui-btn-warm" onclick="testScrollMenu()">
+            <i class="fas fa-arrow-down"></i> 滚动菜单
+        </button>
+        <button class="layui-btn" onclick="testHighlight()">
+            <i class="fas fa-highlighter"></i> 高亮测试
+        </button>
+        <button class="layui-btn layui-btn-primary" onclick="testClearState()">
+            <i class="fas fa-undo"></i> 清除状态
+        </button>
+    </div>
+    
+    <div class="alert-box success" style="display:none;" id="testResult">
+        <i class="fas fa-check"></i>
+        <span id="testMessage">操作成功！</span>
+    </div>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-code"></i> 使用方法</h3>
+    <div class="demo-section">
+        <h4>1. 创建新页面时，继承基础模板：</h4>
+        <div class="code-block">
+{% raw %}{% extends "common/base.html" %}
+
+{% block title %}页面标题 - CRM系统{% endblock %}
+
+{% block page_title %}页面标题{% endblock %}
+
+{% block content %}
+    <!-- 你的页面内容 -->
+{% endblock %}{% endraw %}
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h4>2. 添加页面特定的样式和脚本：</h4>
+        <div class="code-block">
+{% raw %}{% block extra_css %}
+<style>
+    /* 你的CSS */
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 你的JavaScript
+</script>
+{% endblock %}{% endraw %}
+        </div>
+    </div>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-book"></i> 文档和支持</h3>
+    <p>详细的使用说明和配置指南，请参考：</p>
+    <ul class="feature-list">
+        <li>
+            <i class="fas fa-file-alt"></i>
+            <strong>SIDEBAR_IMPLEMENTATION.md</strong> - 完整实现文档
+        </li>
+        <li>
+            <i class="fas fa-bug"></i>
+            <strong>BUG_REPORT.md</strong> - 已知问题和修复记录
+        </li>
+        <li>
+            <i class="fas fa-info"></i>
+            <strong>README.md</strong> - 项目说明
+        </li>
+    </ul>
+    
+    <div class="alert-box warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>注意：</strong> 如果遇到问题，请检查浏览器控制台的错误信息，或查看相关文档。
+    </div>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-chart-line"></i> 浏览器兼容性</h3>
+    <table class="layui-table">
+        <thead>
+            <tr>
+                <th>浏览器</th>
+                <th>支持版本</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><i class="fab fa-chrome"></i> Chrome</td>
+                <td>60+</td>
+                <td><span style="color: #27ae60;"><i class="fas fa-check-circle"></i> 完全支持</span></td>
+            </tr>
+            <tr>
+                <td><i class="fab fa-firefox"></i> Firefox</td>
+                <td>55+</td>
+                <td><span style="color: #27ae60;"><i class="fas fa-check-circle"></i> 完全支持</span></td>
+            </tr>
+            <tr>
+                <td><i class="fab fa-safari"></i> Safari</td>
+                <td>11+</td>
+                <td><span style="color: #27ae60;"><i class="fas fa-check-circle"></i> 完全支持</span></td>
+            </tr>
+            <tr>
+                <td><i class="fab fa-edge"></i> Edge</td>
+                <td>79+</td>
+                <td><span style="color: #27ae60;"><i class="fas fa-check-circle"></i> 完全支持</span></td>
+            </tr>
+            <tr>
+                <td><i class="fab fa-internet-explorer"></i> IE</td>
+                <td>11</td>
+                <td><span style="color: #f39c12;"><i class="fas fa-exclamation-circle"></i> 部分支持</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="demo-card">
+    <h3><i class="fas fa-route"></i> 快速导航链接</h3>
+    <div class="btn-group">
+        <a href="/customer/list" class="layui-btn">
+            <i class="fas fa-users"></i> 客户列表
+        </a>
+        <a href="/customer/add" class="layui-btn layui-btn-normal">
+            <i class="fas fa-plus"></i> 新增客户
+        </a>
+        <a href="/customer/index" class="layui-btn layui-btn-warm">
+            <i class="fas fa-home"></i> 客户首页
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+layui.use(['layer'], function(){
+    var layer = layui.layer;
+    
+    // 切换侧边栏
+    window.testToggleSidebar = function() {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.click();
+            showTestResult('侧边栏状态已切换！');
+        }
+    };
+    
+    // 滚动菜单
+    window.testScrollMenu = function() {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.scrollTo({
+                top: sidebar.scrollHeight / 2,
+                behavior: 'smooth'
+            });
+            showTestResult('菜单已滚动到中间位置！');
+        }
+    };
+    
+    // 高亮测试
+    window.testHighlight = function() {
+        const submenuLinks = document.querySelectorAll('.submenu-link');
+        if (submenuLinks.length > 0) {
+            // 随机选择一个菜单项高亮
+            const randomIndex = Math.floor(Math.random() * submenuLinks.length);
+            const randomLink = submenuLinks[randomIndex];
+            
+            // 移除其他高亮
+            submenuLinks.forEach(link => link.classList.remove('active'));
+            
+            // 添加高亮
+            randomLink.classList.add('active');
+            
+            // 展开父菜单
+            const parentSubmenu = randomLink.closest('.submenu');
+            if (parentSubmenu) {
+                parentSubmenu.classList.add('show');
+                const parentMenuLink = document.querySelector('.menu-link[data-submenu="' + parentSubmenu.id + '"]');
+                if (parentMenuLink) {
+                    parentMenuLink.classList.add('expanded');
+                }
+            }
+            
+            showTestResult('已随机高亮菜单项：' + randomLink.textContent);
+        }
+    };
+    
+    // 清除状态
+    window.testClearState = function() {
+        localStorage.removeItem('sidebarCollapsed');
+        localStorage.removeItem('expandedMenus');
+        localStorage.removeItem('activeSubmenu');
+        showTestResult('所有状态已清除！刷新页面查看效果。');
+    };
+    
+    // 显示测试结果
+    function showTestResult(message) {
+        const resultBox = document.getElementById('testResult');
+        const messageSpan = document.getElementById('testMessage');
+        if (resultBox && messageSpan) {
+            messageSpan.textContent = message;
+            resultBox.style.display = 'block';
+            setTimeout(function() {
+                resultBox.style.display = 'none';
+            }, 3000);
+        }
+    }
+    
+    // 页面加载提示
+    layer.msg('欢迎使用CRM系统！', {icon: 1, time: 2000});
+});
+</script>
+{% endblock %}
+
