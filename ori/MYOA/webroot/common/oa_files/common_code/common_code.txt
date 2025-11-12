@@ -1,0 +1,128 @@
+## common code
+
+include_once("../common/CommonControl.php");  // 引用公共类
+$model = new CommonControlModel();
+
+$companyNew = $model->getUserBuNew($deptId);  // 公司别
+
+$userInfo = $model->getUserInfo($userId);  // 获取用户信息-制单人数据
+
+详情判断是否存在：
+if(empty($id)){
+    // echo "对应数据不存在！";
+    Message("提示","对应数据不存在！");
+    exit;
+}
+详情数据获取：
+$action = new ActionModel();
+$param['id'] = $id;
+$data = $action->querySalesContract($param);
+$attachObj = $action->getAttachById($id);  // 附件取数
+// 详情页面附件初始化：
+var attachObj = <?= $attachObj ?>;
+                $(".btn-upload").each(function() {
+                    var id = this.id;
+                    if (!ifEmpty(attachObj[id])) {
+                        attach.attachReadonly({
+                            elem: "#" + this.id,
+                            uploadUrl: "/general/attachment/attach.php?type=" + this.id + "&url=common",
+                            attachObj: attachObj[id]
+                        });
+                    }
+                });
+详情附件显示：
+	<input id="foreign_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: none;" value="附件上传" readonly />				
+
+$selectParam = array(
+    'is_used' => '1', // 可用参数
+    'type' => 'yes_or_no,contract_protocol_type,continent,manage_dept'
+);
+$selectArr = $model->getCommonParam($selectParam);  // 下拉数组
+详情页面下拉：
+$yes_or_no = array();
+foreach ($selectArr['yes_or_no'] as $co) {
+    $yes_or_no[$co['paras_value']] = $co['paras_desc'];
+}
+			
+
+标准头： <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script language="Javascript" type="text/javascript" src="<?= COMMON_FILE_URL ?>/jquery-1.11.3.min.js"></script>
+    <script language="Javascript" type="text/javascript" src="<?= COMMON_FILE_URL ?>/common.js"></script>
+    <script language="Javascript" type="text/javascript" src="<?= COMMON_FILE_URL ?>/layui/layui.js" charset="utf-8"></script>
+    <script language="Javascript" type="text/javascript" src="../main.js"></script>
+    <link rel="stylesheet" href="<?= COMMON_FILE_URL ?>/css/font.css">
+    <link rel="stylesheet" href="<?= COMMON_FILE_URL ?>/css/weadmin.css">
+    <script language="Javascript" type="text/javascript" src="<?= COMMON_FILE_URL ?>/dtreeck.js"></SCRIPT>
+    <link rel="stylesheet" type="text/css" href="<?= COMMON_FILE_URL ?>/dtreeck.css">
+
+form参数： <div class="weadmin-body" style="width:90%;margin:1% 4%;">
+        <form id="addForm" class="layui-form">
+            <input type="hidden" name="user_bu" id="user_bu" value="<?= $companyNew ?>" />
+            <input type="hidden" name="fieldName" value="form_id" />
+            <input type="hidden" name="tableName" value="inhe_customer_info" />
+            <input type="hidden" name="flowType" value="lxdj" />
+            <input type="hidden" name="reset" value="day" />
+            <input type="hidden" name="digit" value="2" />
+            <input type="hidden" name="type" value="project_review" />
+            <input type="hidden" name="step" value="0" />
+			 <table width="100%" align="center">
+                <tr>
+                    <td align="center">
+                        <img alt="" src="../../../../../images/project_review_<?= $companyNew ?>.jpg" style="width: 15%; height: auto;" title="" />
+                    </td>
+                </tr>
+            </table>
+按钮：			<table id="tab" width="100%">
+                            <tr class="layui-bg-body">
+                                <td colspan="4" align="center" style="padding: 5px;">
+                                    <input lay-submit lay-filter="submit" name="btn_submit" actionType="Submit" value="提交" type=button class="layui-btn layui-btn-oa layui-btn-sm" />
+                                    <input lay-submit lay-filter="submit" name="btn_save" actionType="Save" value="保存" type=button class="layui-btn layui-btn-oa layui-btn-sm" />
+                                    <input name="btn_close" value="关闭" type=button class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.close();return false;" />
+                                </td>
+                            </tr>
+                        </table>
+						
+下拉;
+                        <div class="layui-input-inline mandatory">
+                            <select id="continent" name="continent" lay-search lay-verify="required">
+                                <option value=''>请选择</option>
+                                <?php foreach ($selectArr['continent'] as $sc) : ?>
+                                    <option value="<?= $sc['paras_value'] ?>"><?= $sc['paras_desc'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>		
+			
+部门和经办人选择控件
+
+                    <td class="layui-bg-gray">申请部门</td>
+                    <td>
+                        <div class="layui-input-inline" style="width: 220px;">
+                            <input type="text" id="menu_parent_name" class="layui-input" data-type="dept_select" name="apply_dept_name" style="width: 220px;" placeholder="请选择申请部门" />
+                            <input type="hidden" id="menu_parent" name="apply_dept">
+                        </div>
+                    </td>
+                    <td class="layui-bg-gray">经办人</td>
+                    <td>
+                        <div class="layui-input-inline" style="width: 220px;">
+                            <input type="hidden" id="real_name" name="real_name" value="" />
+                            <select name="user_name" id="user_name" lay-filter="user_name" placeholder="请选择经办人">
+                                <option value=''>请选择</option>
+                            </select>
+                        </div>
+                    </td>
+附件：
+                    <td class="layui-bg-gray">附件</td>
+                    <td colspan="7">
+                        <input type="button" id="contract_protocol" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="附件上传" />
+                    </td>
+富文本：
+                        <textarea class="layui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+按钮：
+                        <input lay-submit lay-filter="submit" name="btn_submit" actionType="Submit" value="提交" type=button class="layui-btn layui-btn-oa layui-btn-sm" />
+部门下拉脚本：
+    <br />
+    <?php include_once("common/mydtree_new.php"); ?>
+	

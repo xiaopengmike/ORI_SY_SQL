@@ -1,0 +1,529 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>202006</title><link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 40px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px !important; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.html-for-mac .inline-math-svg .MathJax_SVG { vertical-align: 0.2px; }
+.md-math-block .MathJax_SVG_Display { text-align: center; margin: 0px; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; overflow-y: hidden; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: var(--monospace); }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none 0s ease 0s; }
+.MathJax_SVG_Display svg { vertical-align: middle !important; margin-bottom: 0px !important; margin-top: 0px !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+svg[id^="mermaidChart"] { line-height: 1em; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+mark .md-meta { color: rgb(0, 0, 0); opacity: 0.3 !important; }
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: 1024px;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	#write {
+		max-width: 1200px;
+	}
+}
+
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+   padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border-top: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table tr th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+.html-for-mac .context-menu {
+    --item-hover-bg-color: #E6F0FE;
+}
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+}
+
+.ty-preferences .window-content {
+    background-color: #fafafa;
+}
+
+.ty-preferences .nav-group-item.active {
+    color: white;
+    background: #999;
+}
+
+
+</style>
+</head>
+<body class='typora-export os-windows' >
+<div  id='write'  class = 'is-node'><h2><a name="第一部分怎么选选什么怎么学学什么" class="md-header-anchor"></a><strong><span>第一部分：怎么选，选什么，怎么学，学什么</span></strong></h2><h3><a name="11-前期准备收集信息做调研" class="md-header-anchor"></a><span>1.1 前期准备：收集信息，做调研</span></h3><p><span>首先，建议平时多去各大招聘站上逛逛（越早越好最好从大一开始），比如boss直聘，猎聘，拉钩，各大公司官网招聘启事，各种技术论坛招聘版块等。</span></p><blockquote><p><span>我那会开始找实习，用了差不多一个月，去了一家做ERP的公司的IT部门，其实就是一网管，修电脑拉网线装各种软件等，这种肯定不喜欢啊，主要还不挣钱，然后没事干的时候就各种网上搜，逛招聘网站，学校论坛等，除了让我大开眼界，然后就是各种追悔莫及，所以啊，真心建议，平时除了打游戏看片外，多去主动搜搜这些东西，比如2020技术发展，2020计算机专业应届生，怎么进大厂等等，对你以后有真有帮助。</span></p></blockquote><p><span>逛这些网站干什么：</span><strong><span>收集信息，做调研</span></strong></p><ul><li><strong><span>看需求。</span></strong><span>看看那些互联网大厂或者自己想去的公司，都在招哪些技术方向？</span></li><li><strong><span>看发展。</span></strong><span>哪些技术方向需求量大，或者给的工资高，那这个方向目前肯定火热？</span></li><li><strong><span>看自己。</span></strong><span>这些技术方向有没有你感兴趣的，或者愿意为之“奋斗终身”的？</span></li><li><strong><span>看要求。</span></strong><span>这些技术招聘对应届生的技术能力都有哪些要求？（要具体详细）</span></li><li><strong><span>定计划。</span></strong><span>搜集和整理好招聘要求后，然后明确具体要掌握哪些东西，具体要到什么程度？</span></li></ul><p><span>举个例子，我毕业了就想去字节跳动（抖音）这个公司（因为张一鸣太帅了），然后去搜集字节跳动各种应届生的技术招聘，发现下面这个招聘牛逼啊，月薪20K起步，</span><strong><span>前端开发工程师</span></strong><span>：</span></p><p><img src="https://pic4.zhimg.com/50/v2-e5442ac61a0d07434d990751afbc800f_hd.jpg" referrerpolicy="no-referrer" alt="img"><img src="https://pic4.zhimg.com/80/v2-e5442ac61a0d07434d990751afbc800f_720w.jpg" referrerpolicy="no-referrer" alt="img"></p><p><span>字节跳动前端开发招聘</span></p><p><span>赶紧网上去搜“什么是前端开发工程师”，“前端开发工程师前景如何（发展路线）”，“如何成为优秀的前端开发”，“前端开发技能树”，“菜鸟如何开始学前端”等等。</span></p><p><span>然后就开始搜集和整理相关资料。</span><strong><span>比如，下面是我搜集整理的前端开发方向，仅供参考：</span></strong></p><h3><a name="12-具体了解是什么" class="md-header-anchor"></a><span>1.</span><strong><span>2 具体了解：是什么？</span></strong></h3><p><span>前端开发工程师是Web前端开发工程师的简称，2007年才真正开始受到重视的一个新兴职业。Web前端开发技术是一个先易后难的过程，主要包括三个要素：HTML（标准通用标记语言下的一个应用）、级联样式表和JavaScript。</span></p><blockquote><p><span>也就是说，前端开发主要包括三个方面，HTML，CSS，JS。然后不知道的继续搜，比如什么是CSS，直到全部都搞明白为止。</span></p></blockquote><h3><a name="13-开发前景如何" class="md-header-anchor"></a><span>1.</span><strong><span>3 开发前景如何？</span></strong></h3><p><span>2020前端开发全国平均薪资12K左右，北上广深更高。</span></p><p><span>前端开发的发展路线：C/S模式，PC端，移动端，混合开发（H5），APP，小程序/公众号。</span></p><p><span>以后发展方向：VR、智能设备交互界面、物联网交互、5G应用等。</span></p><blockquote><p><span>我的初步认识，前端像是在做展现给用户看的各种“界面”，那这种东西永远不会淘汰啊，什么东西没这个可以？嗯，这个方向有前途。</span></p></blockquote><h3><a name="14-都要学什么" class="md-header-anchor"></a><span>1.</span><strong><span>4 都要学什么？</span></strong></h3><p><span>前端开发包括，web前端，小程序，跨端开发（PC/移动），前端工程化。</span></p><p><span>前端技能需要：</span></p><p><span>a. 精通HTML、CSS、JS。</span></p><p><span>b. 熟悉常用前端框架，如bootstrap，jQuery等。</span></p><p><span>c. 熟悉前后端分离，HTTP，AJAX等技术。</span></p><p><span>d. 熟悉NodeJS，包括Grunt，Gulp，Webpack等。</span></p><p><span>c. 熟悉MVVM思想，如React、VueJS，AngularJS等。</span></p><blockquote><p><span>AJAX什么鬼？Grunt，Gulp，Webpack什么东西？MVVM又是什么？然后一个个查一个个学。</span></p></blockquote><h3><a name="15-如何开始学" class="md-header-anchor"></a><span>1.</span><strong><span>5 如何开始学？</span></strong></h3><p><span>a. 从HTML、CSS开始学起，学会如何布局，如何实现设计稿样式等。</span></p><p><span>b. 学习JS语法基础，还有如何操作DOM，XHR技术，AJAX怎么用，JS高级特性闭包，回调，异步等，ES6新特性</span></p><p><span>c. 学习各种框架，前端组件，比如bootstrap，jQuery等等</span></p><p><span>d. 学习NodeJS</span></p><p><span>c. 看各种开源项目，源代码，然后自己实践做小项目</span></p><blockquote><p><span>前端框架好多啊，看的我晕</span></p></blockquote><h3><a name="16-学习到什么程度可以进大厂呢" class="md-header-anchor"></a><span>1.</span><strong><span>6 学习到什么程度可以进大厂呢？</span></strong></h3><p><span>a. 基础扎实，HTML、CSS、JS。</span></p><p><span>b. 熟练主流框架和常用框架，比如国内比较流行Vue，国外流行react。</span></p><p><span>c. 会一门后端语言，如Nodejs。</span></p><p><span>d. 熟练掌握前端工程化。</span></p><p><span>e. 熟悉当浏览器输入域名到网页内容展示整个技术过程，越详细越好。</span></p><blockquote><p><span>基础扎实，就是基本问的知识点都非常清楚；熟练呢，就是能轻松使用不依靠文档之类的，最好能看看源码，了解下实现逻辑；学前端如果要掌握后端语言首推nodejs，什么JAVA，Python有时间可以学；</span></p></blockquote><p><span>最后，就是找各种大厂面试笔试题，各种刷题，各种恶补基础知识，如网络，系统，算法等。</span></p><p><span>OK，以上这些，从今天开始，埋头苦练吧，希望有朝一日，从菜鸟，到初级前端，到高级前端，到前端架构，到前端专家，到。。。</span></p><hr /><h2><a name="第二部分计算机专业通用学习流程和职业发展方向" class="md-header-anchor"></a><span>第二部分：计算机专业通用学习流程和职业发展方向</span></h2><p><span>这里，我想再说一下一般计算机专业的学习路径和职业发展方向（尤其是不打算考研考博做研究的）：</span></p><p><strong><span>2.1 计算机基础</span></strong><span>：（这些一定要啃，持续啃，无论什么方向，即使现在一知半解）</span></p><p><span>1）计算机组成（硬件组成和如何协同工作）</span></p><p><span>2）操作系统（如何操控硬件，推荐Unix/Linux）</span></p><p><span>3）计算机网络（数据如何传输）</span></p><p><span>4）数据库实现（数据如何存储）</span></p><p><span>5）C/C++语言（人类如何与计算机沟通）</span></p><p><span>6）数据结构及算法（如何转化和解决现实问题）</span></p><p>&nbsp;</p><p><strong><span>2.2 计算机进阶</span></strong><span>：（拥有一定计算机基础后，选择好方向，重点学习和进阶）</span></p><p><span>【以web开发为例】：</span></p><p><span>1）从零开始。找一本入门级编程书籍，如PHP开发入门，疯狂Java等，按照书本内容，从搭建开发运行环境，写第一行代码Hello world，到写一个留言板，开发一个blog，开发一个电商网站。</span></p><p><span>2）开始实践。找第一份工作进行实践学习，分析需求，设计功能，完成开发，测试和上线发布。</span></p><p><span>3）技术扩展。打造自己的技术技能图谱，学习其他开发语言，学习系统，网络，运维，数据库，算法等，并在工作中实践运用，解决各种遇到的技术问题。</span></p><p><span>4）技术升级。学习并解决更复杂的技术问题，如高并发，高可用，中间件，大数据，系统架构，分布式等，当然还包括软技能，如技术管理、相互协作、高效沟通等等。</span></p><p><span>5）技术转型。1 技术管理 2 技术架构 3 技术专家 4 开始创业</span></p><p>&nbsp;</p><p><strong><span>2.3 计算机常见职业发展方向</span></strong><span>：（全面了解，选择适合自己的，感兴趣的，并作为终极目标，持续深入，然后再横向扩展，成为大拿）</span></p><p><span>1）网络方向（网络工程师）</span></p><p><span>2）运维方向（系统运维，开发运维，DEVOPS，云计算）</span></p><p><span>3）数据库方向（DBA，数据库开发）</span></p><p><span>4）开发方向（硬件研发，嵌入式开发，系统开发，游戏开发，算法工程师，web开发，前端开发，移动开发，Android，IOS，全栈工程师，图像，声音等）</span></p><p><span>5）数据方向（大数据开发，数据挖掘和分析，商务智能）</span></p><p><span>6）测试方向（测试工程师，自动化测试，持续集成）</span></p><p><span>7）项目产品方向（产品经理，PM经理，敏捷教练，DEVOPS）</span></p><p><span>8）安全方向（安全工程师）</span></p><p><span>9）新型产业（物联网，区块链，AR/VR，人工智能，机器学习）</span></p><p><span>10）技术管理和架构（架构师，技术Leader，技术经理，CTO）</span></p><p><span>11）独立开发者，自由职业者</span></p><hr /><h2><a name="持续更新" class="md-header-anchor"></a><span>持续更新</span></h2><p><strong><span>2020-03-20更新：</span></strong></p><p><span>一个大厂常见技术评级体系：助理研发工程师（实习）-&gt; 研发工程师（应届）-&gt; 高级研发工程师-&gt; 资深研发工程师-&gt; 架构师-&gt; 高级架构师-&gt; 技术专家-&gt; 科学家</span></p><p><span>一个中大型互联网公司常见的研发部门组成：1）开发 2）测试 3）运维 4）产品 5）设计 6）架构 7）大数据 8）技术委员会</span></p><p><span>一个产品通用的研发过程： 1）立项 2）产品需求和产品设计 3）UI设计 4）开发 5）测试 6）运维上线 7）bug处理和需求反馈 8）继续迭代</span></p><p>&nbsp;</p><p><strong><span>2020-03-22更新：</span></strong></p><p><span>多说一些：计算机和编程技术的学习，没有你想象中的那么难，我经常给新手这样说，“计算机，其实是科学家们开发的一种高效计算工具，他们为了让人们更容易使用和更好的与计算机沟通，还开发了很多编程语言，并且给你附上了详尽的使用说明书，没有让你发明创造，只是让你熟练使用它而已，这很难吗？</span><strong><span>记住，计算机和编程技术真正的难点不在如何使用上，而是在如何用它们解决现实问题上。</span></strong><span>”</span></p><p><span>我们都知道，计算机其核心主要包括：输入、传输、计算、存储、输出五大部分，我们编程做开发也是同样的逻辑过程，甚至包括我们学习知识技能也是一样：</span><strong><span>首先你需要大量的（输入</span></strong><span>）</span><strong><span>，然后独立思考、处理和整合（计算），做详尽的笔记和记忆（存储），请教大牛和与其他人讨论（信息传输），实践应用和教授他人（输出）</span></strong><span>。</span></p><p><span>艺术，源于生活而又高于生活！</span></p><p>&nbsp;</p><p><strong><span>2020-04-02更新：</span></strong></p><p><span>2020年比较火热的互联网行业（计算机专业就业方向）。</span></p><ol><li><span>在线娱乐</span>
+<span>1) 游戏：腾讯、网易、字节跳动（游戏事业部）、完美世界、B站、莉莉丝、叠纸游戏</span>
+<span>2) 视频：字节跳动（抖音、西瓜、tiktok）、快手、腾讯、爱奇艺、优酷、B站</span>
+<span>3) 直播：花椒、快手、陌陌、酷狗、映客、一直播、</span></li></ol><p><span>\2. 在线教育</span>
+<span>好未来（学而思网校）、VIPkid、猿辅导（旗下还有斑马）、作业帮、跟谁学、作业盒子、一起作业、火花思维</span></p><p><span>\3. 医疗健康</span>
+<span>阿里健康、平安好医生、春雨医生、好大夫、丁香园、微医、云知声、推想科技、灵医智慧</span></p><p><span>\4. 电商/新零售</span>
+<span>盒马生鲜、每日优鲜、京东（到家、物流）、美团（买菜）、有赞、顺丰、美菜（北京云杉）、便利蜂、瑞幸</span></p><p><span>\5. 在线办公/云计算/公有云/saas行业</span></p><p><span>腾讯（企业微信事业部）、阿里（钉钉事业部）、字节跳动（飞书）、阿里（阿里云事业部）、华为（华为云事业部）、腾讯（腾讯云事业部）、金山云、ucloud；</span></p><p><span>现在做互联网不叫IT了，改叫</span><strong><span>TMT</span></strong><span>，是电信、媒体和科技（Telecommunication，Media，Technology）三个英文单词的首字母，整合在一起，实际是未来电信、媒体\科技（互联网）、信息技术的融合趋势所产生的，所以做计算机往这三个方向上发展一般不会太差。</span></p><p><strong><span>2020-04-27更新：</span></strong></p><p><span>程序员书单推荐（无聊的时候多看看书，你的问题书中都有）</span></p><p><span>1） 计算机基础</span></p><p><span>《计算机组成与实现》、《计算机系统概论》、《深入理解计算机系统》、《计算机网络》、《TCP/IP详解（卷1）》、《Unix环境高级编程》、《算法导论》、《Linux就是这个范儿》、《图解HTTP》</span></p><p><span>2）开发基础</span></p><p><span>《C语言程序设计》、《Java编程思想》、《深入浅出MySQL》、《高性能MySQL》、《Redis实战》、《现代前端技术解析》、《Java并发编程实战》、《剑指offer》</span></p><p><span>3）技术高阶和架构</span></p><p><span>《构建高性能web站点》、《大型网站系统与Java中间件实践》、《微服务设计》、《淘宝技术这十年》、《大型网站技术架构核心原理与案例分析》、《尽在双11：阿里巴巴技术演进与超越》、《深入理解spring cloud与微服务构建》、《亿级流量网站架构核心技术》、《重构 : 改善既有代码的设计》</span></p><p><span>4）技术运维</span></p><p><span>《SRE Google运维解密》、《Docker从入门到实战》、《持续交付》、《Devops实战》</span></p><p><span>5）大数据</span></p><p><span>《Storm实战》、《Spark Streaming 实时流处理与精通》、《Spark 快速大数据分析》、《大数据挖掘》</span></p><p><span>6）互联网大佬传记</span></p><p><span>《史蒂夫乔布斯传》、《沃自传：与苹果一起疯狂》、《图灵的秘密》、《乔森纳传：首次聚焦苹果首席设计师》、《雷军：人因梦想而伟大》、《马云传》、《腾讯传》、《编程人生》、《世界因你不同》</span></p><p><span>7）个人成长</span></p><p><span>《程序员修炼之道》、《高效程序员的45个习惯：敏捷开发修炼之道》、《异类》、《影响力大师》、《情商》、《优秀到不能被忽视》</span></p><p>&nbsp;</p><p><strong><span>2020-05-11更新：</span></strong></p><p><span>一些免费且值得收藏学习的计算机资源（免费且优质的东西一直都在那里，重要的是你怎么找到它们，付费的优质资源也有很多，但是垃圾也多）</span></p><p><span>1) 计算机优质资源列表 Awesome lists about all kinds of interesting topics</span></p><p><a href='https://github.com/sindresorhus/awesome'><span>https://github.com/sindresorhus/awesomegithub.com</span></a></p><p><span>2）《后端架构师技术图谱》</span></p><p><a href='https://github.com/xingshaocheng/architect-awesome'><span>https://github.com/xingshaocheng/architect-awesomegithub.com</span></a></p><p><span>3）各种awesome系列，比如Vue，java，go，IOS等等</span></p><p><a href='https://github.com/vuejs/awesome-vue'><span>https://github.com/vuejs/awesome-vuegithub.com</span></a></p><p><a href='https://github.com/avelino/awesome-go'><span>https://github.com/avelino/awesome-gogithub.com</span></a></p><p><a href='https://github.com/vsouza/awesome-ios'><span>https://github.com/vsouza/awesome-iosgithub.com</span></a></p><p><span>4）计算机各种学习资源汇总</span></p><p><a href='https://www.zhangyang.date/R2020.html'><span>https://www.zhangyang.date/R2020.htmlwww.zhangyang.date</span></a></p><p>&nbsp;</p><p><strong><span>2020-06-05更新：</span></strong></p><p><span>说点题外话，计算机专业学什么语言好找工作？这里的语言只能是相对来讲的，比如前端开发，JAVA语言等，这些就目前业界而言，相对需求量更大 一些，但是不能因此否认其他语言或者技术 就不好找工作。</span></p><p><span>总之，做技术，要想好找工作，唯有实力才是王道。</span></p><p><span>实力从何而来？</span></p><p><span>实力 = 扎实的技术能力（知己） + 熟悉面试要求（知彼）+面试技巧（研究面试题/面试套路/回答技巧）</span></p><p><span>1）扎实的技术能力。就是知道自己的技术水平如何，到什么水准，能做什么，不能做什么，擅长什么，不擅长什么，找工作就是找适合自己对自己稍微有些挑战的，而不是挑战极限挑战不可能。</span></p><p><span>2）熟悉面试要求。就是要 站在公司角度思考问题，比如“请给我 一个录用你的理由”，公司招人道理很 简单，就是拿钱招人干活，所以，胜任工作是最基本的要求，应聘之前，多研究下公司招聘 要求，一定要知己知彼。</span></p><p><span>3）面试技巧。除了上面两条核心点外，面试技巧只能说锦上添花的东西，你的目标很清晰，就是为了拿offer，或者高薪offer，其他所有影响这个目标的话都少说或者不说，比如人家问你打算在北京待几年啊，有没有回老家的打算啊，这就是在问你，来公司打算干多久啊之类的，不要傻傻的说，明年回老家，结婚生孩子去，这种肯定立马被毙，面试本身就是真真假假，把握好度，不要太过了，但是，如果后面真的决定去公司了，干活一定要诚实有信。</span></p></div>
+</body>
+</html>

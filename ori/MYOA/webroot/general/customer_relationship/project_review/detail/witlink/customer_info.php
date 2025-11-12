@@ -1,0 +1,135 @@
+<input type="hidden" name="fieldName" value="form_id" />
+<table id="tab1" width="100%" style="text-align: center;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;">（一）客户信息</td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">1. 代理商/经销商基本信息</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">代理商</td>
+        <td class="TableData" width="18%">
+            <input type="text" name="name1" id="name1" class="layui-input" data-type="customer_name" value="<?= str_replace("\"","&quot;", $customerData['customer_name1']) ?>" />
+        </td>
+        <td class=" TableContent" width="15%">客户编号</td>
+        <td class="TableData" width="18%">
+            <input type="text" name="customer_id1" id="customer_id1" class="layui-input" value="<?= $customerData['customer_id1'] ?>" />
+        </td>
+        <td class=" TableContent" width="15%">所在国</td>
+        <td class="TableData">
+            <input type="text" name="country1" id="country1" class="layui-input" value="<?= $customerData['country1'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact1" id="contact1" class="layui-input" value="<?= $customerData['contact1'] ?>" />
+        </td>
+        <td class=" TableContent">电话</td>
+        <td class="TableData">
+            <input type="text" name="phone1" id="phone1" class="layui-input" value="<?= $customerData['phone1'] ?>" />
+        </td>
+        <td class=" TableContent">邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email1" id="email1" class="layui-input" value="<?= $customerData['email1'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">简介</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="introduction1" name="introduction1"><?= $customerData['introduction1'] ?></textarea>
+        </td>
+        <td class="TableContent">添加附件：</td>
+        <td class="TableData" align="left">
+            <input id="introduction1_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: none;" value="上传" readonly />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">合作历史 （说明是首次合作还是老代理/经销商。若是首次合作，必须有展示代理实力的相关信息；若是老代理/经销商，必须注明合作过的项目和成功的项目。）</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="cooperate_history" name="cooperate_history"  ><?= $project['cooperate_history'] ?></textarea>
+        </td>
+        <td class="TableContent">添加附件：</td>
+        <td class="TableData" style="text-align: left;">
+            <input id="cooperate_history_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: none;" value="上传" readonly />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">2. 招标方/业主基本信息 （投标项目必填）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">招标方</td>
+        <td class="TableData">
+            <input type="text" name="name2" id="name2" class="layui-input" data-type="customer_name" value="<?= str_replace("\"","&quot;", $customerData['customer_name2']) ?>" />
+        </td>
+        <td class=" TableContent">客户编号</td>
+        <td class="TableData">
+            <input type="text" name="customer_id2" id="customer_id2" class="layui-input" value="<?= $customerData['customer_id2'] ?>" />
+        </td>
+        <td class=" TableContent">所在国</td>
+        <td class="TableData">
+            <input type="text" name="country2" id="country2" class="layui-input" value="<?= $customerData['country2'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact2" id="contact2" class="layui-input" value="<?= $customerData['contact2'] ?>" />
+        </td>
+        <td class=" TableContent">电话</td>
+        <td class="TableData">
+            <input type="text" name="phone2" id="phone2" class="layui-input" value="<?= $customerData['phone2'] ?>" />
+        </td>
+        <td class=" TableContent">邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email2" id="email2" class="layui-input" value="<?= $customerData['email2'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">简介</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="introduction2" name="introduction2"><?= $customerData['introduction2'] ?></textarea>
+        </td>
+        <td class=" TableContent">添加附件：</td>
+        <td class="TableData" align="left">
+            <input id="introduction2_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: none;" value="上传" readonly />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left;color:red">3. 买方信息（必填项，匹配销售合同评审流程的买方）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">买方名称</td>
+        <td class="TableData">
+            <input type="text" name="name3" id="name3" class="layui-input" data-type="customer_name" value="<?= str_replace("\"","&quot;", $customerData['customer_name3']) ?>" />
+        </td>
+        <td class=" TableContent">客户编号</td>
+        <td class="TableData">
+            <input type="text" name="customer_id3" id="customer_id3" class="layui-input" value="<?= $customerData['customer_id3'] ?>" />
+        </td>
+        <td class=" TableContent">所在国</td>
+        <td class="TableData">
+            <input type="text" name="country3" id="country3" class="layui-input" value="<?= $customerData['country3'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">
+            <input type="text" name="contact3" id="contact3" class="layui-input" value="<?= $customerData['contact3'] ?>" />
+        </td>
+        <td class=" TableContent">电话</td>
+        <td class="TableData">
+            <input type="text" name="phone3" id="phone3" class="layui-input" value="<?= $customerData['phone3'] ?>" />
+        </td>
+        <td class=" TableContent">邮箱</td>
+        <td class="TableData">
+            <input type="text" name="email3" id="email3" class="layui-input" value="<?= $customerData['email3'] ?>" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">简介</td>
+        <td class="TableData" colspan="5">
+            <textarea class="layui-textarea" id="introduction3" name="introduction3"><?= $customerData['introduction3'] ?></textarea>
+        </td>
+    </tr>
+</table>

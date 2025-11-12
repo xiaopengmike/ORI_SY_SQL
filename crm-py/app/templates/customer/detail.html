@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>客户详情</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f5f5f5; }
+        .form-container { background: white; padding: 20px; margin: 10px auto; max-width: 90%; border-radius: 4px; }
+        .TableContent { background-color: #f2f2f2; padding: 8px; text-align: right; width: 10%; }
+        .TableData { padding: 8px; text-align: left; }
+        .button-area { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        {% if main %}
+        <div class="button-area">
+            {% if operate == 'approve' and approve_info %}
+            <button type="button" class="layui-btn layui-btn-oa" onclick="approveAction('pass');">通过</button>
+            <button type="button" class="layui-btn layui-btn-danger" onclick="approveAction('back');">退回</button>
+            {% endif %}
+            <button type="button" class="layui-btn layui-btn-oa" onclick="window.location.href='/customer/list';">返回列表</button>
+        </div>
+        
+        <table class="layui-table" style="width: 100%;">
+            <tr><td class="TableContent">登记单号</td><td class="TableData">{{ main.get('form_id', '') }}</td>
+                <td class="TableContent">客户名称</td><td class="TableData">{{ main.get('customer_name', '') }}</td></tr>
+            <tr><td class="TableContent">简称</td><td class="TableData">{{ main.get('short_name', '') }}</td>
+                <td class="TableContent">大洲</td><td class="TableData">{{ main.get('continent', '') }}</td></tr>
+            <tr><td class="TableContent">国家</td><td class="TableData">{{ main.get('country', '') }}</td>
+                <td class="TableContent">地址</td><td class="TableData">{{ main.get('address', '') }}</td></tr>
+            <tr><td class="TableContent">客户简介</td><td class="TableData" colspan="3">{{ main.get('summarize', '') }}</td></tr>
+        </table>
+        
+        {% if contacts %}
+        <h3>联系人</h3>
+        <table class="layui-table">
+            <thead><tr><th>姓名</th><th>电话1</th><th>电话2</th><th>邮箱</th><th>职位</th><th>地址</th><th>备注</th></tr></thead>
+            <tbody>
+            {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.get('name', '') }}</td>
+                <td>{{ contact.get('phone_one', '') }}</td>
+                <td>{{ contact.get('phone_two', '') }}</td>
+                <td>{{ contact.get('email', '') }}</td>
+                <td>{{ contact.get('position', '') }}</td>
+                <td>{{ contact.get('address', '') }}</td>
+                <td>{{ contact.get('remark', '') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
+        {% if company %}
+        <h3>公司信息</h3>
+        <table class="layui-table">
+            <thead><tr><th>公司名称</th><th>简称</th><th>国家</th><th>地址</th><th>联系人</th><th>电话</th></tr></thead>
+            <tbody>
+            {% for comp in company %}
+            <tr>
+                <td>{{ comp.get('company_name', '') }}</td>
+                <td>{{ comp.get('company_short_name', '') }}</td>
+                <td>{{ comp.get('company_country', '') }}</td>
+                <td>{{ comp.get('company_address', '') }}</td>
+                <td>{{ comp.get('contact_name', '') }}</td>
+                <td>{{ comp.get('phone', '') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
+        {% if operate == 'approve' and approve_info %}
+        <h3>审批意见</h3>
+        <form id="approveForm">
+            <input type="hidden" name="form_id" value="{{ main.get('form_id', '') }}" />
+            <input type="hidden" name="step" value="{{ step }}" />
+            <textarea name="opinion" class="layui-textarea" placeholder="请输入审批意见"></textarea>
+        </form>
+        {% endif %}
+        {% else %}
+        <div style="text-align: center; padding: 50px;">数据不存在</div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+    <script>
+        function approveAction(action) {
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                var formData = $('#approveForm').serialize() + '&action=' + (action === 'pass' ? 'Approve' : 'Back');
+                $.ajax({
+                    url: '/customer/action',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.code === '10000') {
+                            layer.msg(action === 'pass' ? '审批通过' : '已退回', {icon: 1}, function() {
+                                window.location.href = '/customer/list';
+                            });
+                        } else {
+                            layer.msg(response.msg || '操作失败', {icon: 2});
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

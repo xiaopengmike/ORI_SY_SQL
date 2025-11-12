@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta name="msvalidate.01" content="787F68E0A6521DB61FE8F9C32C149E9F" />
+    <meta content="" name="Keywords">
+    <meta name="description" content="">
+    <title>的最新持仓_乌龟量化</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" />
+    <link href="/static/bootstrap/css/combine.css" rel="stylesheet">
+    <link href="/static/css/base.css?v=0218" rel="stylesheet">
+    <script src="/static/jquery/jquery.js"></script>
+    <script src="/static/js/base.js?v=0217"></script>
+    <script src="/static/echarts/echarts.min.js?v=20190408"></script>
+    <script src="/static/g2plot/min.js?v=20201206"></script>
+    <link href="/static/css/index.css?v=20191105" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container"> <a class="navbar-brand base_logo" href="/"> <img src="/static/img/logo1.jpg"
+                    alt="乌龟量化官网" title="乌龟量化"> </a>
+            <ul class="navbar-nav mr-auto" style="width:100%;">
+                <li class="nav-item dropdown"> <a href="javascript:;" class="nav-link dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 排名<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu rank_dropdown_menu">
+                        <h5>财务</h5><a href="/hotstock/" title="用户关注度最热的股票">热门股票、基金</a><a href="/cnvaluetop/"
+                            title="最便宜的股票">最便宜的股票</a><a href="/cnnetprofitgtop/" title="净利润增速最高排名">净利润增速最高排名</a><a
+                            href="/cnhistorypetop/" title="a股市盈率pe新低排名">PE历史新低排名</a><a href="/cnhistorypbtop/"
+                            title="a股市净率pb新低排名">PB历史新低排名</a><a href="/cnpetop/" title="a股市盈率pe最低排名">扣非PE最低排名</a><a
+                            href="/cnrevenuegtop/" title="营业收入最高排名">营业收入增速最高排名</a><a href="/cnyushoutop/"
+                            title="预收款项最高排名">预收款增速最高排名</a><a href="/cnfreecashflowtop/" title="a股自由现金流排名">自由现金流排名</a><a
+                            href="/cnfreecashdiscounttop/">自由现金流折现排名</a><a href="/cnroetop/"
+                            title="a股roe最高的股票排名">ROE_最高的股票</a><a href="/tool/roeseries/"
+                            title="roe连续3年超过15%的股票排名">ROE_3年超15%的股票排名</a>
+                        <h5 class="mt-3">北上资金</h5><a href="/cnhugutongnewtop/" title="北上资金、沪股通、深股通、港资"> 持有最多排名</a><a
+                            href="/cnhugutongrowth/" title="北上资金、沪股通、深股通、港资"> 持续净流入排名</a><a href="/cnhugutongtop/"
+                            title="北上资金、沪股通、深股通、港资">净买入股票排名</a><a href="/cnhugutongliuchutop/"
+                            title="北上资金、沪股通、深股通、港资">净卖出股票排名</a>
+                        <h5 class="mt-3">其他</h5><a href="/cnreporttop/">研报推荐热股排名</a><a
+                            href="/cnrangeuptop/">股票、指数和行业涨跌幅排名</a><a href="/cnholdjizhongtop/">股票控盘度最强排名</a><a
+                            href="/cnmargintop/">融资融券最高排名</a><a href="/cnmainzjtop/">主要股东买卖排名</a><a
+                            href="/cnholdernumtop/">股东数环比变化排名</a><a href="/cnturnovertop/">换手率最低和最高排名</a><a
+                            href="/cndazongtop/">大宗交易折溢价排名</a>
+                        <h5 class="mt-3">机构持仓</h5><a href="/cnfundtop/jijin1/">基金重仓持仓股排名</a><a
+                            href="/cnfundtop/qfii1/">QFII重仓持仓股排名</a><a href="/cnfundtop/shebao1/">社保养老金持仓股排名</a><a
+                            href="/cnfundtop/shebao1/">国家队重仓持仓股排名</a>
+                        <h5 class="mt-3">分红、股息</h5><a href="/cndividendyeartop/" title="连续n年股息率最高排名">连续3年股息率最高</a><a
+                            href="/cndividendtop/" title="a股个股股息率分红排名">近1年股息率分红最高</a><a href="/cndividendforcasttop/"
+                            title="即将分红派息的股票排名">即将分红最高排名</a>
+                        <h5 class="mt-3">财报</h5><a href="/yejiyuce/">业绩预测</a><a href="/yejiyugao/">业绩预告</a><a
+                            href="/yejijijiang/">即将披露的财报</a><a href="/yejizuixin/">最新披露的财报</a>
+                        <h5 class="mt-3">牛市涨幅排名</h5><a href="/zt/niushiup/index/" rel="nofollow">指数涨的最多</a><a
+                            href="/zt/niushiup/sector/" rel="nofollow">行业涨的最多</a><a href="/zt/niushiup/symbol/"
+                            rel="nofollow">股票涨的最多</a><a href="/zt/niushiup/symbol2/" rel="nofollow">股票涨幅最少</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown"> <a href="javascript:;" class="nav-link dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 综合<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu rank_dropdown_menu">
+                        <h5>工具</h5><a href="/tool/portfolio/">组合回测</a><a href="/tool/dingtou/">定投计算器</a><a
+                            href="/tool/stockholder/">机构国家队持仓查询</a><a href="/tool/roeseries/"
+                            title="roe连续m年超过n%的股票查询">ROE连续M年超过N%的股票</a><a href="/tool/compare/"
+                            title="个股、指数和行业指数的比较">个股、指数或行业的估值对比</a><a
+                            href="/tool/financialanalysis/sz000651/type1/3yearq1/">单个股票财务指标分析</a><a
+                            href="/tool/financialanalysis/sz000651/type2/sz000333/3yearq1/">两个股票对比财务指标</a><a
+                            href="/sector/bk0040/stockfin1/">同行业股票详细财务对比</a><a
+                            href="/stock/freecashflow/sh600519/">股票的自由现金流估值</a><a
+                            href="/stock/historypeg/sz000651/">股票的PEG估值</a>
+                        <h5 class="mt-3">市场情绪、全市场</h5><a href="/market/amount/">成交额走势图</a><a
+                            href="/market/hugutong/">北上资金净流入走势图</a><a href="javascript:;"
+                            data-u="/market/perange/">估值分布图</a><a href="javascript:;" data-u="/market/amplitude/">换手率和振幅
+                            <i class="text-org">New</i></a><a href="/market/margin/">融资融券走势图</a><a
+                            href="/market/chinayearlyipos/">新股IPO发行量</a><a href="/market/jiejin/">解禁市值走势图</a><a
+                            href="/market/holdernum/">股东数走势图</a><a href="/market/gpzy/">质押比走势图</a><a
+                            href="/cnmacro/gpzh/">A股新开户数</a><a href="/cnmacro/zqhl/" title="巴菲特指标、巴菲特指数">证券化率</a><a
+                            href="/cnmacro/bound10year/" title="中国十年期国债收益率走势图">10年期国债收益率</a><a href="/cnmacro/gzsy/"
+                            title="格雷厄姆指数">股债收益率比</a>
+                        <h5>宏观、经济</h5><a href="/cnmacro/cpi/">居民消费_CPI</a><a href="/cnmacro/fj/">房价走势</a><a
+                            href="/cnmacro/gpzh/">A股新开户数</a><a href="/cnmacro/zq/">国债和企业债</a><a
+                            href="/cnmacro/hbgy/">货币供应M2</a><a href="/cnmacro/gdp/">生产总值_GDP</a><a
+                            href="/cnmacro/ppi/">工业品出厂价格_PPI</a><a href="/cnmacro/pmi/">采购经理人指数_PMI</a><a
+                            href="/cnmacro/cztz/">固定资产投资</a><a href="/cnmacro/ll/">存贷款基准利率</a><a
+                            href="/cnmacro/ckzbj/">存款准备金率</a><a href="/cnmacro/czsr/">财政收入</a><a
+                            href="/cnmacro/sssr/">税收收入</a><a href="/cnmacro/xzxd/">新增信贷</a><a
+                            href="/cnmacro/gyzjz/">工业增加值</a><a href="/cnmacro/spjg/">企业商品价格</a><a
+                            href="/cnmacro/xfpls/">消费品零售总额</a><a href="/cnmacro/jck/">海关进出口额</a><a
+                            href="/cnmacro/whcb/">外汇和黄金储备</a><a href="/cnmacro/wstz/">外商直接投资</a><a
+                            href="/cnmacro/bwbck/">本外币存款</a><a href="/cnmacro/whdk/">外汇贷款</a><a
+                            href="/cnmacro/xfz/">消费者信心</a><a href="/cnmacro/qyjq/">企业景气和企业家</a>
+                    </div>
+                </li>
+                <li id='li_indices' class="nav-item dropdown"> <a href="javascript:;" class="nav-link dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 指数<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu indices_dropdown_menu"> <a href="/indicestop/" style="min-width:250px;"
+                            class="d-inline-block mt-1 mb-2">全部指数的估值排名 <i class="text-org">Hot</i></a><a href="/etf/"
+                            style="min-width:250px;" class="d-inline-block mt-1 mb-2">ETF大全</a><a
+                            href="/indicesquanttop/" style="min-width:250px;"
+                            class="d-inline-block mt-1 mb-2">量化策略指数排名</a>
+                        <h5>热门</h5><a href="/chinaindicespe/sh000300/" title="沪深300的历史市盈率走势图">沪深300</a><a
+                            href="/chinaindicespe/sh000001/" title="上证指数的历史市盈率走势图">上证指数</a><a
+                            href="/chinaindicespe/sz399001/" title="深证成指的历史市盈率走势图">深证成指</a><a
+                            href="/chinaindicespe/sz399006/" title="创业板指的历史市盈率走势图">创业板指</a><a
+                            href="/chinaindicespe/sh000905/" title="中证500的历史市盈率走势图">中证500</a><a
+                            href="/chinaindicespe/sh000922/" title="中证红利的历史市盈率走势图">中证红利</a><a
+                            href="/chinaindicespe/sh000016/" title="上证50的历史市盈率走势图">上证50</a><a
+                            href="/chinaindicespe/sh000985/" title="科创板50指数的历史市盈率走势图">中证全A</a>
+                        <h5>红利 & 医药 & 消费</h5><a href="/chinaindicespe/sh000922/" title="中证红利的历史市盈率走势图">中证红利</a><a
+                            href="/chinaindicespe/sh000015/" title="上证红利指数的历史市盈率走势图">上证红利</a><a
+                            href="/chinaindicespe/sz399324/" title="深证红利的历史市盈率走势图">深证红利</a><a
+                            href="/chinaindicespe/sh000821/" title="沪深300红利的历史市盈率走势图">300红利</a><a
+                            href="/chinaindicespe/csiH30269/" title="中证红利低波动指数的历史市盈率走势图">红利低波</a><a
+                            href="/chinaindicespe/csiH50040/" title="上证红利低波动指数的历史市盈率走势图">上红低波</a><a
+                            href="/chinaindicespe/CSPSADRP/" title="标普中国A股红利机会指数">标普红利</a><a
+                            href="/chinaindicespe/csi930740/" title="沪深300红利低波动指数">300红利LV</a><a
+                            href="/chinaindicespe/csih30089/" title="中证红利潜力指数">红利潜力</a><a
+                            href="/chinaindicespe/csi930955/" title="中证红利低波动100指数">红利低波100</a><a
+                            href="/chinaindicespe/sh000991/" title="全指医药的历史市盈率走势图">全指医药</a><a
+                            href="/chinaindicespe/sh000933/" title="中证医药的历史市盈率走势图">中证医药</a><a
+                            href="/chinaindicespe/sh000978/" title="100医药指数的历史市盈率走势图">100医药</a><a
+                            href="/chinaindicespe/sh000913/" title="沪深300医药的历史市盈率走势图">沪深300医药</a><a
+                            href="/chinaindicespe/sz399394/" title="国证医药的历史市盈率走势图">国证医药</a><a
+                            href="/chinaindicespe/sh000814/" title="细分医药的历史市盈率走势图">细分医药</a><a
+                            href="/chinaindicespe/csi930726/" title="生物医药的历史市盈率走势图">生物医药</a><a
+                            href="/chinaindicespe/csi930743/" title="中证生物科技的历史市盈率走势图">中证生科</a><a
+                            href="/chinaindicespe/csi931152/" title="中证创新药产业指数的历史市盈率走势图">创新药</a><a
+                            href="/chinaindicespe/csi931140/" title="医药50指数的历史市盈率走势图">医药50</a><a
+                            href="/chinaindicespe/sz399989/">中证医疗 </a><a href="/chinaindicespe/sh000932/">中证消费</a><a
+                            href="/chinaindicespe/sh000912/" title="沪深300主要消费指数的历史市盈率走势图">300消费</a><a
+                            href="/chinaindicespe/csi931139/">消费50</a><a href="/chinaindicespe/sh000069/">消费80</a><a
+                            href="/chinaindicespe/sh000807/" title="食品饮料的历史市盈率走势图">食品饮料</a><a
+                            href="/chinaindicespe/sz399997/" title="中证白酒的历史市盈率走势图">中证白酒</a><a
+                            href="/chinaindicespe/sz399987/" title="中证酒的历史市盈率走势图">中证酒</a><a
+                            href="/chinaindicespe/sh000990/" title="全指消费的历史市盈率走势图">全指消费</a><a
+                            href="/chinaindicespe/sh000989/" title="全指可选的历史市盈率走势图">全指可选</a><a
+                            href="/chinaindicespe/csi931068/">消费龙头 </a><a href="/chinaindicespe/csi000815/">细分食品 <i
+                                class="text-org">New</i></a>
+                        <h5>上证、深证</h5><a href="/chinaindicespe/sh000985/" title="中证全A的历史市盈率走势图">中证全A</a><a
+                            href="/chinaindicespe/sh000903/" title="中证100的历史市盈率走势图">中证100</a><a
+                            href="/chinaindicespe/sh000906/" title="中证800的历史市盈率走势图">中证800</a><a
+                            href="/chinaindicespe/sh000852/" title="中证1000的历史市盈率走势图">中证1000</a><a
+                            href="/chinaindicespe/sh000914/" title="沪深300金融的历史市盈率走势图">300金融</a><a
+                            href="/chinaindicespe/sh000919/" title="沪深300价值的历史市盈率走势图">300价值</a><a
+                            href="/chinaindicespe/csi931069/" title="中证中金优选300指数的历史市盈率走势图">中金优选300</a><a
+                            href="/chinaindicespe/sh000925/" title="基本面50的历史市盈率走势图">基本面50</a><a
+                            href="/chinaindicespe/sh000170/" title="50AH优选的历史市盈率走势图">50AH优选</a><a
+                            href="/chinaindicespe/sh000010/" title="上证180的历史市盈率走势图">上证180</a><a
+                            href="/chinaindicespe/sh000046/" title="上证中小的历史市盈率走势图">上证中小</a><a
+                            href="/chinaindicespe/sz399701/" title="深证基本面60的历史市盈率走势图">深证F60</a><a
+                            href="/chinaindicespe/sz399702/" title="深证基本面120的历史市盈率走势图">深证F120</a><a
+                            href="/chinaindicespe/sz399106/" title="深证综指的历史市盈率走势图">深证综指</a><a
+                            href="/chinaindicespe/sz399005/" title="中小板指的历史市盈率走势图">中小板指</a><a
+                            href="/chinaindicespe/sz399101/" title="中小板综指的历史市盈率走势图">中小板综指</a><a
+                            href="/chinaindicespe/sz399102/" title="创业板综指的历史市盈率走势图">创业板综指</a><a
+                            href="/chinaindicespe/sz399550/" title="央视50的历史市盈率走势图">央视50</a><a
+                            href="/chinaindicespe/sz399330/" title="深证100的历史市盈率走势图">深证100</a><a
+                            href="/chinaindicespe/sz399673/" title="创业板50的历史市盈率走势图">创业板50</a><a
+                            href="/chinaindicespe/sz399317/" title="国证A指的历史市盈率走势图">国证A指</a><a
+                            href="/chinaindicespe/sz399088/">深创100</a><a href="/chinaindicespe/csi950096/"
+                            title="上海国企指数的历史市盈率走势图">上海国企</a><a href="/chinaindicespe/csi930782/"
+                            title="500低波指数的历史市盈率走势图">500低波</a>
+                        <h5>行业</h5><a href="/chinaindicespe/sz399975/" title="证券公司的历史市盈率走势图">证券公司</a><a
+                            href="/chinaindicespe/sz399437/">证券龙头</a><a href="/chinaindicespe/csi931087/"
+                            title="中证科技龙头指数的历史市盈率走势图">科技龙头</a><a href="/chinaindicespe/csiH30184/"
+                            title="中证全A半导体指数的历史市盈率走势图">半导体</a><a href="/chinaindicespe/sh000926/"
+                            title="中证央企指数的历史市盈率走势图">中证央企</a><a href="/chinaindicespe/csi931079/"
+                            title="5G通信的历史市盈率走势图">5G通信</a><a href="/chinaindicespe/csi931160/"
+                            title="通信设备的历史市盈率走势图">通信设备</a><a href="/chinaindicespe/csi930713/"
+                            title="人工智能的历史市盈率走势图">人工智能</a><a href="/chinaindicespe/csi931186/"
+                            title="中证科技的历史市盈率走势图">中证科技</a><a href="/chinaindicespe/sz399967/"
+                            title="中证军工的历史市盈率走势图">中证军工</a><a href="/chinaindicespe/csi931066/"
+                            title="军工龙头的历史市盈率走势图">军工龙头</a><a href="/chinaindicespe/sz399973/">中证国防 <i
+                                class="text-org">New</i></a><a href="/chinaindicespe/sz399998/"
+                            title="中证煤炭的历史市盈率走势图">中证煤炭</a><a href="/chinaindicespe/sh000827/"
+                            title="中证环保的历史市盈率走势图">中证环保</a><a href="/chinaindicespe/sz399971/"
+                            title="中证传媒的历史市盈率走势图">中证传媒</a><a href="/chinaindicespe/sh000935/">中证信息</a><a
+                            href="/chinaindicespe/sz399983/">地产等权</a><a href="/chinaindicespe/sz399812/"
+                            title="养老产业的历史市盈率走势图">养老产业</a><a href="/chinaindicespe/sh000948/"
+                            title="内地房产的历史市盈率走势图">内地房产</a><a href="/chinaindicespe/sz399995/"
+                            title="中证基建工程的历史市盈率走势图">基建工程</a><a href="/chinaindicespe/csi931009/">建筑材料 <i
+                                class="text-org">New</i></a><a href="/chinaindicespe/csi931052/"
+                            title="国证价值的历史市盈率走势图">国证价值</a><a href="/chinaindicespe/sz399610/">深TMT50 <i
+                                class="text-org">New</i></a><a href="/chinaindicespe/sz399986/"
+                            title="中证银行的历史市盈率走势图">中证银行</a><a href="/chinaindicespe/sh000993/"
+                            title="全指信息的历史市盈率走势图">全指信息</a><a href="/chinaindicespe/csi930697/"
+                            title="中证全A家用电器指数的历史市盈率走势图">全指家电</a><a href="/chinaindicespe/csi000860/">结构调整</a><a
+                            href="/chinaindicespe/csih30257/">500信息</a><a href="/chinaindicespe/csi990001/">中华半导体</a><a
+                            href="/chinaindicespe/csi000861/" title="中证央企创新驱动指数">央企创新</a><a
+                            href="/chinaindicespe/sz399976/" title="中证新能源汽车_成分股少">CS新能源汽车</a><a
+                            href="/chinaindicespe/csi930997/" title="中证新能源汽车_成分股多">中证新能源车</a><a
+                            href="/chinaindicespe/sz399417/" title="国证新能源汽车">国证新能源车</a><a
+                            href="/chinaindicespe/csi930721/">CS智汽车 <i class="text-org">New</i></a><a
+                            href="/chinaindicespe/csi931380/" title="中证科技50指数的历史市盈率走势图">科技50</a><a
+                            href="/chinaindicespe/csi931187/">科技100</a><a href="/chinaindicespe/csi931159/">创新100</a><a
+                            href="/chinaindicespe/csi931165/" title="中证新兴科技100策略指数">新兴科技100</a><a
+                            href="/chinaindicespe/csi000960/" title="中证龙头企业指数">中证行业龙头</a><a
+                            href="/chinaindicespe/hkhscait/" title="恒生A股行业龙头指数">恒生A股龙头</a><a
+                            href="/chinaindicespe/csi930651/" title="中证计算机主题指数">CS计算机</a><a
+                            href="/chinaindicespe/csih30588/" title="中证证券保险指数">中证证保</a><a
+                            href="/chinaindicespe/sz399440/">国证钢铁</a><a href="/chinaindicespe/csi930606/">中证钢铁</a><a
+                            href="/chinaindicespe/sh000819/">有色金属</a><a href="/chinaindicespe/sz980017/">国证芯片</a><a
+                            href="/chinaindicespe/csih30165/">全指房地产</a><a href="/chinaindicespe/sz399966/">800非银</a><a
+                            href="/chinaindicespe/csi930652/">中证电子</a><a href="/chinaindicespe/csi931151/">光伏产业</a><a
+                            href="/chinaindicespe/csi000813/">细分化工</a><a href="/chinaindicespe/csi000949/">中证农业</a><a
+                            href="/chinaindicespe/sh000979/">大宗商品 <i class="text-org">New</i></a><a
+                            href="/chinaindicespe/sz399804/">中证体育 <i class="text-org">New</i></a>
+                        <h5>其他</h5><a href="/chinaindicespe/HKHSI/" title="恒生指数(港股)的历史市盈率走势图">恒生指数</a><a
+                            href="/chinaindicespe/HKHSCEI/" title="恒生中国企业指数">国企指数</a><a href="/chinaindicespe/HSFML25/"
+                            title="恒生中国（香港上市）25指数">香港大盘</a><a href="/chinaindicespe/SPHCMSHP/"
+                            title="标普香港上市中国中小盘精选指数。">香港中小</a><a href="/chinaindicespe/SP500/"
+                            title="标准普尔500指数">标普500</a><a href="/chinaindicespe/NDX/" title="纳斯达克100指数">纳指100</a><a
+                            href="/chinaindicespe/N225/" title="日经225股市指数">日经225</a><a href="/chinaindicespe/935600/"
+                            title="MSCI印度股市指数">MSCI印度</a><a href="/chinaindicespe/GDAXI/" title="德国DAX30指数">德国DAX</a><a
+                            href="/chinaindicespe/SPACEVCP/" title="标普沪港深中国增强价值指数">标普价值</a><a
+                            href="/chinaindicespe/SPCQVCP/" title="标普中国A股质量价值指数">标普质量</a><a
+                            href="/chinaindicespe/sh000170/" title="上证50AH优选">50AH优选</a><a
+                            href="/chinaindicespe/csih11136/" title="中概互联">中国互联</a><a href="/chinaindicespe/csih30533/"
+                            title="中概互联">中国互联50</a>
+                    </div>
+                </li>
+                <li id='li_sector' class="nav-item dropdown"> <a href="javascript:;" class="nav-link dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 行业<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu sector_dropdown_menu">
+                        <h5>概览</h5><a href='/sector/'>全部行业排名</a><a href='/gainian/'>概念大全</a><a
+                            href='/business/'>主营产品</a><a href='/hq/sector/'>行业概念实时行情</a>
+                        <h5>医药卫生</h5><a href='/sector/bk0004/'>农业服务</a><a href='/sector/bk0040/'>化学制药</a><a
+                            href='/sector/bk0041/'>中药</a><a href='/sector/bk0042/'>生物制品</a><a
+                            href='/sector/bk0043/'>医药商业</a><a href='/sector/bk0044/'>医疗器械服务</a>
+                        <h5>消费</h5><a href='/sector/bk0002/'>养殖业</a><a href='/sector/bk0003/'>农产品加工</a><a
+                            href='/sector/bk0033/'>饮料制造</a><a href='/sector/bk0034/'>食品加工制造</a><a
+                            href='/sector/bk0025/'>汽车整车</a><a href='/sector/bk0026/'>汽车零部件</a><a
+                            href='/sector/bk0028/'>交运设备服务</a><a href='/sector/bk0031/'>白色家电</a><a
+                            href='/sector/bk0032/'>视听器材</a><a href='/sector/bk0035/'>纺织制造</a><a
+                            href='/sector/bk0036/'>服装家纺</a><a href='/sector/bk0039/'>家用轻工</a><a
+                            href='/sector/bk0058/'>零售</a><a href='/sector/bk0060/'>景点及旅游</a><a
+                            href='/sector/bk0061/'>酒店及餐饮</a><a href='/sector/bk0064/'>传媒</a>
+                        <h5>金融地产</h5><a href='/sector/bk0053/'>房地产开发</a><a href='/sector/bk0054/'>园区开发</a><a
+                            href='/sector/bk0055/'>银行</a><a href='/sector/bk0056/'>保险及其他</a><a
+                            href='/sector/bk0057/'>证券</a>
+                        <h5>信息技术</h5><a href='/sector/bk0021/'>半导体及元件</a><a href='/sector/bk0022/'>光学光电子</a><a
+                            href='/sector/bk0023/'>其他电子</a><a href='/sector/bk0024/'>电子制造</a><a
+                            href='/sector/bk0030/'>计算机设备</a><a href='/sector/bk0063/'>计算机应用</a>
+                        <h5>原材料</h5><a href='/sector/bk0001/'>种植业与林业</a><a href='/sector/bk0009/'>化学制品</a><a
+                            href='/sector/bk0010/'>化工合成材料</a><a href='/sector/bk0011/'>化工新材料</a><a
+                            href='/sector/bk0012/'>钢铁</a><a href='/sector/bk0013/'>有色冶炼加工</a><a
+                            href='/sector/bk0014/'>新材料</a><a href='/sector/bk0015/'>建筑材料</a><a
+                            href='/sector/bk0016/'>建筑装饰</a><a href='/sector/bk0037/'>造纸</a><a
+                            href='/sector/bk0038/'>包装印刷</a>
+                        <h5>工业</h5><a href='/sector/bk0017/'>通用设备</a><a href='/sector/bk0018/'>专用设备</a><a
+                            href='/sector/bk0019/'>仪器仪表</a><a href='/sector/bk0020/'>电气设备</a><a
+                            href='/sector/bk0027/'>非汽车交运</a><a href='/sector/bk0048/'>港口航运</a><a
+                            href='/sector/bk0049/'>公路铁路运输</a><a href='/sector/bk0050/'>公交</a><a
+                            href='/sector/bk0051/'>机场航运</a><a href='/sector/bk0052/'>物流</a><a
+                            href='/sector/bk0059/'>贸易</a><a href='/sector/bk0066/'>国防军工</a>
+                        <h5>能源、公用、电信</h5><a href='/sector/bk0005/'>煤炭开采加工</a><a href='/sector/bk0006/'>石油矿业开采</a><a
+                            href='/sector/bk0007/'>采掘服务</a><a href='/sector/bk0008/'>基础化学</a><a
+                            href='/sector/bk0045/'>电力</a><a href='/sector/bk0046/'>燃气水务</a><a
+                            href='/sector/bk0047/'>环保工程</a><a href='/sector/bk0029/'>通信设备</a><a
+                            href='/sector/bk0062/'>通信服务</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" id='li_fund'> <a href="javascript:;" class="nav-link dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 基金<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu fund_dropdown_menu">
+                        <h5>工具</h5><a href="/fundrank/?cate1=all&cate2=001003&interval=1_year">短期绩优基金</a><a
+                            href="/fundrank/?cate1=all&cate2=001004&interval=1_year">长期绩优基金</a><a
+                            href="/fundrank/?cate1=all&cate2=001021&interval=1_year">三年五星基金</a><a
+                            href="/fundrank/?cate1=all&cate2=001035&interval=1_year">波动小的基金</a><a
+                            href="/fundrank/?cate1=%E6%B7%B7%E5%90%88%E5%9E%8B&cate2=all&interval=1_year">混合型基金排名</a><a
+                            href="/fundrank/?cate1=%E8%82%A1%E7%A5%A8%E5%9E%8B&cate2=all&interval=1_year">股票型基金排名</a><a
+                            href="/fundrank/?cate1=%E5%80%BA%E5%88%B8%E5%9E%8B&cate2=all&interval=1_year">债券型基金排名</a><a
+                            href="/fundrank/?cate1=all&cate2=cus_dt1month&interval=1_year">定投次数最多</a><a
+                            href="/fundrank/?cate1=all&cate2=cus_avghold1&interval=1_year">平均持有天数最多</a><a
+                            href="/hotstock/?days=1095&cate=fund">热门关注的基金</a>
+                        <h5>工具</h5><a href="javascript:;" data-u="/fund/compare/">基金对比 <i
+                                class="text-org d-inline-block ml-2">New</i></a><a href="javascript:;"
+                            data-u="/tool/portfolio/">组合回测</a><a href="/fund/managers/">筛选、查找基金经理</a>
+                    </div>
+                </li>
+                <li class="nav-item li_hq dropdown"> <a href="javascript:;" class="dropdown-toggle nav-link"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 行情<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu" style="min-width:180px;width:100px;left:-25px;"> <a href="javascript:;"
+                            data-u="/hq/indices/">市场概览</a> <a href="javascript:;" data-u="/hq/dynamic/">大盘热点</a> <a
+                            href="javascript:;" data-u="/hq/sector/">行业涨跌</a> </div>
+                </li>
+                <li class="nav-item"> <a href="javascript:;" data-u="/zuhe/detail/12/" class="nav-link a-org"> 组合 </a>
+                </li>
+                <li class="nav-item"> <a href="/topic/" class="nav-link">社区</a> </li>
+                <li class="nav-item"> <a href="/feeds/" class="nav-link"> 在看 </a> </li>
+                <li class="nav-item dropdown"> <a href="javascript:;" class="dropdown-toggle nav-link"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 帮助<span
+                            class="caret"></span> </a>
+                    <div class="dropdown-menu help_dropdown_menu"> <a href="javascript:;"
+                            onclick="showWeChatHelp('gzh');"> 公众号 </a> <a href="javascript:;"
+                            onclick="showWeChatHelp('help');"> 在线帮助 </a> <a href="/topic/">反馈问题</a> <a
+                            href="javascript:;" data-u="/topic/u800003/" rel="nofollow">官方通告</a> <a href="javascript:;"
+                            data-u="/UserRights/ToVip/" rel="nofollow">升级为高级会员 <span
+                                class="glyphicon glyphicon-shopping-cart"></span></a> </div>
+                </li>
+                <li class="nav-item form-inline my-2 my-lg-0 dropdown" style="margin-left:10px;"> <input
+                        onkeyup="autoComplete(this);" type="search" class="form-control mr-sm-2 form-control-sm"
+                        aria-label="Search" placeholder="数字、拼音或中文" id="search_input"> <button
+                        class="btn btn-outline-success btn-sm" type="button" onclick="autoComplete(this);"
+                        id="btn_defaut_search">搜</button>
+                    <div class="dropdown-menu search_dropdown_menu" id="search_results" style="display:none;"></div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item login_li"> <a data-u="/auth/login/" rel="nofollow" href="javascript:;"
+                        class="nav-link"> 登录/免费注册 </a> </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="alert alert-light mt-2 top_tip">
+        <div class="watchs">&nbsp;</div>
+        <div class="tj mt-2"> <span class="indices_up">&nbsp;</span> <span class="gongnneng">&nbsp;</span> </div>
+    </div>
+    <div class="container">
+        <div class="alert alert-light header mb-2 mt-2">
+            <div class="title_area mt-1">
+                <h2 class="mb-1"><a href="/tool/stockholder/" class="black">的最新持仓_工具</a></h2>
+            </div>
+            <hr class="mb-2 mt-1">
+            <div class="index_nav mb-1"> <a href="/tool/portfolio/">组合收益回测</a> <a href="/tool/dingtou/">定投计算器</a> <a
+                    href="/tool/roeseries/" title="ROE连续M年超过N%的股票查询">ROE筛选器</a> <a href="/tool/stockholder/"
+                    title="大股东、基金、机构和国家队的持仓查询">机构国家队持仓</a> <a href="/tool/compare/" title="个股、指数和行业指数的比较">估值对比</a> <a
+                    href="/tool/financialanalysis/sz000651/type2/sz000333/3yearq1/">两个股票财务对比</a> </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                var current_path = $('.current_path').html().toLocaleLowerCase();
+                $('.index_nav a').each(function () {
+                    var href = $(this).attr('href').toLocaleLowerCase();
+                    if (href.indexOf(current_path) > -1) {
+                        $(this).addClass('active');
+                    }
+                });
+            });
+        </script>
+        <div class="alert alert-info control_area">
+            <input id="txtHolder" type="text" class="form-control mr-2 text-center" placeholder="大股东、机构、QFII的名称"
+                value="" onkeyup="holderSearch(this);">
+            <div class="dropdown-menu pl-3" style="display:none;"></div>
+            在 <select id="sel_date" class="form-control input-sm ml-2">
+                <option value="20201231">2020.12</option>
+                <option value="20200930">2020.09</option>
+                <option value="20200630">2020.06</option>
+                <option value="20200331">2020.03</option>
+            </select> <span class="d-inline-block ml-2 mr-2">批次的持仓详情</span>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-light active" onclick="doSearch(1);">模糊匹配</button>
+                <button type="button" class="btn btn-light" onclick="doSearch(0);">精准匹配</button>
+            </div>
+        </div>
+        <table class="table table-boarder bg-white" id="table1" data-custom-sort="numericOnly">
+            <thead>
+                <tr>
+                    <th class="text-secondary">序</th>
+                    <th class="text-secondary">股东</th>
+                    <th>持有股票</th>
+                    <th>持有股数</th>
+                    <th data-sortable="true"><small>持有市值(亿)</small></th>
+                    <th data-sortable="true"><small>占流通比</small></th>
+                    <th data-sortable="true"><small>较上期变动</small></th>
+                    <th data-sortable="true">PE_扣非</th>
+                    <th data-sortable="true">股息</th>
+                    <th data-sortable="true">市值(亿)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="small text-secondary" title="秦龙">秦龙</td>
+                    <td> <a href="/stock/holder/sz002984/" target="_blank"> 森麒麟<small class="text-muted">.002984</small>
+                        </a> </td>
+                    <td>2.73亿</td>
+                    <td>127.89</td>
+                    <td>395.35%</td>
+                    <td class="text-danger"> 较上期无变动 </td>
+                    <td>29.49</td>
+                    <td>0.35%</td>
+                    <td>304.56</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class="small text-secondary" title="黄卫斌">黄卫斌</td>
+                    <td> <a href="/stock/holder/sz300894/" target="_blank"> 火星人<small class="text-muted">.300894</small>
+                        </a> </td>
+                    <td>1.48亿</td>
+                    <td>94.11</td>
+                    <td>388.92%</td>
+                    <td class="text-danger"> +594.37% </td>
+                    <td>112.02</td>
+                    <td>-</td>
+                    <td>257.70</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td class="small text-secondary" title="柳庆华">柳庆华</td>
+                    <td> <a href="/stock/holder/sh605155/" target="_blank"> 西大门<small class="text-muted">.605155</small>
+                        </a> </td>
+                    <td>0.56亿</td>
+                    <td>15.09</td>
+                    <td>234.21%</td>
+                    <td class="text-danger"> 较上期无变动 </td>
+                    <td>33.17</td>
+                    <td>-</td>
+                    <td>25.78</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="alert alert-warning font110 text-center mt-2 mb-5"> 非高级用户仅能查看 <big></big> 持仓的前 <big>3</big> 名，共有
+            <big>756</big> 名。
+        </div>
+    </div>
+    </div>
+    <input type="hidden" name="csrfmiddlewaretoken"
+        value="tRG3aMUk6vWa9ixggbMtI5qwQz3z8HLeBwEKLLdE5xKZ1NvAtAMSL799fcuFQlWL">
+    <script src="/static/js/search.js?v=1005"></script>
+    <script src="/static/js/show_top_tip.js?v=1106"></script>
+    <script src="/static/js/watch_stocks.js?v=1107"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js?v=20200608"></script>
+    <link rel="stylesheet" href="/static/tablesort/bootstrap-table.css?v=20200608">
+    <script src="/static/tablesort/bootstrap-table.js?v=20200608"></script>
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
+        id="modelTips">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4><button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modelFeedback" tabindex="-1" role="dialog" aria-labelledby="modelFeedback">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">提交反馈</h4><button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body"><input type="email" class="form-control mgb10 " id="feedback_email"
+                        placeholder="邮箱（选填）" title="邮箱地址"><textarea class="form-control" rows="6" title="反馈的内容"
+                        placeholder="反馈内容" id="feedback_content"></textarea></div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary"
+                        onclick="send_feedback(this);">提交反馈</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="user_is_authenticated hide2">0</div>
+    <div class="hide2" id="hidden_uid"></div>
+    <div class="is_mobile hide2">False</div>
+    <div class="current_symbol hide2">SH600519</div>
+    <div class="current_symbol_name hide2">贵州茅台</div>
+    <div class="current_path hide2">/tool/stockholder/</div>
+    <div class="current_path_full hide2">/tool/stockholder/?like=1&amp;date=20210231&amp;holder=</div>
+    <div class="referer hide2"></div>
+    <link rel="stylesheet" href="/static/tablesort/bootstrap-table.css">
+    <script src="/static/tablesort/bootstrap-table.js"></script>
+    <script src="/static/js/cn/search_holder.js?v=0201"></script>
+    <script type="text/javascript"> $(function () {
+            $('#sel_date').val("20201231");
+            $('#table1').bootstrapTable({ stickyHeader: true });
+        })();
+        function doSearch(like) {
+            var holder = $.trim($('#txtHolder').val());
+            var date = $('#sel_date').val();
+            if (!date) { date = '20200331' }
+            if (holder != '') {
+                var url = '/tool/stockholder/?like={0}&date={1}&holder={2}'.format(like, date, encodeURIComponent(holder));
+                window.location.href = url;
+            }
+        }
+        function holderSearch(obj) {
+            var word = $.trim($(obj).val());
+            if (word == '' || word.length < 2) { return; }
+            var search_result = [];
+            var item_count = 0;
+            for (var i = 0; i < list_search_holder.length; i++) {
+                if (item_count > 16) { break; }
+                var item = list_search_holder[i];
+                if (item.indexOf(word) > -1) {
+                    search_result.push(item.split(' ')[0]); item_count += 1;
+                }
+            }
+            var append_html = '';
+            if (search_result.length == 0) {
+                append_html = '&nbsp;&nbsp;&nbsp;没有相关内容。';
+            } else {
+                for (var i = 0; i < search_result.length; i++) {
+                    var arr_item = search_result[i];
+                    var click = "$('#txtHolder').val('{0}');$(this).parent().hide();".format(arr_item);
+                    append_html += '<a href="javascript:;" onClick="{0}">{1}</a>'.format(click, arr_item);
+                }
+            }
+            $(obj).next().html(append_html);
+            $(obj).next().show();
+        }
+    </script>
+</body>
+
+</html>

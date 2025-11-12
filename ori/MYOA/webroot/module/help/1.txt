@@ -1,0 +1,35 @@
+array (
+  0 => 
+  array (
+    'title' => '帮助首页',
+    'isFolder' => true,
+    'isLazy' => false,
+    'expand' => true,
+    'key' => 'sort_0',
+    'icon' => 'root.png',
+    'url' => 'search.php',
+    'target' => 'help_main',
+  ),
+  1 => 
+  array (
+    'title' => '体验式学习',
+    'isFolder' => true,
+    'isLazy' => false,
+    'expand' => true,
+    'key' => 'sort_0',
+    'icon' => 'experience.png',
+    'url' => 'http://tongda2000.com/oa/MYOA2013ADV/experience/',
+    'target' => '_blank',
+  ),
+  2 => 
+  array (
+    'title' => '通达OA社区自助服务站',
+    'isFolder' => true,
+    'isLazy' => false,
+    'expand' => true,
+    'key' => 'sort_02',
+    'icon' => 'folder.gif',
+    'url' => 'help_bbs.html',
+    'target' => 'help_main',
+  ),
+)

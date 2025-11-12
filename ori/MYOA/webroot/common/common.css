@@ -1,0 +1,155 @@
+#preview {
+    align: center;
+    width: 120px;
+    height: 150px;
+}
+
+.bodycolor {
+    background: #ffffff;
+}
+
+.TableContent {
+    text-align: center;
+}
+
+label {
+    padding-left: 18px;
+    cursor: pointer;
+}
+
+input[value="1"]:checked+label {
+    color: #36b574;
+    font-weight: bold;
+    background: url(/static/images/form/yes.png) no-repeat;
+}
+
+input[value="2"]:checked+label {
+    color: red;
+    font-weight: bold;
+    background: url(/static/images/form/no1.png) no-repeat;
+}
+
+#over_show {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.TextDetail {
+    overflow: hidden;
+    resize: none;
+    border: none;
+    color: #0066cc;
+    font-size: 9pt;
+}
+
+.TextDetails {
+    overflow: hidden;
+    resize: none;
+    color: #0066cc;
+    font-size: 9pt;
+}
+
+.TableData {
+    color: #0066cc;
+}
+
+.BigInput {
+    color: #0066cc;
+}
+
+.r {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #F0F0F0;
+    margin: auto;
+}
+
+#tab {
+    table-layout: fixed;
+}
+
+@page {
+    size: auto;
+    /* auto is the initial value */
+    margin: 0mm;
+    /* this affects the margin in the printer settings */
+}
+
+.normalSelect {
+    width: auto;
+    height: 24px;
+    color: #0066cc;
+}
+
+.BigStatic {
+    color: #0066cc;
+}
+
+/* 待提交; 审批中; 已审批; 退回; 结束 */
+.unSubmit {
+    color: #0066cc !important;
+}
+
+.underApproval {
+    color: #5FB878 !important;
+}
+
+.approved {
+    color: #FF5722 !important;
+}
+
+.returnBack {
+    color: #FFB800 !important;
+}
+
+.finished {
+    color: red !important;
+}
+
+.invalid {
+    color: gray !important;
+}
+
+.bodyColorNew {
+    background-color: #F0F0F0;
+}
+
+.normalLink {
+    color: #01AAED;
+}
+
+.newColor {
+    color: #027AFF
+}
+
+.newBackground {
+    background-color: #027AFF
+}
+
+.tdright {
+    text-align: right;
+}
+
+.left {
+    text-align: left;
+}
+
+.mandatory {
+    /* border-color: darkviolet; */
+    border: 1px solid darkviolet;
+}
+
+.important {
+    border: 1px solid red;
+}
+
+.required_field{
+    background-color: #f9fbd5;
+}
+
+button.help {
+    background: #70a1c8 url('/static/help/style/images/help.gif') 6px center no-repeat;
+}

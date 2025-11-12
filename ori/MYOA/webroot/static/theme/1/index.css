@@ -1,0 +1,407 @@
+*{padding:0px; margin:0px;}
+html
+{
+    height:100%;
+    overflow:hidden;
+}
+body
+{
+    height:100%;
+    overflow:hidden;
+	font-size:12px;
+}
+table
+{
+    border:0px;
+    border-collapse:collapse;
+}
+img
+{
+    border:0px;
+}
+a
+{
+    outline:none;
+}
+
+/* 顶部logo、时间、天气等 */
+#north
+{
+    height:50px;
+    color:#fff;
+    background:url("topbar_bg.png");
+    overflow:hidden;
+}
+#north #north_left
+{
+    float:left;
+    padding-top:9px;
+}
+#north #north_left #banner_text
+{
+    vertical-align:middle;
+    font-weight:bold;
+    font-size: 18pt;
+}
+#north #north_right
+{
+    float:right;
+    padding-right:10px;
+    text-align:right;
+}
+#north #north_right a
+{
+    color:#fff;
+    text-decoration:none;
+}
+#north #north_right #datetime
+{
+    height:25px;
+    line-height:25px;
+    cursor:pointer;
+}
+#north #north_right #datetime #datetime_left
+{
+    padding-left:11px;
+    background:url("dt_left.png") no-repeat left center;
+    float:right;
+}
+#north #north_right #datetime #datetime_right
+{
+    padding-right:11px;
+    background:url("dt_right.png") no-repeat right center;
+}
+#north #north_right #datetime #time_area
+{
+    background:url('/static/images/time.gif') left center no-repeat;
+    padding-left:16px;
+    margin-left:5px;
+}
+#north #north_right #weather
+{
+    height:25px;
+    line-height:25px;
+    display:inline-block;
+    float:right;
+}
+#north #north_right #rss
+{
+    height:25px;
+    line-height:25px;
+    display:inline-block;
+    float:right;
+}
+#north #north_right #weather .city
+{
+    font-weight:bold;
+    cursor:pointer;
+}
+#north #north_right #area_select
+{
+    height:25px;
+    line-height:25px;
+    text-align:right;
+    display:none;
+}
+
+/* 顶部人员信息、菜单快捷组 */
+#infobar
+{
+    height:28px;
+    line-height:28px;
+    background: #E7F1F8 url('shortcut_bg.png') repeat-x top left;
+    color:#fff;
+    overflow:hidden;
+    padding-left:250px;
+    padding-right:360px;
+    position:relative;
+}
+#infobar #infobar_user
+{
+    width:200px;
+    position:absolute;
+    left:5px;
+    top:0px;
+    _padding-top:4px;
+}
+#infobar #infobar_user #on_status
+{
+   font-weight:bold;
+   cursor:pointer;
+}
+
+#infobar #infobar_user #my_status
+{
+   width:170px;
+   color:#8896A0;
+   border:1px #FFFFFF solid;
+}
+#infobar #infobar_user #my_status:hover
+{
+   color:#000000;
+}
+#infobar #infobar_func_left
+{
+    position:absolute;
+    left:200px;
+    top:0px;
+}
+#infobar #infobar_func_left a
+{
+    display:inline-block;
+    height:27px;
+    width:45px;
+}
+#infobar #infobar_func_left #hide_left_btn
+{
+    background: url('call_left.png') center center no-repeat;
+}
+#infobar #infobar_func_left #hide_left_btn.right
+{
+    background: url('call_right.png') center center no-repeat;
+}
+#infobar #infobar_func_right
+{
+    position:absolute;
+    right:0px;
+    top:0px;
+    width:360px;
+}
+#infobar #infobar_func_right a
+{
+    display:inline-block;
+    height:28px;
+    line-height:28px;
+    color:#fff;
+    text-decoration:none;
+    float:right;   
+    padding:0px 10px;
+}
+#infobar #infobar_func_right a.reg
+{
+    text-align:center;
+}
+#infobar #infobar_func_right a.desktop
+{
+    padding-left:25px;
+    background: url('/static/images/menu/mytable.gif') left center no-repeat;
+}
+#infobar #infobar_func_right a.help
+{
+    padding-left:22px;
+    background: url('/static/help/style/images/help.gif') left center no-repeat;
+}
+#infobar #infobar_func_right a.control_panel
+{
+    padding-left:25px;
+    background: url('/static/images/menu/theme.gif') left center no-repeat;
+}
+#infobar #infobar_func_right a.logout
+{
+    padding-left:20px;
+    background: url('/static/images/login.gif') left center no-repeat;
+}
+#infobar #infobar_func_right #hide_top_btn
+{
+    width:10px;
+    background: url('call_up.png') center center no-repeat;
+}
+#infobar #infobar_func_right #hide_top_btn.down
+{
+    background: url('call_down.png') center center no-repeat;
+}
+
+/* 主操作区域 */
+#center
+{
+    position:relative;
+    overflow:hidden;
+    padding-left:250px;
+}
+#center.hide_ipanel
+{
+    padding-left:0px;
+}
+#center #center_left
+{
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:250px;
+    height:100%;
+}
+#center #center_right
+{
+    height:100%;
+}
+
+/* 宣传栏 */
+#hero_bar {
+   width:100%;
+   height:22px;
+   line-height:22px;
+   color:#565050;
+   border-top:1px #a3a7aa solid;
+   background:#d9e5f1;
+   overflow:hidden;
+   position:relative;
+}
+#hero_bar #tongdainfo{
+    position:absolute;
+    left:30px;
+    top:0px;
+    z-index:5;
+    height:22px;
+    line-height:22px;
+}
+#hero_bar #tongdainfo a{
+    color:#292826;
+    text-decoration:none;
+}
+#hero_bar #tongdainfo a:hover{
+    color:#ff0000;
+    text-decoration:underline;
+}
+#hero_bar #tongdainfo a.red{
+    color:#ff0000;
+}
+#hero_bar #tongdainfo a.blue{
+    color:#3151c2;
+}
+#hero_bar #tongdainfo a span{
+    display:inline-block;
+    padding-left:10px;
+    padding-right:15px;
+}
+#hero_bar #tongdainfo a.first_link{
+}
+#hero_bar #tongdainfo a.first_link span{
+}
+#hero_bar #reg_area{
+    position:absolute;
+    right:30px;
+    top:0px;
+    z-index:10;
+    height:22px;
+    line-height:22px;
+    background:#d9e5f1;
+    padding-left:20px;
+}
+#hero_bar #reg_area a.reg{
+    display:inline-block;
+    height:19px;
+    line-height:19px;
+    padding-left:5px;
+    background:url('reg_btn_bg.png') left top no-repeat;
+    text-decoration:none;
+    color:#fff;
+}
+#hero_bar #reg_area a.reg span{
+    display:inline-block;
+    padding-left:20px;
+    padding-right:25px;
+    text-align:center;
+    background:url('reg_btn_bg.png') right bottom no-repeat;
+}
+
+/* 状态栏 */
+#south
+{
+    width:100%;
+    height:25px;
+    line-height:25px;
+    overflow:hidden;
+    color:#000;
+    background:#f4f9fb url("statusbar.png") left top repeat-x;
+}
+
+#south table
+{
+    width:100%;
+    height:25px;
+    font-size:12px;
+    border:0px;
+    border-collapse:collapse;
+}
+#south table td.left
+{
+    width:120px;
+    padding-left:10px;
+    text-align:center;
+}
+#south table td.left span
+{
+    cursor:pointer;
+}
+#south table td.left div
+{
+    cursor:pointer;
+}
+#south table td.left div span
+{
+    color:#0066cc;
+    font-weight:bold;
+    cursor:pointer;
+    padding:0px 5px;
+}
+#south table td.center
+{
+}
+#south table td.center #status_text
+{
+    height:25px;
+    line-height:25px;
+    text-align:center;
+    font-weight:bold;
+    overflow:hidden;
+}
+
+#south table td.reg
+{
+    width:180px;
+    text-align:right;
+    cursor:pointer;
+}
+#south table td.reg .days
+{
+    color:#ff0000;
+}
+
+#south table td.right
+{
+    width:140px;
+    padding-right:10px;
+    text-align:right;
+    cursor:pointer;
+}
+
+#on_status_list
+{
+    position:absolute;
+    z-index:100;
+    display:none;
+    width:60px;
+    font-weight:normal;
+    border-top:0;
+    border: #124164 1px solid;
+    background:#FFFFFF;
+    color:#000000;
+}
+#on_status_list #on_status_ul
+{
+}
+#on_status_list #on_status_ul li
+{
+    list-style-type: none;
+}
+#on_status_list #on_status_ul li a
+{
+    display: block;
+    height:25px;
+    line-height:25px;
+    text-decoration:none;
+}
+
+#on_status_list #on_status_1, .on_status_1{padding-left:20px;background:url("/static/images/org/U01.png") left center no-repeat;}
+#on_status_list #on_status_2, .on_status_2{padding-left:20px;background:url("/static/images/org/U02.png") left center no-repeat;}
+#on_status_list #on_status_3, .on_status_3{padding-left:20px;background:url("/static/images/org/U03.png") left center no-repeat;}
