@@ -1,0 +1,75 @@
+<table id="tab1" width="100%" style="text-align: center;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;">第一类客户信息</td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">1. 代理商/经销商基本信息</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">代理商/经销商名称</td>
+        <td class="TableData" width="18%">{{ customer_data.get('name1', '') }}</td>
+        <td class="TableContent" width="15%">客户代码</td>
+        <td class="TableData" width="18%">{{ customer_data.get('customer_id1', '') }}</td>
+        <td class="TableContent" width="15%">代理商/经销商所在国</td>
+        <td class="TableData">{{ customer_data.get('country1', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">{{ customer_data.get('contact1', '') }}</td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">{{ customer_data.get('phone1', '') }}</td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">{{ customer_data.get('email1', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">代理商/经销商简介</td>
+        <td class="TableData" colspan="5">{{ customer_data.get('introduction1', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left">2. 招标方/业主方基本信息（投标项目必填）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">招标方/业主方名称</td>
+        <td class="TableData">{{ customer_data.get('name2', '') }}</td>
+        <td class="TableContent">客户代码</td>
+        <td class="TableData">{{ customer_data.get('customer_id2', '') }}</td>
+        <td class="TableContent">招标方/业主方所在国</td>
+        <td class="TableData">{{ customer_data.get('country2', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">{{ customer_data.get('contact2', '') }}</td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">{{ customer_data.get('phone2', '') }}</td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">{{ customer_data.get('email2', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">招标方/业主方简介</td>
+        <td class="TableData" colspan="5">{{ customer_data.get('introduction2', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableHeader" colspan="8" style="text-align:left;color:red">3. 买方信息（必填）</td>
+    </tr>
+    <tr>
+        <td class="TableContent">买方名称</td>
+        <td class="TableData">{{ customer_data.get('name3', '') }}</td>
+        <td class="TableContent">客户代码</td>
+        <td class="TableData">{{ customer_data.get('customer_id3', '') }}</td>
+        <td class="TableContent">买方所在国</td>
+        <td class="TableData">{{ customer_data.get('country3', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">联系人</td>
+        <td class="TableData">{{ customer_data.get('contact3', '') }}</td>
+        <td class="TableContent">联系人电话</td>
+        <td class="TableData">{{ customer_data.get('phone3', '') }}</td>
+        <td class="TableContent">联系人邮箱</td>
+        <td class="TableData">{{ customer_data.get('email3', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">买方简介</td>
+        <td class="TableData" colspan="5">{{ customer_data.get('introduction3', '') }}</td>
+    </tr>
+</table>
+

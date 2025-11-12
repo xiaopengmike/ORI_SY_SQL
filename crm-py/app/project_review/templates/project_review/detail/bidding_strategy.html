@@ -1,0 +1,106 @@
+<table id="tab3" width="100%" style="text-align: left;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;text-align:center">第三类 投标策略（投标项目必填）</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">1.标号（Tender No.）</td>
+        <td class="TableData" width="35%">{{ bidding.get('tender_no', '') }}</td>
+        <td class="TableContent" width="15%">2.投标截止时间</td>
+        <td class="TableData">{{ bidding.get('end_date', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">3.项目名称（投标规模）</td>
+        <td class="TableData" colspan="3">{{ bidding.get('project_name', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">4. 招标/合同主要条款说明</td>
+        <td class="TableData" colspan="3">{{ bidding.get('tender', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">5.投标规则说明</td>
+        <td class="TableData" colspan="3">{{ bidding.get('bid_rule', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">6.招标规则</td>
+        <td class="TableData" colspan="3">{{ bidding.get('biding_rule', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">7.投标/履约/质保金要求</td>
+        <td class="TableData" colspan="3">{{ bidding.get('effective_demand', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">8.投标资格要求</td>
+        <td class="TableData" colspan="3">{{ bidding.get('tender_demand', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">9.投标文件要求</td>
+        <td class="TableData" colspan="3">{{ bidding.get('file_demand', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">10.参与方式</td>
+        <td class="TableData" colspan="3">{{ bidding.get('format', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">11. 如果通过经销商投标，请说明</td>
+        <td class="TableData" colspan="3">{{ bidding.get('reason', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">12.招标方/业主采购流程说明</td>
+        <td class="TableData" colspan="3">{{ bidding.get('process_description', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">13.付款流程</td>
+        <td class="TableData" colspan="3">{{ bidding.get('pay_process', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">14.付款能源</td>
+        <td class="TableData" colspan="3">{{ bidding.get('pay_energy', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">15.合作伙伴分析</td>
+        <td class="TableData" colspan="3">{{ bidding.get('partner_analysis', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">16.关系</td>
+        <td class="TableData" colspan="3">{{ bidding.get('relationship', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">17.市场分析</td>
+        <td class="TableData" colspan="3">{{ bidding.get('market_analysis', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">18.策略分析</td>
+        <td class="TableData" colspan="3">{{ bidding.get('strategy_analysis', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">19.可行性分析</td>
+        <td class="TableData" colspan="3">{{ bidding.get('feasibility_analysis', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">20.成功关键</td>
+        <td class="TableData" colspan="3">{{ bidding.get('key_to_success', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">21.个人意见</td>
+        <td class="TableData" colspan="3">{{ bidding.get('personal_opinion', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">22.项目级别</td>
+        <td class="TableData">
+            {% if select_arr and 'project_level' in select_arr %}
+            {% for item in select_arr['project_level'] %}
+            {% if bidding.get('project_level') == item.get('paras_value') %}{{ item.get('paras_desc', '') }}{% endif %}
+            {% endfor %}
+            {% endif %}
+        </td>
+        <td class="TableContent">23.是否有项目经理</td>
+        <td class="TableData">
+            {% if select_arr and 'yes_or_no' in select_arr %}
+            {% for item in select_arr['yes_or_no'] %}
+            {% if bidding.get('have_manager') == item.get('paras_value') %}{{ item.get('paras_desc', '') }}{% endif %}
+            {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+

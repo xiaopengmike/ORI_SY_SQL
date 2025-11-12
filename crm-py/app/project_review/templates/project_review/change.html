@@ -1,0 +1,148 @@
+{% extends "project_review/add.html" %}
+
+{% block title %}变更项目评审 - CRM系统{% endblock %}
+
+{% block page_title %}变更项目评审{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form id="mainForm" class="layui-form">
+        <div class="button-area">
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Change">提交</button>
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="ChangeSave">保存</button>
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.close();return false;">关闭</button>
+        </div>
+        
+        <input type="hidden" id="form_id" name="form_id" />
+        <input type="hidden" name="related_id" value="{{ related_id }}" />
+        <input type="hidden" name="from_id" value="{{ main.get('form_id', '') }}" />
+        <input type="hidden" name="fieldName" value="form_id" />
+        <input type="hidden" name="tableName" value="inhe_project_main" />
+        <input type="hidden" name="flowType" value="lxdj" />
+        <input type="hidden" name="reset" value="day" />
+        <input type="hidden" name="digit" value="2" />
+        <input type="hidden" id="type" name="type" value="{{ main.get('type', '') }}_change" />
+        <input type="hidden" name="step" id="step" value="1" />
+        <input type="hidden" name="user_bu" id="user_bu" value="{{ main.get('user_bu', '') }}" />
+        <input type="hidden" name="deptName" value="{{ dept_name }}" />
+        <input type="hidden" name="create_user_bu" value="{{ main.get('create_user_bu', '') }}" />
+        
+        <table width="100%" align="center">
+            <tr>
+                <td align="center">
+                    <img alt="" src="/static/images/{{ company }}/project_review_{{ company }}.jpg" style="width: 34%; height: auto;" />
+                </td>
+            </tr>
+        </table>
+        
+        <br />
+        <table class="TableBlock" width="100%" align="center">
+            <tr>
+                <td class="TableContent" width="15%" align="right">起草部门：</td>
+                <td class="TableData" width="18%">{{ dept_name }}</td>
+                <td class="TableContent" width="15%" align="right">起草人：</td>
+                <td class="TableData" width="18%">{{ user_name }}</td>
+                <td class="TableContent" width="15%" align="right">日期：</td>
+                <td class="TableData" id="currentDate"></td>
+            </tr>
+            <tr>
+                <td class="TableContent" width="15%">标题：</td>
+                <td class="TableData" colspan="5">
+                    <input type="text" name="title" id="title" class="layui-input" value="{{ main.get('title', '') }}" />
+                </td>
+            </tr>
+            <tr>
+                <td class="TableContent">备注：</td>
+                <td class="TableData" colspan="5">
+                    <textarea class="layui-textarea" name="remark" id="remark">{{ main.get('remark', '') }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    {% include "project_review/form_modules/customer_info.html" %}
+                    {% include "project_review/form_modules/project_situation.html" %}
+                    {% include "project_review/form_modules/bidding_strategy.html" %}
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+<script>
+$(function() {
+    // 设置当前日期
+    var now = new Date();
+    var dateStr = now.getFullYear() + '-' + 
+        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+        String(now.getDate()).padStart(2, '0') + ' ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+    $('#currentDate').text(dateStr);
+    
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 客户选择变化时，自动填充客户信息
+        form.on('select(customer_name)', function(data) {
+            var cusId = data.value;
+            var cusCount = data.elem.title;
+            var url = "/project_review/action?action=Retrieve";
+            $.post(url, {
+                dataType: 'getCustomerDetail',
+                id: cusId
+            }, function(res) {
+                if (res.code == '200') {
+                    var data = res.data;
+                    $("#customer_id" + cusCount).val(data.short_name || '');
+                    $("#country" + cusCount).val(data.country_desc || '');
+                    $("#contact" + cusCount).val(data.contact_name || '');
+                    $("#phone" + cusCount).val(data.contact_phone || '');
+                    $("#email" + cusCount).val(data.email || '');
+                    var text = (data.summarize || '').replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
+                    $("#introduction" + cusCount).val(text);
+                }
+                form.render('select');
+            });
+        });
+        
+        // 表单提交
+        form.on('submit(submit)', function(data) {
+            var actionType = $(data.elem).attr('actionType');
+            submitForm(actionType);
+            return false;
+        });
+    });
+});
+
+function submitForm(actionType) {
+    var formData = $('#mainForm').serialize();
+    formData += '&action=' + (actionType == 'Change' ? 'Change' : 'ChangeSave');
+    
+    $.ajax({
+        url: '/project_review/action',
+        type: 'POST',
+        data: formData,
+        success: function(res) {
+            if (res.code == '200') {
+                layui.layer.msg('操作成功');
+                if (actionType == 'Change') {
+                    setTimeout(function() {
+                        window.close();
+                    }, 1000);
+                }
+            } else {
+                layui.layer.msg(res.msg || '操作失败');
+            }
+        },
+        error: function() {
+            layui.layer.msg('操作失败');
+        }
+    });
+}
+</script>
+{% endblock %}
+

@@ -1,0 +1,143 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}项目评审详情 - CRM系统{% endblock %}
+
+{% block page_title %}项目评审详情{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/layui@2.8.0/dist/css/layui.css">
+<style>
+    .form-container {
+        background: white;
+        padding: 20px;
+        margin: 10px auto;
+        max-width: 95%;
+        border-radius: 4px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .TableContent {
+        background-color: #f2f2f2;
+        padding: 8px;
+        text-align: right;
+        width: 15%;
+    }
+    .TableData {
+        padding: 8px;
+        text-align: left;
+    }
+    .TableHeader {
+        background-color: #f2f2f2;
+        padding: 8px;
+        font-weight: bold;
+    }
+    .button-area {
+        text-align: center;
+        margin: 20px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form id="mainForm" class="layui-form">
+        <div class="button-area">
+            {% if operate == 'approve' and approve_info %}
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Approve">提交</button>
+            {% if cur_operate == 'approve' %}
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Back">退回</button>
+            {% endif %}
+            {% endif %}
+            <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="window.close();return false;">关闭</button>
+        </div>
+        
+        <input type="hidden" name="type" id="type" value="{{ main.get('type', '') }}" />
+        <input type="hidden" name="user_bu" id="user_bu" value="{{ main.get('user_bu', '') }}" />
+        <input type="hidden" name="form_id" id="form_id" value="{{ main.get('form_id', '') }}" />
+        <input type="hidden" name="step" id="step" value="{{ step }}" />
+        
+        <table width="100%" align="center">
+            <tr>
+                <td align="center">
+                    <img alt="" src="/static/images/{{ main.get('user_bu', '') }}/{{ main.get('type', '') }}_{{ main.get('user_bu', '') }}.jpg" style="width: 34%; height: auto;" />
+                </td>
+            </tr>
+        </table>
+        
+        <br />
+        <table class="TableBlock" width="100%" align="center">
+            <tr>
+                <td class="TableContent" width="15%" align="right">起草部门：</td>
+                <td class="TableData" width="18%">{{ main.get('deptName', '') }}</td>
+                <td class="TableContent" width="15%" align="right">起草人：</td>
+                <td class="TableData" width="18%">{{ main.get('createUserName', '') }}</td>
+                <td class="TableContent" width="15%" align="right">日期：</td>
+                <td class="TableData">{{ main.get('write_time', '') }}</td>
+            </tr>
+            <tr>
+                <td class="TableContent">标题：</td>
+                <td class="TableData" colspan="5">{{ main.get('title', '') }}</td>
+            </tr>
+            <tr>
+                <td class="TableContent">备注：</td>
+                <td class="TableData" colspan="5">{{ main.get('remark', '') }}</td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    {% include "project_review/detail/customer_info.html" %}
+                    {% include "project_review/detail/project_situation.html" %}
+                    {% include "project_review/detail/bidding_strategy.html" %}
+                    {% if main.get('status') == 'Y' and operate == 'detail' %}
+                        {% include "project_review/detail/approve_opinion.html" %}
+                    {% else %}
+                        {% include "project_review/detail/approve_opinion.html" %}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+<script>
+layui.use(['form', 'layer'], function() {
+    var form = layui.form;
+    var layer = layui.layer;
+    
+    // 表单提交
+    form.on('submit(submit)', function(data) {
+        var actionType = $(data.elem).attr('actionType');
+        submitForm(actionType);
+        return false;
+    });
+});
+
+function submitForm(actionType) {
+    var formData = $('#mainForm').serialize();
+    formData += '&action=' + (actionType == 'Approve' ? 'Approve' : 'Back');
+    
+    $.ajax({
+        url: '/project_review/action',
+        type: 'POST',
+        data: formData,
+        success: function(res) {
+            if (res.code == '200') {
+                layui.layer.msg('操作成功');
+                setTimeout(function() {
+                    window.close();
+                }, 1000);
+            } else {
+                layui.layer.msg(res.msg || '操作失败');
+            }
+        },
+        error: function() {
+            layui.layer.msg('操作失败');
+        }
+    });
+}
+</script>
+{% endblock %}
+

@@ -659,4 +659,145 @@ class QueryService:
             'page': page,
             'page_size': page_size
         }
+    
+    def query_project_review_list(self, param):
+        """
+        查询项目评审列表
+        对应原PHP的get_data.php和list.php的查询逻辑
+        
+        Args:
+            param (dict): 查询参数字典
+            
+        Returns:
+            dict: 包含数据和总数的字典
+        """
+        user_id = get_login_user_id()
+        dept_id = get_login_dept_id()
+        
+        # 获取通用参数
+        from app.common.data_model import DataModel
+        data_model = DataModel()
+        select_param = {
+            'is_used': '1',
+            'type': 'project_star,crm_process_sort'
+        }
+        select_arr = data_model.get_common_param(select_param)
+        
+        # 处理project_star
+        project_star = {}
+        star_icon = {}
+        if 'project_star' in select_arr and select_arr['project_star']:
+            for co in select_arr['project_star']:
+                project_star[co['paras_value']] = co.get('paras_desc', '')
+                star_icon[co['paras_value']] = co.get('extra', '')
+        
+        # 处理company
+        company = {}
+        if 'crm_process_sort' in select_arr and select_arr['crm_process_sort']:
+            for cc in select_arr['crm_process_sort']:
+                company[cc['paras_value']] = cc.get('paras_desc', '')
+        
+        # 构建WHERE条件
+        where_clauses = ["1=1"]
+        sql_params = []
+        
+        # 表单ID
+        if param.get('form_id'):
+            where_clauses.append("m.form_id LIKE %s")
+            sql_params.append(f"%{param['form_id']}%")
+        
+        # 项目代码
+        if param.get('project_code'):
+            where_clauses.append("m.project_code LIKE %s")
+            sql_params.append(f"%{param['project_code']}%")
+        
+        # 国家
+        if param.get('country'):
+            where_clauses.append("p.country = %s")
+            sql_params.append(param['country'])
+        
+        # 状态
+        if param.get('status'):
+            where_clauses.append("m.status = %s")
+            sql_params.append(param['status'])
+        
+        # 公司
+        if param.get('user_bu'):
+            where_clauses.append("m.user_bu = %s")
+            sql_params.append(param['user_bu'])
+        
+        # 类型 - 固定为project_review
+        where_clauses.append("m.type = %s")
+        sql_params.append('project_review')
+        
+        # 权限控制 - 只能查看自己创建的项目
+        where_clauses.append("m.user_id = %s")
+        sql_params.append(user_id)
+        
+        # 排序
+        from app.utils.sql_validator import sanitize_field_name
+        order_by = "ORDER BY m.id DESC"
+        if param.get('sort_field') and param.get('sort_way'):
+            sort_field = param['sort_field']
+            sort_way = param['sort_way'].upper()
+            if '.' in sort_field:
+                table_alias, field = sort_field.split('.', 1)
+                sanitize_field_name(field)
+                sort_field = f"{table_alias}.`{field}`"
+            else:
+                sanitize_field_name(sort_field)
+                sort_field = f"`{sort_field}`"
+            if sort_way not in ['ASC', 'DESC']:
+                sort_way = 'ASC'
+            order_by = f"ORDER BY {sort_field} {sort_way}, m.id DESC"
+        
+        # 分页
+        try:
+            page = max(1, int(param.get('page', 1)))
+        except (ValueError, TypeError):
+            page = 1
+        try:
+            page_size = max(1, min(100, int(param.get('page_size', 10))))
+        except (ValueError, TypeError):
+            page_size = 10
+        limit = f"LIMIT {(page - 1) * page_size}, {page_size}"
+        
+        # 查询总数
+        count_sql = f"""
+            SELECT COUNT(*) AS cnt 
+            FROM inhe_project_main m
+            LEFT JOIN inhe_project_info p ON p.form_id = m.form_id
+            WHERE {' AND '.join(where_clauses)}
+        """
+        count_result = Database.execute_query(count_sql, tuple(sql_params))
+        total = count_result[0]['cnt'] if count_result else 0
+        
+        # 查询数据
+        data_sql = f"""
+            SELECT m.*,
+                   u.user_name AS create_user_name,
+                   d.dept_name AS dept_name,
+                   p.country AS country
+            FROM inhe_project_main m
+            LEFT JOIN user u ON u.user_id = m.user_id
+            LEFT JOIN department d ON d.dept_id = m.organ_id
+            LEFT JOIN inhe_project_info p ON p.form_id = m.form_id
+            WHERE {' AND '.join(where_clauses)}
+            {order_by}
+            {limit}
+        """
+        data_result = Database.execute_query(data_sql, tuple(sql_params))
+        
+        # 添加额外字段
+        for item in data_result:
+            item['project_star_desc'] = project_star.get(item.get('project_star', ''), '')
+            item['star_icon'] = star_icon.get(item.get('project_star', ''), '')
+            item['company'] = company.get(item.get('user_bu', ''), '')
+        
+        return {
+            'list': data_result,
+            'total': total,
+            'page': page,
+            'page_size': page_size
+        }
 

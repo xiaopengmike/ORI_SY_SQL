@@ -1,0 +1,195 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}项目评审列表 - CRM系统{% endblock %}
+
+{% block page_title %}项目评审列表{% endblock %}
+
+{% block extra_css %}
+<style>
+    .drop-btn {
+        cursor: pointer;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        background-color: lightgray;
+        min-width: 154px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-content a:hover {
+        background-color: #027AFF;
+        color: white;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    .query-form {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form id="tab" class="layui-form">
+    <input type="hidden" id="type" name="type" value="project_review" />
+    <input type="hidden" id="sort_way" name="sort_way" value="" />
+    <input type="hidden" id="sort_field" name="sort_field" value="" />
+    <input type="hidden" id="page_size" name="page_size" value="10" />
+    <input type="hidden" id="checkedIds" name="checkedIds" value="" />
+    
+    <div class="query-form">
+        <table style="width: 100%;">
+            <tr>
+                <td align="right" width="10%">流程单号：</td>
+                <td width="15%">
+                    <input type="text" name="form_id" id="form_id" class="layui-input">
+                </td>
+                <td align="right" width="10%">项目代码：</td>
+                <td width="15%">
+                    <input type="text" name="project_code" id="project_code" class="layui-input">
+                </td>
+                <td align="right" width="10%">国家：</td>
+                <td width="15%">
+                    <input type="text" name="country" id="country" class="layui-input">
+                </td>
+                <td align="right" width="10%">状态：</td>
+                <td width="15%">
+                    <div class="layui-input-inline">
+                        <select id="status" name="status">
+                            <option value=''>请选择</option>
+                            <option value='T'>待提交</option>
+                            <option value='P'>审核中</option>
+                            <option value='Y'>已通过</option>
+                            <option value='N'>退回</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">公司：</td>
+                <td>
+                    <div class="layui-input-inline" style="width: 150px;">
+                        <select id="user_bu" name="user_bu" lay-verify="" lay-search>
+                            <option value=''>请选择</option>
+                            {% for key, value in crm_process_sort.items() %}
+                            <option value="{{ key }}">{{ value.paras_desc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+                <td colspan="6" align="right">
+                    <button class="layui-btn layui-btn-oa layui-btn-sm" onclick="loadList('1');return false;">查询</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<div id="tableList" style="width:100%;text-align:center;"></div>
+
+<script>
+layui.use(['form', 'layer'], function() {
+    var layer = layui.layer,
+        form = layui.form;
+    loadList('1');
+    form.render();
+});
+
+function loadList(page) {
+    var formData = {
+        type: 'project_review',
+        page: page,
+        page_size: $('#page_size').val(),
+        form_id: $('#form_id').val(),
+        project_code: $('#project_code').val(),
+        country: $('#country').val(),
+        status: $('#status').val(),
+        user_bu: $('#user_bu').val()
+    };
+    
+    $.ajax({
+        url: '/project_review/query',
+        type: 'POST',
+        data: formData,
+        success: function(res) {
+            if (res.code == '200') {
+                renderTable(res.data);
+            } else {
+                layer.msg(res.msg || '查询失败');
+            }
+        },
+        error: function() {
+            layer.msg('查询失败');
+        }
+    });
+}
+
+function renderTable(data) {
+    var html = '<table class="layui-table">';
+    html += '<thead><tr>';
+    html += '<th>流程单号</th><th>项目代码</th><th>标题</th><th>国家</th><th>状态</th><th>公司</th><th>创建人</th><th>创建时间</th><th>操作</th>';
+    html += '</tr></thead><tbody>';
+    
+    if (data.list && data.list.length > 0) {
+        for (var i = 0; i < data.list.length; i++) {
+            var item = data.list[i];
+            html += '<tr>';
+            html += '<td>' + (item.form_id || '') + '</td>';
+            html += '<td>' + (item.project_code || '') + '</td>';
+            html += '<td>' + (item.title || '') + '</td>';
+            html += '<td>' + (item.country || '') + '</td>';
+            html += '<td>' + getStatusText(item.status) + '</td>';
+            html += '<td>' + (item.company || '') + '</td>';
+            html += '<td>' + (item.create_user_name || '') + '</td>';
+            html += '<td>' + (item.write_time || '') + '</td>';
+            html += '<td><a href="/project_review/detail?id=' + item.form_id + '">查看</a></td>';
+            html += '</tr>';
+        }
+    } else {
+        html += '<tr><td colspan="9" align="center">暂无数据</td></tr>';
+    }
+    
+    html += '</tbody></table>';
+    
+    // 分页
+    if (data.total > 0) {
+        var totalPages = Math.ceil(data.total / data.page_size);
+        html += '<div style="text-align: right; margin-top: 10px;">';
+        html += '共 ' + data.total + ' 条记录，第 ' + data.page + ' / ' + totalPages + ' 页';
+        if (data.page > 1) {
+            html += ' <a href="javascript:loadList(' + (data.page - 1) + ')">上一页</a>';
+        }
+        if (data.page < totalPages) {
+            html += ' <a href="javascript:loadList(' + (data.page + 1) + ')">下一页</a>';
+        }
+        html += '</div>';
+    }
+    
+    $('#tableList').html(html);
+}
+
+function getStatusText(status) {
+    var statusMap = {
+        'T': '待提交',
+        'P': '审核中',
+        'Y': '已通过',
+        'N': '退回'
+    };
+    return statusMap[status] || status;
+}
+</script>
+{% endblock %}
+

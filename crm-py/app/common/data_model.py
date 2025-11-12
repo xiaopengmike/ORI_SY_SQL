@@ -218,6 +218,55 @@ class DataModel:
         """
         result = Database.execute_query(sql, (user_id,))
         return result[0]['cnt'] > 0 if result else False
+    
+    def get_temp_code(self, param):
+        """
+        获取临时项目代码列表
+        对应原PHP的DataModel::getTempCode()
+        
+        Args:
+            param (dict): 参数字典，包含user_id等
+            
+        Returns:
+            list: 临时项目代码列表
+        """
+        where_clauses = ["1=1"]
+        params = []
+        
+        if param.get('user_id'):
+            where_clauses.append("k.user_id = %s")
+            params.append(param['user_id'])
+        
+        sql = f"""
+            SELECT k.* 
+            FROM inhe_temp_project_code k 
+            WHERE {' AND '.join(where_clauses)}
+            ORDER BY k.id DESC
+        """
+        result = Database.execute_query(sql, tuple(params))
+        return result
+    
+    def get_customer_list2(self):
+        """
+        获取客户列表（所有客户，用于详情页选择）
+        对应原PHP的DataModel::getCustomerList2()
+        
+        Returns:
+            dict: 客户ID到客户名称的字典映射
+        """
+        sql = """
+            SELECT k.id, k.customer_name 
+            FROM inhe_customer_data k 
+            ORDER BY k.customer_name
+        """
+        result = Database.execute_query(sql)
+        
+        # 转换为字典格式
+        customer_dict = {}
+        for item in result:
+            customer_dict[str(item['id'])] = item.get('customer_name', '')
+        
+        return customer_dict
 
 
 

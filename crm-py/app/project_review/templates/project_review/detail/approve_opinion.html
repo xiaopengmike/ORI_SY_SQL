@@ -1,0 +1,43 @@
+<table id="tab4" width="100%" style="text-align: left;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;text-align:center">审批意见</td>
+    </tr>
+    {% if approve_data %}
+    {% for item in approve_data %}
+    <tr>
+        <td class="TableContent">审批步骤：</td>
+        <td class="TableData">{{ item.get('step', '') }}</td>
+        <td class="TableContent">审批人：</td>
+        <td class="TableData">{{ item.get('approve_user_name', '') }}</td>
+        <td class="TableContent">审批时间：</td>
+        <td class="TableData">{{ item.get('approve_time', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">审批意见：</td>
+        <td class="TableData" colspan="5">{{ item.get('opinion', '') }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    {% if operate == 'approve' and approve_info %}
+    <tr>
+        <td class="TableContent">审批意见：</td>
+        <td class="TableData" colspan="5">
+            <textarea class="layui-textarea" name="opinion" id="opinion" lay-verify="required"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">项目星级：</td>
+        <td class="TableData">
+            <select id="project_star" name="project_star">
+                <option value=''>请选择</option>
+                {% if project_star %}
+                {% for key, value in project_star.items() %}
+                <option value="{{ key }}">{{ value.get('paras_desc', '') }}</option>
+                {% endfor %}
+                {% endif %}
+            </select>
+        </td>
+    </tr>
+    {% endif %}
+</table>
+

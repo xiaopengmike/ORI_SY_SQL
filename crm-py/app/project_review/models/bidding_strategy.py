@@ -164,4 +164,85 @@ class BiddingStrategy:
         sql = "DELETE FROM inhe_bidding_strategy WHERE form_id = %s"
         Database.execute_update(sql, (form_id,))
         return True
+    
+    @staticmethod
+    def change_bidding_strategy(param, form_id, related_id):
+        """
+        变更投标策略（创建新记录）
+        对应原PHP的ActionModel::changeBiddingStrategy()
+        
+        Args:
+            param (dict): 变更参数字典
+            form_id (str): 新表单ID
+            related_id (str): 原表单ID
+            
+        Returns:
+            bool: 变更是否成功
+        """
+        # 这个方法主要通过FormModel的changeMainData调用
+        # 这里只做基础验证
+        if not form_id or not related_id:
+            return False
+        return True
+    
+    @staticmethod
+    def update_main_data(param_insert, condition):
+        """
+        通用更新方法（用于FormModel调用）
+        
+        Args:
+            param_insert (dict): 更新参数字典
+            condition (dict): 条件字典
+            
+        Returns:
+            bool: 更新是否成功
+        """
+        form_id = condition.get('form_id', '')
+        if not form_id:
+            return False
+        
+        # 构建更新字段
+        update_fields = []
+        params = []
+        
+        for key, value in param_insert.items():
+            if value is not None:
+                update_fields.append(f"{key} = %s")
+                params.append(value)
+        
+        if not update_fields:
+            return False
+        
+        params.append(form_id)
+        sql = f"UPDATE inhe_bidding_strategy SET {', '.join(update_fields)} WHERE form_id = %s"
+        Database.execute_update(sql, tuple(params))
+        return True
+    
+    @staticmethod
+    def change_main_data(param_insert, condition):
+        """
+        变更主表数据（创建新记录）
+        
+        Args:
+            param_insert (dict): 插入参数字典
+            condition (dict): 条件字典（related_id）
+            
+        Returns:
+            bool: 变更是否成功
+        """
+        related_id = condition.get('form_id', '')
+        if not related_id:
+            return False
+        
+        # 构建插入字段和值
+        fields = list(param_insert.keys())
+        placeholders = ['%s'] * len(fields)
+        values = [param_insert[key] for key in fields]
+        
+        sql = f"""
+            INSERT INTO inhe_bidding_strategy ({', '.join(fields)})
+            VALUES ({', '.join(placeholders)})
+        """
+        Database.execute_insert(sql, tuple(values))
+        return True
 

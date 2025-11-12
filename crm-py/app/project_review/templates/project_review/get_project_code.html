@@ -1,0 +1,114 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}获取项目代码 - CRM系统{% endblock %}
+
+{% block page_title %}获取项目代码{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form id="mainForm" class="layui-form">
+        <input type="hidden" name="dataType" id="form_type" value="verifyProjectCode" />
+        <input type="hidden" name="user_bu" id="user_bu" value="{{ company }}" />
+        
+        <table class="layui-table" border="0" cellpadding="0" cellspacing="10">
+            <tr>
+                <td nowrap class="layui-bg-gray" width="25%">正式系统项目代码</td>
+                <td>
+                    <div class="layui-input-inline">
+                        <input type="text" name="projectCode" id="project_code" lay-verify="required" class="layui-input" placeholder="请输入项目代码" autocomplete="off" minlength="3"/>
+                    </div>
+                    <div class="layui-input-inline">
+                        <input id="createCode" name="createCode" value="获取" type="button" class="layui-btn layui-btn-oa" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="layui-bg-gray">临时项目代码</td>
+                <td>
+                    <input type="text" name="temp_project_code" id="temp_project_code" class="layui-input" placeholder="请输入临时项目代码" autocomplete="off" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center" style="padding: 5px;">
+                    <button type="button" class="layui-btn layui-btn-oa layui-btn-sm" lay-submit lay-filter="submit" actionType="Retrieve">提交</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/layui@2.8.0/dist/layui.js"></script>
+<script>
+layui.use(['form', 'layer'], function() {
+    var form = layui.form;
+    var layer = layui.layer;
+    
+    form.on('submit(submit)', function(data) {
+        var actionType = $(data.elem).attr("actionType");
+        var url = "/project_review/action?action=" + actionType;
+        $.post(url, $("#mainForm").serializeArray(), function(res) {
+            if (res.code == "200") {
+                if (res.data && res.data.code == '200') {
+                    layer.msg(res.data.data);
+                    return;
+                }
+                layer.alert("提交成功!", {
+                    icon: 1
+                }, function(index, layero) {
+                    // 返回项目代码
+                    var project_code = $("#project_code").val();
+                    var temp_project_code = $("#temp_project_code").val();
+                    if (parent.returnProjectCode) {
+                        parent.returnProjectCode(project_code, temp_project_code);
+                    }
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                });
+            } else {
+                layer.alert('提交失败', {
+                    icon: 5
+                });
+            }
+        });
+        return false;
+    });
+    
+    $("#project_code,#temp_project_code").blur(function(){
+        var project_code = $("#project_code").val();
+        var temp_project_code = $("#temp_project_code").val();
+        var url = "/project_review/action?action=Retrieve";
+        $.post(url, {
+            dataType: 'verifyProjectCode',
+            projectCode: project_code,
+            user_bu: $("#user_bu").val(),
+            temp_project_code: temp_project_code
+        }, function(res) {
+            if (res.code == '200') {
+                if (res.data && res.data.code == '200') {
+                    layer.msg(res.data.data);
+                    return;
+                }
+            }
+        });
+    });
+    
+    $('#createCode').on('click', function() {
+        var url = "/project_review/action?action=Retrieve";
+        $.post(url, {
+            dataType: 'getFormalProjectCode',
+            charLength: 3
+        }, function(res) {
+            if (res.code == '200') {
+                $("#project_code").val(res.data);
+                form.render();
+                return false;
+            }
+        });
+    });
+    
+    form.render();
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,120 @@
+<table id="tab2" width="100%" style="text-align: left;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;text-align:center">第二类 项目情况</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">1.系统项目代码</td>
+        <td class="TableData" width="35%">
+            <input type="text" readonly name="project_code" id="project_code" class="layui-input required_field" value="{{ project.get('project_code', '') }}" autocomplete="off" lay-verify="required" />
+            <input type="hidden" readonly name="temp_project_code" id="temp_project_code" class="layui-input" value="{{ project.get('temp_project_code', '') }}" autocomplete="off"  />
+        </td>
+        <td class="TableContent" width="15%">2.项目所在国</td>
+        <td class="TableData">
+            <input type="text" name="country" id="country" class="layui-input" placeholder="请输入项目所在国" value="{{ project.get('country', '') }}" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">3.项目范围（供应和服务内容，如：表计/AMI系统/EPC等）</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="scope" name="scope">{{ project.get('scope', '') }}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">4.是否为投标项目（投标方式只有对竞争性投标方式是针对客户需求的获取方式来判断，不能以经销商固定报价的获取来判断。）</td>
+        <td class="TableData" colspan="3">
+            <div class="layui-input-inline mandatory">
+                <select id="project_type" name="project_type" lay-search >
+                    <option value=''>请选择</option>
+                    {% if select_arr and 'project_type' in select_arr %}
+                    {% for val in select_arr['project_type'] %}
+                    {% if val.get('user_bu') == 'INHENERGY' %}{% continue %}{% endif %}
+                    <option value="{{ val.get('paras_value', '') }}" {% if project.get('project_type') == val.get('paras_value') %}selected{% endif %}>{{ val.get('paras_desc', '') }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">5.样机需求（如有样机需求，请说明样机需求及时间）</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="prototype" name="prototype">{{ project.get('prototype', '') }}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">6.项目潜力（成长性、可持续性和重要性）：</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="potential" name="potential">{{ project.get('potential', '') }}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">7.项目来源（项目背景/社会经济状况）</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="background" name="background">{{ project.get('background', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="background_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">8.EPC项目说明（总承包商和技术能力）：</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="explain_user" name="explain_user">{{ project.get('explain_user', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="explain_user_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">9.EPC项目说明（项目周期，融资和要要求）</td>
+        <td class="TableData">
+            <textarea class="layui-textarea" id="explain_project" name="explain_project">{{ project.get('explain_project', '') }}</textarea>
+        </td>
+        <td class="TableContent" width="15%">添加附件</td>
+        <td class="TableData">
+            <input id="explain_project_attach" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent" colspan="4">10.项目涉及产品及市场参考价格及客户目标价格</td>
+    </tr>
+    {% if product_detail_types %}
+    {% for product_type in product_detail_types %}
+    <tr>
+        <td class="TableContent" colspan="4">{{ product_type }}</td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <table id="tab21" width="100%">
+                <tr class="TableContent" style="text-align: center;">
+                    <td>项目涉及产品</td>
+                    <td>业务参考价格</td>
+                    <td>历史投/中标价格</td>
+                    <td>供应商/标准</td>
+                    <td>预计数量</td>
+                    <td>操作</td>
+                </tr>
+                <tr class="project-detail-row" data-type="{{ product_type }}">
+                    <td><input type="text" name="product1" class="layui-input" /></td>
+                    <td><input type="text" name="price1" class="layui-input" /></td>
+                    <td><input type="text" name="first_price1" class="layui-input" /></td>
+                    <td><input type="text" name="supplier1" class="layui-input" /></td>
+                    <td><input type="text" name="number1" class="layui-input" /></td>
+                    <td><button type="button" class="layui-btn layui-btn-xs add-detail-row">添加</button></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    <tr>
+        <td class="TableContent">11.服务</td>
+        <td class="TableData" colspan="3">
+            <textarea class="layui-textarea" id="service" name="service">{{ project.get('service', '') }}</textarea>
+        </td>
+    </tr>
+</table>
+<input type="hidden" id="addProjectDetailCount" name="addProjectDetailCount" value="0" />
+

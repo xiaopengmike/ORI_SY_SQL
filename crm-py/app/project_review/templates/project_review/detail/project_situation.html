@@ -1,0 +1,84 @@
+<table id="tab2" width="100%" style="text-align: left;">
+    <tr>
+        <td class="TableHeader" colspan="8" style="color: red;text-align:center">第二类 项目情况</td>
+    </tr>
+    <tr>
+        <td class="TableContent" width="15%">1.系统项目代码</td>
+        <td class="TableData" width="35%">{{ project.get('project_code', '') }}</td>
+        <td class="TableContent" width="15%">2.项目所在国</td>
+        <td class="TableData">{{ project.get('country', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">3.项目范围</td>
+        <td class="TableData" colspan="3">{{ project.get('scope', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">4.是否为投标项目</td>
+        <td class="TableData" colspan="3">
+            {% if select_arr and 'project_type' in select_arr %}
+            {% for val in select_arr['project_type'] %}
+            {% if project.get('project_type') == val.get('paras_value') %}{{ val.get('paras_desc', '') }}{% endif %}
+            {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td class="TableContent">5.样机需求</td>
+        <td class="TableData" colspan="3">{{ project.get('prototype', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">6.项目潜力</td>
+        <td class="TableData" colspan="3">{{ project.get('potential', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">7.项目来源</td>
+        <td class="TableData" colspan="3">{{ project.get('background', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">8.EPC项目说明（总承包商和技术能力）</td>
+        <td class="TableData" colspan="3">{{ project.get('explain_user', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent">9.EPC项目说明（项目周期，融资和要要求）</td>
+        <td class="TableData" colspan="3">{{ project.get('explain_project', '') }}</td>
+    </tr>
+    <tr>
+        <td class="TableContent" colspan="4">10.项目涉及产品及市场参考价格及客户目标价格</td>
+    </tr>
+    {% if project_detail %}
+    {% for type_key, items in project_detail.items() %}
+    <tr>
+        <td class="TableContent" colspan="4">{{ type_key }}</td>
+    </tr>
+    {% if items %}
+    <tr>
+        <td colspan="4">
+            <table width="100%">
+                <tr class="TableContent" style="text-align: center;">
+                    <td>项目涉及产品</td>
+                    <td>业务参考价格</td>
+                    <td>历史投/中标价格</td>
+                    <td>供应商/标准</td>
+                    <td>预计数量</td>
+                </tr>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.get('product', '') }}</td>
+                    <td>{{ item.get('price', '') }}</td>
+                    <td>{{ item.get('first_price', '') }}</td>
+                    <td>{{ item.get('supplier', '') }}</td>
+                    <td>{{ item.get('number', '') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    <tr>
+        <td class="TableContent">11.服务</td>
+        <td class="TableData" colspan="3">{{ project.get('service', '') }}</td>
+    </tr>
+</table>
+
