@@ -74,6 +74,9 @@ def list_page():
         # 获取用户公司（简化处理）- 确保有默认值
         user_bu = session.get('LOGIN_USER_BU', '')
         
+        # 获取语言设置（从session或cookie，默认为中文）
+        lang = session.get('LANG') or request.cookies.get('LANG', 'CH')
+        
         return render_template('customer/list.html',
                              crm_process_sort=crm_process_sort,
                              crm_process_type=crm_process_type,
@@ -81,7 +84,8 @@ def list_page():
                              country_arr=country_arr or [],
                              user_bu=user_bu or '',
                              user_id=user_id or '',
-                             current_tab=tab)
+                             current_tab=tab,
+                             lang=lang)
     except Exception as e:
         # 错误处理 - 返回错误页面或重定向
         print(f"渲染客户列表页面错误: {str(e)}")

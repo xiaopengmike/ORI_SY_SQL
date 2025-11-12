@@ -90,18 +90,27 @@ def query():
     查询接口
     对应原PHP的query_page.php
     """
-    from app.services.query_service import QueryService
-    
-    params = get_param_to_dict(request)
-    
-    # 设置默认值
-    params.setdefault('page', 1)
-    params.setdefault('page_size', 10)
-    params.setdefault('type', 'customer_data')
-    
-    # 执行查询
-    query_service = QueryService()
-    result = query_service.query_customer_list(params)
-    
-    return jsonify(ResponseCode.success(result))
+    try:
+        from app.services.query_service import QueryService
+        
+        params = get_param_to_dict(request)
+        
+        # 设置默认值
+        params.setdefault('page', 1)
+        params.setdefault('page_size', 10)
+        params.setdefault('type', 'customer_data')
+        
+        # 执行查询
+        query_service = QueryService()
+        result = query_service.query_customer_list(params)
+        
+        return jsonify(ResponseCode.success(result))
+    except Exception as e:
+        # 添加错误处理和日志
+        import traceback
+        error_msg = f"查询接口错误: {str(e)}"
+        print(error_msg)
+        traceback.print_exc()
+        # 返回错误响应
+        return jsonify(ResponseCode.failed(None, error_msg)), 500
 
