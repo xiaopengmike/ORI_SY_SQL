@@ -231,6 +231,34 @@ def get_project_code():
                          company=company,
                          project_code_select=project_code_select)
 
+@project_review_bp.route('/project_list')
+@login_required
+def project_list():
+    """
+    项目列表弹窗
+    用于销售合同评审等模块选择项目代码
+    复用 get_project_code.html 模板
+    """
+    user_id = get_login_user_id()
+    dept_id = get_login_dept_id()
+    company = request.args.get('company', '')
+    
+    # 获取数据模型
+    data_model = DataModel()
+    user_model = UserModel()
+    
+    if not company:
+        company = user_model.get_user_bu(dept_id)
+    
+    # 获取临时项目代码
+    project_code_select = data_model.get_temp_code({'user_id': user_id})
+    if not project_code_select:
+        project_code_select = []
+    
+    return render_template('project_review/templates/project_review/get_project_code.html',
+                         company=company,
+                         project_code_select=project_code_select)
+
 @project_review_bp.route('/detail')
 @login_required
 def detail_query():

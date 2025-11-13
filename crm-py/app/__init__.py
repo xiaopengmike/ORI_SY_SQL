@@ -33,6 +33,7 @@ def create_app(config_class=Config):
     from app.common.controllers.auth_controller import auth_bp
     from app.customer.controllers.customer_controller import customer_bp
     from app.common.controllers.action_controller import action_bp
+    from app.common.controllers.common_list_controller import common_list_bp
     from app.project_review.controllers.project_review_controller import project_review_bp
     from app.project_review.controllers.project_review_action_controller import project_review_action_bp
     from app.sales_contract_review.controllers.sales_contract_review_controller import sales_contract_review_bp
@@ -41,6 +42,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(customer_bp, url_prefix='/customer')
     app.register_blueprint(action_bp, url_prefix='/customer')
+    app.register_blueprint(common_list_bp, url_prefix='/common')
     app.register_blueprint(project_review_bp, url_prefix='/project_review')
     app.register_blueprint(project_review_action_bp, url_prefix='/project_review')
     app.register_blueprint(sales_contract_review_bp, url_prefix='/sales_contract_review')

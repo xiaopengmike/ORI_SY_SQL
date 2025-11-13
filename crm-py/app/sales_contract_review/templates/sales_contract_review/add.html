@@ -260,8 +260,19 @@
                                 {% if product_type.get('paras_value') == 'Other' %}
                                     {{ company_names.get(company, '') }}
                                 {% endif %}
-                                {{ product_type.get('paras_desc', '') }}
                                 {% set desc = product_type.get('paras_desc', '') %}
+                                {# 去掉描述里已有的括号提示，只保留后面追加的一次 #}
+                                {% set clean_desc = desc
+                                    | replace('（慧联生产供货）', '')
+                                    | replace('(慧联生产供货)', '')
+                                    | replace('（电网生产供货）', '')
+                                    | replace('(电网生产供货)', '')
+                                    | replace('（耐吉生产供货）', '')
+                                    | replace('(耐吉生产供货)', '')
+                                    | replace('（成都生产供货）', '')
+                                    | replace('(成都生产供货)', '')
+                                %}
+                                {{ clean_desc }}
                                 {# Electric note intentionally not rendered per requirement #}
                                 {% if '慧联软通产品明细' in desc %}
                                     <span class="electric-note">(慧联生产供货)</span>
@@ -817,14 +828,24 @@ layui.use(['form', 'layer'], function() {
                 }
                 
                 if (actionType == 'Submit' || actionType == 'Change') {
-                    // 提交后获取下一审批人（第二阶段实现）
-                    // $.getNextApprover(reJson.data);
-                    layer.alert(btnVal + "成功！", {
-                        icon: 1
-                    }, function(index) {
-                        layer.close(index);
-                        // 可以刷新页面或关闭窗口
-                        // window.opener.location.reload();
+                    // 提交后弹出下一审批人选择窗口
+                    var formId = reJson.data || $("#form_id").val();
+                    var userBu = $("#user_bu").val();
+                    layer.open({
+                        title: "选择下一审批人",
+                        type: 2,
+                        area: ['500px', '400px'],
+                        content: "/sales_contract_review/next_approver?form_id=" + encodeURIComponent(formId) + "&user_bu=" + encodeURIComponent(userBu),
+                        end: function() {
+                            // 弹窗关闭后提示成功
+                            layer.alert(btnVal + "成功！", {
+                                icon: 1
+                            }, function(index) {
+                                layer.close(index);
+                                // 可以刷新页面或关闭窗口
+                                // window.opener.location.reload();
+                            });
+                        }
                     });
                 } else {
                     layer.alert(btnVal + "成功！", {
@@ -873,14 +894,39 @@ function returnProject(project_name, project_number){
 	$("#project_number").val(project_number || '');
 	layui.form && layui.form.render();
 }
+// 弹窗回填（项目代码）
+function returnProjectCode(project_code, temp_code){
+	if (project_code) {
+		$("#project_name").val(project_code || '');
+	}
+	if (temp_code) {
+		// 如果有临时项目代码，可以设置到相应字段
+		// 这里根据实际需求调整
+	}
+	layui.form && layui.form.render();
+}
 // 弹窗回填（合同编号）
 function returnFormId(form_id){
 	$("#form_id").val(form_id || '');
 	layui.form && layui.form.render();
 }
 // 弹窗回填（下一审批人）
-function returnNextApprover(user_id){
+function returnNextApprover(user_id, user_name){
 	$("#approve_user").val(user_id || '');
+	if (user_name) {
+		// 可以显示审批人姓名（如果有显示字段）
+	}
+}
+// 弹窗回填（用户选择）
+function returnUser(userName, userId, domId, deptId){
+	$("#" + domId).val(userName || '');
+	if ($("#" + domId).parent().find("[data-type='business_user_id']").length > 0) {
+		$("#" + domId).parent().find("[data-type='business_user_id']").val(userId || '');
+	}
+	if ($("#" + domId).parent().find("[data-type='business_dept_id']").length > 0) {
+		$("#" + domId).parent().find("[data-type='business_dept_id']").val(deptId || '');
+	}
+	layui.form && layui.form.render();
 }
 // 绑定上传按钮
 $(function(){

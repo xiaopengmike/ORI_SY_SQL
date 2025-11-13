@@ -1,0 +1,123 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}选择人员{% endblock %}
+
+{% block content %}
+<div style="margin: 1%; background-color: white;">
+    <form class="layui-form">
+        <div class="demoTable" style="margin: 5px;">
+            姓名：
+            <div class="layui-inline">
+                <input class="layui-input" name="user_name" id="user_name" autocomplete="off" style="width: 150px;" placeholder="请输入姓名">
+            </div>
+            工号：
+            <div class="layui-inline">
+                <input class="layui-input" name="user_byid" id="user_byid" autocomplete="off" style="width: 150px;" placeholder="请输入工号">
+            </div>
+            <input lay-submit lay-filter="reload" id="reload" data-type="reload" value="查询" type="button" class="layui-btn" />
+        </div>
+    </form>
+    <!--数据表格-->
+    <table class="layui-hide" id="LAY_table_user" lay-filter="tableList"></table>
+</div>
+
+<script>
+layui.use(['form', 'table'], function() {
+    var table = layui.table;
+    var form = layui.form;
+    var domId = '{{ dom_id }}';
+
+    // 数据表格渲染
+    var tableIns = table.render({
+        elem: '#LAY_table_user',
+        url: '/customer/query?type=customer_data',
+        cellMinWidth: 90,
+        title: '人员列表',
+        cols: [[
+            {
+                type: 'radio',
+                fixed: 'left'
+            }, {
+                field: 'user_name',
+                title: '姓名',
+                width: 120,
+                align: 'center'
+            }, {
+                field: 'user_byid',
+                title: '工号',
+                width: 120,
+                align: 'center'
+            }, {
+                field: 'dept_name',
+                title: '部门',
+                align: 'center'
+            }]
+        ],
+        id: 'tableReload',
+        page: true,
+        height: 'auto',
+        done: function(res, curr, count) {
+            // 这里需要从用户表查询，暂时使用空数据
+            // 实际应该调用用户查询接口
+        }
+    });
+
+    var $ = layui.$,
+        active = {
+            reload: function() {
+                // 执行重载
+                // 注意：这里需要实现用户查询接口
+                // 暂时使用空查询
+                table.reload('tableReload', {
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        user_name: $('#user_name').val(),
+                        user_byid: $('#user_byid').val()
+                    }
+                }, 'data');
+            }
+        };
+
+    table.on('radio(tableList)', function(obj) {
+        // 选中的数据
+        var data = obj.data;
+        // 返回数据到原页面
+        if (parent.returnUser) {
+            parent.returnUser(data.user_name || '', data.user_id || '', domId, data.dept_id || '');
+        }
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+
+    form.on('submit(reload)', function(data) {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+        return false;
+    });
+    
+    // 初始化：直接查询用户列表
+    // 注意：这里需要实现一个用户查询接口
+    // 暂时使用简单的查询方式
+    $.ajax({
+        url: '/customer/action?action=Retrieve',
+        type: 'POST',
+        data: {
+            dataType: 'getUserList',
+            user_name: '',
+            user_byid: ''
+        },
+        success: function(res) {
+            if (res.code == '200' && res.data) {
+                // 更新表格数据
+                table.reload('tableReload', {
+                    data: res.data
+                });
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+

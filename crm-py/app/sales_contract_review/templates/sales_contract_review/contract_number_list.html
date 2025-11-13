@@ -1,0 +1,96 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}合同编号列表{% endblock %}
+
+{% block content %}
+<div style="margin: 1%; background-color: white;">
+    <form class="layui-form">
+        <div class="demoTable" style="margin: 5px;">
+            项目编号：
+            <div class="layui-inline">
+                <input class="layui-input" name="project_code" id="project_code" autocomplete="off" style="width: 110px;">
+            </div>
+            <input lay-submit lay-filter="reload" id="reload" data-type="reload" value="查询" type="button" class="layui-btn" />
+        </div>
+    </form>
+    <!--数据表格-->
+    <table class="layui-hide" id="LAY_table_user" lay-filter="tableList"></table>
+</div>
+
+<script>
+layui.use(['form', 'table'], function() {
+    var table = layui.table;
+    var form = layui.form;
+
+    // 数据表格渲染
+    var tableIns = table.render({
+        elem: '#LAY_table_user',
+        url: '/sales_contract_review/query',
+        cellMinWidth: 90,
+        title: '合同编号列表',
+        cols: [[
+            {
+                type: 'checkbox',
+                fixed: 'left'
+            }, {
+                field: 'form_id',
+                title: '合同编号',
+                width: 170,
+                align: 'center'
+            }, {
+                field: 'project_number',
+                title: '项目编号',
+                align: 'center'
+            }, {
+                field: 'create_user_name',
+                title: '创建人',
+                align: 'center'
+            }]
+        ],
+        id: 'tableReload',
+        page: true,
+        height: 'auto',
+        text: {
+            none: '未取号，请先到取号页面取号后选择'
+        },
+        done: function(res, curr, count) {
+            exportData = res.data;
+        }
+    });
+
+    var $ = layui.$,
+        active = {
+            reload: function() {
+                // 执行重载
+                table.reload('tableReload', {
+                    page: {
+                        curr: 1 // 重新从第 1 页开始
+                    },
+                    where: {
+                        project_code: $('#project_code').val(),
+                        type: 'sales_contract_review'
+                    }
+                }, 'data');
+            }
+        };
+
+    table.on('checkbox(tableList)', function(obj) {
+        // 是否选中，选中为true
+        // 选中的数据
+        // 返回数据到原页面
+        if (obj.checked) {
+            parent.returnFormId(obj.data.form_id);
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        }
+    });
+
+    form.on('submit(reload)', function(data) {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+        return false;
+    });
+});
+</script>
+{% endblock %}
+

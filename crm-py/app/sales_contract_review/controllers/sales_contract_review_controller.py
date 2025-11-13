@@ -171,3 +171,65 @@ def add():
         traceback.print_exc()
         return redirect(url_for('sales_contract_review.list_page'))
 
+@sales_contract_review_bp.route('/contract_number_list')
+@login_required
+def contract_number_list():
+    """
+    合同编号列表弹窗
+    用于选择已存在的合同编号
+    """
+    company = request.args.get('company', '')
+    return render_template('sales_contract_review/templates/sales_contract_review/contract_number_list.html',
+                         company=company)
+
+@sales_contract_review_bp.route('/next_approver')
+@login_required
+def next_approver():
+    """
+    下一审批人选择弹窗（简化版）
+    仅支持单选下一步审批人
+    """
+    try:
+        user_id = get_login_user_id()
+        dept_id = get_login_dept_id()
+        form_id = request.args.get('form_id', '')
+        user_bu = request.args.get('user_bu', '')
+        
+        # 获取流程模型
+        from app.common.process_model import ProcessModel
+        process_model = ProcessModel()
+        
+        # 获取流程步骤
+        flow_arr = process_model.get_flow_step('sales_contract_review', user_bu)
+        
+        # 获取下一步（step=1）的审批人信息
+        next_step_info = flow_arr.get('1', {}) if flow_arr else {}
+        approver_str = next_step_info.get('approver', '')
+        
+        # 解析审批人ID列表（逗号分隔）
+        approver_ids = []
+        if approver_str:
+            approver_ids = [uid.strip() for uid in approver_str.split(',') if uid.strip()]
+        
+        # 获取审批人用户信息
+        approver_list = []
+        if approver_ids:
+            from app.utils.db import Database
+            placeholders = ','.join(['%s'] * len(approver_ids))
+            sql = f"SELECT user_id, USER_NAME FROM user WHERE user_id IN ({placeholders})"
+            result = Database.execute_query(sql, tuple(approver_ids))
+            approver_list = result if result else []
+        
+        return render_template('sales_contract_review/templates/sales_contract_review/next_approver.html',
+                             approver_list=approver_list,
+                             form_id=form_id,
+                             user_bu=user_bu)
+    except Exception as e:
+        print(f"渲染下一审批人弹窗错误: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return render_template('sales_contract_review/templates/sales_contract_review/next_approver.html',
+                             approver_list=[],
+                             form_id='',
+                             user_bu='')
+
