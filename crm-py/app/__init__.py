@@ -35,12 +35,16 @@ def create_app(config_class=Config):
     from app.common.controllers.action_controller import action_bp
     from app.project_review.controllers.project_review_controller import project_review_bp
     from app.project_review.controllers.project_review_action_controller import project_review_action_bp
+    from app.sales_contract_review.controllers.sales_contract_review_controller import sales_contract_review_bp
+    from app.sales_contract_review.controllers.sales_contract_review_action_controller import sales_contract_review_action_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(customer_bp, url_prefix='/customer')
     app.register_blueprint(action_bp, url_prefix='/customer')
     app.register_blueprint(project_review_bp, url_prefix='/project_review')
     app.register_blueprint(project_review_action_bp, url_prefix='/project_review')
+    app.register_blueprint(sales_contract_review_bp, url_prefix='/sales_contract_review')
+    app.register_blueprint(sales_contract_review_action_bp, url_prefix='/sales_contract_review')
     
     # 添加根路径路由，重定向到客户列表
     @app.route('/')

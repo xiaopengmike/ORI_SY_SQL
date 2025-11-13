@@ -1,0 +1,932 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}销售合同评审 - 新增{% endblock %}
+
+{% block page_title %}销售合同评审 - 新增（{{ company }}）{% endblock %}
+
+{% block extra_css %}
+<style>
+    .required_field {
+        background-color: #f9fbd5;
+    }
+    .TableBlock {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+    .TableBlock td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+    .TableContent {
+        background-color: #f5f5f5;
+        text-align: right;
+        padding: 8px;
+        font-weight: bold;
+        width: 15%;
+    }
+    .TableData {
+        background-color: #fff;
+        text-align: left;
+        padding: 8px;
+    }
+    .TableHeader {
+        background-color: #e6e6e6;
+        text-align: center;
+        padding: 8px;
+        font-weight: bold;
+    }
+    .mandatory {
+        background-color: #f9fbd5;
+    }
+    .form-container {
+        width: 80%;
+        margin: 1% 9%;
+        background: #fff;
+        padding: 20px;
+        border-radius: 4px;
+    }
+    .btn-group {
+        padding: 10px;
+        background: #f5f5f5;
+        margin-bottom: 10px;
+    }
+    /* 电表类产品分组标题后的红色提示 */
+    .electric-note {
+        color: #d93025;
+        margin-left: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="width: 100%; height: auto; margin: auto;">
+    <form id="mainForm" class="layui-form">
+        <!-- 按钮组 -->
+        <div class="btn-group">
+            <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="submit" name="btn_submit" actionType="Submit">提交</button>
+            <button type="button" class="layui-btn layui-btn-sm" lay-submit lay-filter="submit" name="btn_save" actionType="Save">保存</button>
+            <button type="button" class="layui-btn layui-btn-sm" onclick="window.close(); return false;">关闭</button>
+        </div>
+        
+        <div class="form-container">
+            <!-- 隐藏字段 -->
+            <input type="hidden" name="pageName" value="addPhp" />
+            <input type="hidden" name="fieldName" value="form_id" />
+            <input type="hidden" name="tableName" value="inhe_contract_review" />
+            <input type="hidden" name="flowType" value="INHESC" />
+            <input type="hidden" name="reset" value="day" />
+            <input type="hidden" name="digit" value="2" />
+            <input type="hidden" id="type" name="type" value="sales_contract_review" />
+            <input type="hidden" name="step" id="step" value="1" />
+            <input type="hidden" name="user_bu" id="user_bu" value="{{ company }}" />
+            <input type="hidden" name="product_company" id="product_company" value="{{ product_company }}" />
+            <input type="hidden" name="create_user_bu" value="{{ user_info.get('company_user_bu', '') }}" />
+            <input type="hidden" name="attach" id="attach_ids" value="" />
+            <input type="hidden" name="approve_user" id="approve_user" value="" />
+            
+            <!-- 隐藏的下拉选项模板 -->
+            <div id="product_brand_select" hidden="hidden">
+                <option value="">请选择</option>
+                {% if select_arr.get('product_brand') %}
+                    {% for v in select_arr['product_brand'] %}
+                        <option value="{{ v.get('paras_value', '') }}">{{ v.get('paras_desc', '') }}</option>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div id="license_product_select" hidden="hidden">
+                <option value="">请选择</option>
+                {% if select_arr.get('license_product') %}
+                    {% for v in select_arr['license_product'] %}
+                        <option value="{{ v.get('paras_value', '') }}">{{ v.get('paras_desc', '') }}</option>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div id="license_type_select" hidden="hidden">
+                <option value="">请选择</option>
+                {% if select_arr.get('license_type') %}
+                    {% for v in select_arr['license_type'] %}
+                        <option value="{{ v.get('paras_value', '') }}">{{ v.get('paras_desc', '') }}</option>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div id="other_company_product_select" hidden="hidden">
+                <option value="">请选择</option>
+                {% if select_arr.get('auto_flow_user') %}
+                    {% for v in select_arr['auto_flow_user'] %}
+                        {% if not ((product_company == 'JXINHE' and v.get('user_bu') == 'INHE') or product_company == v.get('user_bu')) %}
+                            <option value="{{ v.get('user_bu', '') }}">{{ v.get('extra', '') }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <!-- 公司Logo区域 -->
+            <table width="100%" align="center" style="margin-bottom: 20px;">
+                <tr>
+                    <td align="center">
+                        <div style="width: 34%; height: 100px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <span style="color: #999;">{{ company }} Logo</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+            <!-- 主要信息模块 -->
+            <table class="TableBlock" width="100%" style="text-align: center; margin-bottom: 20px;">
+                <tr>
+                    <td class="TableContent">
+                        <b><font style="color: red;">项目代号</font></b>
+                    </td>
+                    <td class="TableData">
+                        <input type="text" readonly name="project_name" id="project_name" class="layui-input mandatory" 
+                               autocomplete="off" {% if company not in ['INHEGRID', 'INHENERGY', 'HKNERGY'] %}lay-verify="required"{% endif %} />
+                    </td>
+                    <td class="TableContent">
+                        {% if company == 'INHENERGY' or company == 'HKNERGY' %}
+                            销售合同编号
+                        {% else %}
+                            编号
+                        {% endif %}
+                        <i style="color:blue" class="layui-icon layui-icon-about"></i>
+                    </td>
+                    <td class="TableData">
+                        <input type="text" name="form_id" id="form_id" class="layui-input" lay-verify="formIdReg" />
+                    </td>
+                    <td class="TableContent">客户名称</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="customer_name" name="customer_name" lay-filter="customer_name" lay-search lay-verify="required">
+                                <option value="">请选择</option>
+                                {% for cus_id, cus_name in customer_select.items() %}
+                                    {% if company in ['INHEGRID', 'INHENERGY', 'HKNERGY'] or company not in ['INHEGRID', 'INHENERGY', 'HKNERGY'] %}
+                                        <option value="{{ cus_name|replace('"', '&quot;') }}">{{ cus_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">合同对方</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline">
+                            <select id="contract_party" name="contract_party" lay-search lay-verify="required">
+                                <option value="">请选择</option>
+                                {% if select_arr.get('contract_party') %}
+                                    {% for val in select_arr['contract_party'] %}
+                                        <option value="{{ val.get('paras_value', '') }}">{{ val.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">合同所属公司</td>
+                    <td class="TableData">
+                        <input type="text" name="contract_belong" id="contract_belong" class="layui-input" 
+                               value="{{ user_info.get('companyName', '') }}" />
+                    </td>
+                    <td class="TableContent">项目编号</td>
+                    <td class="TableData">
+                        <input type="text" name="project_number" id="project_number" class="layui-input" 
+                               {% if company != 'INHEGRID' %}lay-verify="required"{% endif %} />
+                    </td>
+                    <td class="TableContent">币种</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="currency" name="currency" lay-filter="currency" lay-search lay-verify="required">
+                                <option value="">请选择</option>
+                                {% if select_arr.get('currency') %}
+                                    {% for cVal in select_arr['currency'] %}
+                                        <option value="{{ cVal.get('paras_value', '') }}">{{ cVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">交货时间</td>
+                    <td class="TableData">
+                        <input type="text" name="delivery_time" id="delivery_time" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">项目等级</td>
+                    <td class="TableData" align="left">
+                        <input type="hidden" name="project_star" id="project_star" class="layui-input" />
+                        <div data-type="project_star"></div>
+                    </td>
+                    {% if company == 'INHENERGY' or company == 'HKNERGY' %}
+                        <td class="TableContent">等级图标</td>
+                        <td class="TableData" align="left">
+                            <div id="star_icon"></div>
+                        </td>
+                        <td class="TableContent">合同类型</td>
+                        <td class="TableData" align="left">
+                            <select id="contract_type" name="contract_type" lay-verify="required">
+                                <option value="">请选择</option>
+                                <option value="1">框架合同</option>
+                                <option value="2">执行合同</option>
+                            </select>
+                        </td>
+                        <td class="TableContent">客户采购订单号</td>
+                        <td class="TableData" align="left">
+                            <input type="text" name="customer_order_no" id="customer_order_no" class="layui-input" />
+                        </td>
+                    {% else %}
+                        <td class="TableContent">等级图标</td>
+                        <td class="TableData" colspan="3" align="left">
+                            <div id="star_icon"></div>
+                        </td>
+                        <td class="TableContent">
+                            销售合同编号<br/>
+                            <span style="font-size:12px;color:red"><b>必须与实际双方签署的合同编号一致，</b></span>
+                        </td>
+                        <td class="TableData" align="left">
+                            <input type="text" name="customer_order_no" id="customer_order_no" class="layui-input" lay-verify="required"/>
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+            
+            <!-- 产品明细模块 -->
+            <table class="TableBlock" width="100%" style="text-align: center; margin-bottom: 20px;">
+                <input type="hidden" id="product_detail_types" value='{{ product_detail_types_json }}'/>
+                {% for product_type in select_arr.get('product_detail_type', []) %}
+                    {% if (company == 'INHENERGY' or company == 'HKNERGY') and product_type.get('paras_value') not in ['Inhenergy', 'Other'] %}
+                        {# 跳过 #}
+                    {% else %}
+                        <tr>
+                            <td class="TableHeader" colspan="12">
+                                {% if product_type.get('paras_value') == 'Other' %}
+                                    {{ company_names.get(company, '') }}
+                                {% endif %}
+                                {{ product_type.get('paras_desc', '') }}
+                                {% set desc = product_type.get('paras_desc', '') %}
+                                {# Electric note intentionally not rendered per requirement #}
+                                {% if '慧联软通产品明细' in desc %}
+                                    <span class="electric-note">(慧联生产供货)</span>
+                                {% elif '银河电网产品明细' in desc %}
+                                    <span class="electric-note">(电网生产供货)</span>
+                                {% elif '银河耐吉产品明细' in desc %}
+                                    <span class="electric-note">(耐吉生产供货)</span>
+                                {% elif '银河成都产品明细' in desc %}
+                                    <span class="electric-note">(成都生产供货)</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if product_type.get('paras_value') == 'Soft' %}
+                            <tr>
+                                <td class="TableContent">合同有效期</td>
+                                <td class="TableContent">开始时间</td>
+                                <td class="TableData" colspan="2">
+                                    <input type="text" name="contract_begin_time" id="contract_begin_time" class="layui-input date" value="" lay-key="1">
+                                </td>
+                                <td class="TableContent">结束时间</td>
+                                <td class="TableData" colspan="2">
+                                    <input type="text" name="contract_end_time" id="contract_end_time" class="layui-input date" value="" lay-key="1">
+                                </td>
+                                <td class="TableContent">附件</td>
+                                <td class="TableData" colspan="3" align="left">
+                                    <input id="soft_license_contract" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传">
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="TableContent">
+                            <td>序号</td>
+                            {% if product_type.get('paras_value') == 'Electric' %}
+                                <td width="20%" style="color: red">
+                                    <b>请填写以下信息：<br />1、通讯模块 2、CIU（通讯方式）</b>
+                                </td>
+                            {% else %}
+                                <td>品牌</td>
+                            {% endif %}
+                            <td>型号</td>
+                            <td>单位</td>
+                            <td>数量</td>
+                            <td>单价</td>
+                            {% if product_type.get('user_bu') == product_company or product_type.get('paras_value') == 'Other' %}
+                                <td colspan="">总金额</td>
+                                <td colspan="">涉及其他公司产品（为否）</td>
+                            {% else %}
+                                <td colspan="2">总金额</td>
+                            {% endif %}
+                            {% if product_type.get('paras_value') == 'Electric' %}
+                                <td colspan="2">技术要求</td>
+                                <td colspan="2">产品品牌</td>
+                            {% elif product_type.get('paras_value') == 'Soft' %}
+                                <td>授权产品</td>
+                                <td>授权数量<br/>（单位：套，最多输入999套）</td>
+                                <td>授权方式</td>
+                                <td>技术要求</td>
+                            {% else %}
+                                <td colspan="4">技术要求</td>
+                            {% endif %}
+                        </tr>
+                        <input type="hidden" id="add{{ product_type.get('paras_value') }}DetailCount" name="add{{ product_type.get('paras_value') }}DetailCount" value="0" />
+                        <tr align="left" id="add{{ product_type.get('paras_value') }}Detail">
+                            <td class="TableData" colspan="12">
+                                <input value="添加" type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="addLine('add{{ product_type.get('paras_value') }}Detail', '{{ product_type.get('paras_value') }}', '{{ company }}'); return false;" />
+                                <input value="导入" type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="$('#upload_{{ product_type.get('paras_value') }}').click(); return false;" />
+                                <input type="file" id="upload_{{ product_type.get('paras_value') }}" productType="{{ product_type.get('paras_value') }}" accept=".xls,.xlsx" style="display:none;" />
+                                <input value="清空" type="button" class="layui-btn layui-btn-oa layui-btn-sm" onclick="clear_product('{{ product_type.get('paras_value') }}'); return false;" />
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+            
+            <!-- 合同信息模块 -->
+            <table class="TableBlock" width="100%" style="text-align: center;">
+                <tr>
+                    <td class="TableContent" width="20%">合同总金额</td>
+                    <td class="TableData" colspan="3">
+                        <input type="text" name="total_amount" id="total_amount" class="layui-input" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent" width="20%">
+                        电表产品合同<b><font style="color: red;">扫描</font></b>附件<br/>
+                        <b><font style="color: red;">(只可上传扫描件或照片)</font></b>
+                    </td>
+                    <td class="TableData" align="left" {% if company in ['INHENERGY', 'HKNERGY'] %}colspan="3"{% else %}width="30%"{% endif %}>
+                        <input id="meter_contract" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                    </td>
+                    {% if company not in ['INHENERGY', 'HKNERGY'] %}
+                        <td class="TableContent" width="20%">
+                            软件产品<b><font style="color: red;">扫描</font></b>合同<br/>
+                            <b><font style="color: red;">(只可上传扫描件或照片)</font></b>
+                        </td>
+                        <td class="TableData" align="left">
+                            <input id="soft_contract" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="TableContent" width="20%">
+                        电表产品合同<b><font style="color: red;">电子</font></b>附件<br/>
+                        <b><font style="color: red;">(只可上传电子文档)<br>请勿上传扫描件</font></b>
+                    </td>
+                    <td class="TableData" align="left" {% if company in ['INHENERGY', 'HKNERGY'] %}colspan="3"{% else %}width="30%"{% endif %}>
+                        <input id="tech_meter_contract" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                    </td>
+                    {% if company not in ['INHENERGY', 'HKNERGY'] %}
+                        <td class="TableContent" width="20%">
+                            软件产品<b><font style="color: red;">电子</font></b>附件<br/>
+                            <b><font style="color: red;">(只可上传电子文档)</font></b>
+                        </td>
+                        <td class="TableData" align="left">
+                            <input id="tech_soft_contract" type="button" class="layui-btn layui-bg-gray btn-upload" style="display: inline!important;" value="上传" />
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="TableContent" width="20%">制单人</td>
+                    <td class="TableData" width="30%">
+                        <input type="text" name="create_user" id="create_user" class="layui-input" value="{{ user_info.get('USER_NAME', user_name) }}" />
+                    </td>
+                    <td class="TableContent" width="20%">部门</td>
+                    <td class="TableData" width="30%">
+                        <input type="text" name="dept_id" id="dept_id" class="layui-input" value="{{ user_info.get('deptName', '') }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">业务归属</td>
+                    <td class="TableData">
+                        <input type="hidden" data-type="business_dept_id" name="business_dept_id" id="business_dept_id" />
+                        <input type="hidden" data-type="business_user_id" name="business_user_id" id="business_user_id" />
+                        <input type="text" name="business_attribution" id="business_attribution" class="layui-input" 
+                               value="{{ user_info.get('business_attribution', '') }}" />
+                    </td>
+                    <td class="TableContent">日期</td>
+                    <td class="TableData">
+                        <input type="text" name="form_date" id="form_date" class="layui-input date" value="{{ current_date }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">运输方式</td>
+                    <td class="TableData">
+                        <input type="text" name="transport_mode" id="transport_mode" class="layui-input" />
+                    </td>
+                    <td class="TableContent">运费承担</td>
+                    <td class="TableData">
+                        <input type="text" name="freight_bearing" id="freight_bearing" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">交货地点</td>
+                    <td class="TableData">
+                        <input type="text" name="delivery_place" id="delivery_place" class="layui-input" />
+                    </td>
+                    <td class="TableContent">收货地址</td>
+                    <td class="TableData">
+                        <input type="text" name="shipping_address" id="shipping_address" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">包装要求</td>
+                    <td class="TableData">
+                        <input type="text" name="package_requirement" id="package_requirement" class="layui-input" 
+                               placeholder="最多255字符" lay-verify="str_length" lay-max="255" lay-name="包装要求"/>
+                    </td>
+                    <td class="TableContent">产品验收标准</td>
+                    <td class="TableData">
+                        <input type="text" name="acceptance_criteria" id="acceptance_criteria" class="layui-input" />
+                    </td>
+                </tr>
+                {% if company not in ['INHENERGY', 'HKNERGY'] %}
+                    <tr>
+                        <td class="TableContent">是否涉及转口贸易？</td>
+                        <td class="TableData" align="left">
+                            <div class="layui-input-inline mandatory">
+                                <select id="have_entrepot_trade" name="have_entrepot_trade" lay-filter="have_entrepot_trade" lay-search>
+                                    <option value="">请选择</option>
+                                    {% if select_arr.get('yes_or_no') %}
+                                        {% for yVal in select_arr['yes_or_no'] %}
+                                            <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </td>
+                        <td class="TableContent">如涉及转口贸易，请详细注明涉及哪些产品</td>
+                        <td class="TableData">
+                            <input type="text" name="involved_product" id="involved_product" class="layui-input" />
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td class="TableContent">合同报价来源</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="quote_source" name="quote_source" lay-filter="quote_source" lay-search>
+                                <option value="">请选择</option>
+                                {% if select_arr.get('quote_source') %}
+                                    {% for yVal in select_arr['quote_source'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">对应历史项目代号（如有，请填写对应项目代号）</td>
+                    <td class="TableData">
+                        <input type="text" name="history_project_code" id="history_project_code" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">合同背景<br>
+                        <b><font style="color: red;">请注明要维护我方哪些利益，要规避哪些风险</font></b>
+                    </td>
+                    <td class="TableData" colspan="5" align="left">
+                        <textarea class="layui-textarea" id="contract_background" name="contract_background" lay-verify="required"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">项目资金来源</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="funds_come" name="funds_come" lay-filter="funds_come" lay-search lay-verify="required">
+                                <option value="">请选择</option>
+                                {% if select_arr.get('funds_come') %}
+                                    {% for yVal in select_arr['funds_come'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">如涉及融资，请详细注明融资方式及融资银行</td>
+                    <td class="TableData">
+                        <input type="text" name="financing_bank" id="financing_bank" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">
+                        <b><font style="color: red;">是否符合：公司正式合同 + 全款到账 + 有预付款 + 有验收标准 + 有质保金</font></b>
+                    </td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="if_eligible" name="if_eligible" lay-filter="if_eligible" lay-search>
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">项目类型</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="product_project_type" name="product_project_type" lay-filter="product_project_type" lay-search>
+                                <option value="">请选择</option>
+                                {% if select_arr.get('product_project_type') %}
+                                    {% for yVal in select_arr['product_project_type'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 结算方式条款 -->
+                {% if select_arr.get('settleModel') %}
+                    <tr>
+                        <td class="TableContent" rowspan="{{ select_arr.get('settleModel')|length }}" width="20%">结算方式条款</td>
+                        <input type="hidden" name="model_count" value="{{ select_arr.get('settleModel')|length }}" />
+                        {% for mId, mVal in select_arr.get('settleModel', {}).items() %}
+                            <td class="TableData" align="left" width="20%">
+                                <b><font style="color: red;">{{ mVal.get('item', '') }}</font></b>
+                            </td>
+                            <td class="TableData" align="left" colspan="3">
+                                {% if mVal.get('if_select') %}
+                                    <div class="layui-input-inline mandatory">
+                                        <select name="model_{{ mId }}" lay-search>
+                                            <option value="">请选择</option>
+                                            {% if select_arr.get(mVal.get('if_select')) %}
+                                                {% for yVal in select_arr[mVal.get('if_select')] %}
+                                                    <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                {% else %}
+                                    <input type="text" name="model_{{ mId }}" class="layui-input" />
+                                {% endif %}
+                            </td>
+                    </tr>
+                    <tr>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td class="TableContent" rowspan="2">其他信息</td>
+                    <td class="TableContent" colspan="1">合同是否有技术规格书</td>
+                    <td class="TableData" colspan="3" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="have_tech_specification" name="have_tech_specification" lay-filter="have_tech_specification" lay-search>
+                                <option value="">请选择</option>
+                                {% if select_arr.get('yes_or_no') %}
+                                    {% for yVal in select_arr['yes_or_no'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableContent">是否通过客服部门OA邮件审批？</td>
+                    <td class="TableData" align="left">
+                        <div class="layui-input-inline mandatory">
+                            <select id="have_email_approval" name="have_email_approval" lay-filter="have_email_approval" lay-search>
+                                <option value="">请选择</option>
+                                {% if select_arr.get('yes_or_no') %}
+                                    {% for yVal in select_arr['yes_or_no'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                    <td class="TableContent">OA邮件标题：</td>
+                    <td class="TableData">
+                        <input type="text" name="email_name" id="email_name" class="layui-input" />
+                    </td>
+                </tr>
+                <tr>
+                    {% if company not in ['INHENERGY', 'HKNERGY'] %}
+                        <td class="TableContent">产品型号</td>
+                        <td class="TableData" colspan="2">
+                            <input type="text" name="product_model" id="product_model" class="layui-input" />
+                        </td>
+                    {% endif %}
+                    <td class="TableContent">是否有库存</td>
+                    <td class="TableData" align="left" {% if company in ['INHENERGY', 'HKNERGY'] %}colspan="4"{% endif %}>
+                        <div class="layui-input-inline mandatory">
+                            <select id="have_inventory" name="have_inventory" lay-filter="have_inventory" lay-search>
+                                <option value="">请选择</option>
+                                {% if select_arr.get('yes_or_no') %}
+                                    {% for yVal in select_arr['yes_or_no'] %}
+                                        <option value="{{ yVal.get('paras_value', '') }}">{{ yVal.get('paras_desc', '') }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                {% if company in ['INHE', 'INHEIAC'] %}
+                    <tr>
+                        <td class="TableContent">功能要求/项目要求</td>
+                        <td class="TableData" align="left" colspan="5">
+                            <textarea class="layui-textarea" id="functional_requirement" name="functional_requirement"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent">特殊要求</td>
+                        <td class="TableData" align="left" colspan="5">
+                            <textarea class="layui-textarea" id="special_requirement" name="special_requirement"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableContent">备件要求</td>
+                        <td class="TableData" align="left" colspan="5">
+                            <textarea class="layui-textarea" id="spare_requirement" name="spare_requirement"></textarea>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- 引入XLSX库用于Excel导入 -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- 引入产品明细处理JS -->
+<script src="{{ url_for('static', filename='js/sales_contract_review/main.js') }}"></script>
+<script>
+layui.use(['form', 'layer'], function() {
+    var layer = layui.layer,
+        form = layui.form;
+    
+    // 表单验证
+    form.verify({
+        formIdReg: [
+            /(^[a-zA-Z0-9_][A-Za-z0-9-_.\/ ]+$)/,
+            '合同编号不能为空，可通过销售合同取号或获取合同编号'
+        ]
+    });
+    
+    // 初始化日期选择器
+    if (typeof $.initDate === 'function') {
+        $.initDate();
+    }
+    
+    // 项目代号点击事件
+    $("#project_name").click(function() {
+        layer.open({
+            title: "项目代号列表",
+            type: 2,
+            area: ['600px', '650px'],
+            content: "/project_review/project_list?company={{ company }}",
+            success: function(layero, index) {
+                setTimeout(function() {
+                    layui.layer.tips('点击此处选择项目', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                }, 500)
+            }
+        });
+    });
+    
+    // 编号点击事件
+    $("#form_id").click(function() {
+        var qs = [
+            "company={{ company }}",
+            "tableName=" + encodeURIComponent($("input[name='tableName']").val() || 'inhe_contract_review'),
+            "fieldName=" + encodeURIComponent($("input[name='fieldName']").val() || 'form_id'),
+            "flowType=" + encodeURIComponent($("input[name='flowType']").val() || 'INHESC'),
+            "reset=" + encodeURIComponent($("input[name='reset']").val() || 'day'),
+            "digit=" + encodeURIComponent($("input[name='digit']").val() || '2')
+        ].join("&");
+        layer.open({
+            title: "合同编号列表",
+            type: 2,
+            area: ['600px', '650px'],
+            content: "/sales_contract_review/contract_number_list?" + qs,
+            success: function(layero, index) {
+                setTimeout(function() {
+                    layui.layer.tips('点击此处选择合同编号', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                }, 500)
+            }
+        });
+    });
+    
+    // 业务归属点击事件
+    $("#business_attribution").click(function() {
+        layer.open({
+            title: '选择人员',
+            type: 2,
+            skin: 'layui-layer-rim',
+            area: ['500px', '500px'],
+            fixed: false,
+            maxmin: true,
+            offset: '50px',
+            content: '/common/list/single_type_list?domId=business_attribution',
+            moveOut: true
+        });
+        form.render();
+    });
+    
+    // 客户名称选择事件
+    form.on('select(customer_name)', function(data) {
+        var customerName = data.elem[data.elem.selectedIndex].text;
+        var url = "/sales_contract_review/action?action=Retrieve&dataType=findContractParty";
+        
+        $.post(url, {
+            customer_name: customerName
+        }, function(reData) {
+            var reJson = null;
+            try {
+                reJson = typeof reData === 'string' ? JSON.parse(reData) : reData;
+            } catch (e) {
+                layer.alert('数据解析异常: ' + e, {
+                    icon: 5
+                });
+                return;
+            }
+            
+            if (isRespSuccess(reJson)) {
+                $("#contract_party").empty();
+                var tpl = "";
+                tpl += "<option value=''>请选择</option>";
+                if (reJson.data && Array.isArray(reJson.data)) {
+                    $.each(reJson.data, function(index, value) {
+                        if (value) {
+                            var escapedValue = value.replace(/"/g, "&quot;");
+                            tpl += '<option value="' + escapedValue + '">' + value + '</option>';
+                        }
+                    });
+                }
+                $("#contract_party").html(tpl);
+                form.render('select');
+            } else {
+                layer.alert('获取合同对方失败：' + (reJson.msg || '未知错误'), {
+                    icon: 5
+                });
+            }
+        });
+        form.render();
+    });
+    
+    // 表单提交
+    form.on('submit(submit)', function(data) {
+        var btnVal = data.elem.value;
+        var actionType = $(data.elem).attr("actionType");
+        var url = "/sales_contract_review/action?action=" + actionType;
+        
+        // 特殊处理：如果项目名称为空且是特定公司，需要确认
+        var projectName = $("#project_name").val();
+        var userBu = $("#user_bu").val();
+        if (!projectName && (userBu == 'INHEGRID' || userBu == 'INHENERGY' || userBu == 'HKNERGY')) {
+            var msg = (userBu == 'INHENERGY' || userBu == 'HKNERGY') 
+                ? "是否确认合同金额小于50万，直接发起合同评审？" 
+                : "是否确认合同金额小于50万，直接发起合同评审？";
+            layer.confirm(msg, {
+                btn: ["确认", "取消"]
+            }, function(index) {
+                _doSubmit(url, actionType, btnVal, layer, form);
+                layer.close(index);
+            });
+            return false;
+        } else {
+            return _doSubmit(url, actionType, btnVal, layer, form);
+        }
+    });
+    
+    function _doSubmit(url, actionType, btnVal, layer, form) {
+        // 提交之前禁用按钮，防止重复提交
+        if (actionType == 'Submit' || actionType == 'Change') {
+            $('[name="btn_submit"]').addClass('layui-btn-disabled');
+            $('[name="btn_submit"]').attr('disabled', 'disabled');
+            $('[name="btn_save"]').addClass('layui-btn-disabled');
+            $('[name="btn_save"]').attr('disabled', 'disabled');
+        }
+        
+        // 序列化表单数据
+        var formData = $("#mainForm").serializeArray();
+        // 确保所有动态添加的字段都被包含
+        $.post(url, formData, function(data) {
+            var reJson = null;
+            try {
+                reJson = typeof data === 'string' ? JSON.parse(data) : data;
+            } catch (e) {
+                layer.alert('数据解析异常: ' + e, {
+                    icon: 5
+                });
+                _enableButtons();
+                return;
+            }
+            
+            if (isRespSuccess(reJson)) {
+                // 更新form_id值
+                if (reJson.data) {
+                    $("#form_id").val(reJson.data);
+                }
+                
+                if (actionType == 'Submit' || actionType == 'Change') {
+                    // 提交后获取下一审批人（第二阶段实现）
+                    // $.getNextApprover(reJson.data);
+                    layer.alert(btnVal + "成功！", {
+                        icon: 1
+                    }, function(index) {
+                        layer.close(index);
+                        // 可以刷新页面或关闭窗口
+                        // window.opener.location.reload();
+                    });
+                } else {
+                    layer.alert(btnVal + "成功！", {
+                        icon: 1
+                    }, function(index) {
+                        layer.close(index);
+                        // window.opener.location.reload();
+                    });
+                }
+            } else {
+                var failMsg = reJson.msg || (btnVal + '失败');
+                layer.alert(failMsg, {
+                    icon: 5
+                });
+                _enableButtons();
+            }
+        }).fail(function() {
+            layer.alert('请求失败，请重试', {
+                icon: 5
+            });
+            _enableButtons();
+        });
+        
+        return false; // 阻止表单提交
+    }
+    
+    function _enableButtons() {
+        $('[name="btn_submit"]').removeClass('layui-btn-disabled');
+        $('[name="btn_submit"]').removeAttr('disabled');
+        $('[name="btn_save"]').removeClass('layui-btn-disabled');
+        $('[name="btn_save"]').removeAttr('disabled');
+    }
+    
+    // 设置必填字段背景色
+    setTimeout(function() {
+        $('select[lay-verify="required"]').next().find('.layui-select-title input').css({'background-color': '#f9fbd5'});
+    }, 500);
+    
+    form.render();
+});
+</script>
+<script>
+// 弹窗回填（项目）
+function returnProject(project_name, project_number){
+	$("#project_name").val(project_name || '');
+	$("#project_number").val(project_number || '');
+	layui.form && layui.form.render();
+}
+// 弹窗回填（合同编号）
+function returnFormId(form_id){
+	$("#form_id").val(form_id || '');
+	layui.form && layui.form.render();
+}
+// 弹窗回填（下一审批人）
+function returnNextApprover(user_id){
+	$("#approve_user").val(user_id || '');
+}
+// 绑定上传按钮
+$(function(){
+    var $uploadInput = $('#__upload_file_hidden');
+    if ($uploadInput.length === 0){
+        $uploadInput = $('<input type="file" id="__upload_file_hidden" style="display:none" />');
+        $('body').append($uploadInput);
+    }
+    $('.btn-upload').off('click').on('click', function(){
+        var btn = this;
+        var type = btn.id || '';
+        $uploadInput.off('change').on('change', function(){
+            if (!this.files || this.files.length === 0) return;
+            var fd = new FormData();
+            fd.append('file', this.files[0]);
+            var uploadUrl = '/common/attachment/upload?type=' + encodeURIComponent(type) + '&url=sales_contract_review';
+            $.ajax({
+                url: uploadUrl,
+                method: 'POST',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function(res){
+                    try{
+                        if (typeof res === 'string'){ res = JSON.parse(res); }
+                    }catch(e){}
+                    if (res && res.code == '200' && res.data && res.data.id){
+                        var cur = $('#attach_ids').val();
+                        var nid = String(res.data.id);
+                        $('#attach_ids').val(cur ? (cur + ',' + nid) : nid);
+                        layer && layer.msg('上传成功');
+                    }else{
+                        layer && layer.alert((res && res.msg) || '上传失败', {icon:5});
+                    }
+                },
+                error: function(){
+                    layer && layer.alert('请求失败', {icon:5});
+                },
+                complete: function(){
+                    // 清空选择
+                    $uploadInput.val('');
+                }
+            });
+        });
+        $uploadInput.click();
+    });
+});
+</script>
+{% endblock %}

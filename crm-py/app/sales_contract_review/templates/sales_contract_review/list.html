@@ -1,0 +1,547 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}销售合同评审列表 - CRM系统{% endblock %}
+
+{% block page_title %}销售合同评审列表{% endblock %}
+
+{% block extra_css %}
+<style>
+    .drop-btn {
+        cursor: pointer;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        background-color: lightgray;
+        min-width: 154px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    .dropdown-content a:hover {
+        background-color: #027AFF;
+        color: white;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    .query-form {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    /* 状态样式 */
+    .unSubmit { color: blue; }
+    .underApproval { color: green; }
+    .approved { color: orange; }
+    .returnBack { color: yellow; }
+    .finished { color: red; }
+    .newColor { color: #027AFF; text-decoration: none; }
+    .newColor:hover { text-decoration: underline; }
+    .TableLine1 { background-color: #f9f9f9; }
+    .TableLine2 { background-color: white; }
+    .newColor{
+        white-space:nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form id="tab" class="layui-form">
+    <input type="hidden" id="type" name="type" value="sales_contract_review" />
+    <input type="hidden" id="sort_way" name="sort_way" value="" />
+    <input type="hidden" id="sort_field" name="sort_field" value="" />
+    <input type="hidden" id="page_size" name="page_size" value="10" />
+    <input type="hidden" id="checkedIds" name="checkedIds" value="" />
+    <input type="hidden" name="business_user_id" id="business_user_id" class="layui-input" value="">
+    <input type="hidden" name="starting_time" id="starting_time" class="layui-input" value="">
+    <input type="hidden" name="ending_time" id="ending_time" class="layui-input" value="">
+    <input type="hidden" name="business_status" id="business_status" class="layui-input" value="">
+    
+    <div class="query-form">
+        <table style="width: 100%;">
+            <tr>
+                <td align="right" width="10%">编号</td>
+                <td width="15%">
+                    <input type="text" name="form_id" id="form_id" class="layui-input" placeholder="请输入">
+                </td>
+                <td align="right" width="10%">合同号</td>
+                <td width="15%">
+                    <input type="text" name="customer_order_no" id="customer_order_no" class="layui-input" placeholder="请输入合同号">
+                </td>
+                <td align="right" width="10%">项目名称</td>
+                <td width="15%">
+                    <input type="text" name="project_name" id="project_name" class="layui-input" placeholder="请输入项目名称" />
+                </td>
+                <td align="right" width="10%">客户名称</td>
+                <td width="15%">
+                    <input type="text" name="customer_name" id="customer_name" class="layui-input" placeholder="请输入客户名称">
+                </td>
+                <td align="right" width="10%">办理状态：</td>
+                <td width="15%">
+                    <div class="layui-input-inline">
+                        <select id="status" name="status">
+                            <option value=''>请选择</option>
+                            <option value='T'>待提交</option>
+                            <option value='P'>审核中</option>
+                            <option value='R'>已通过</option>
+                            <option value='Y'>已通过</option>
+                            <option value='N'>退回</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td nowrap align="right">公司：</td>
+                <td>
+                    <div class="layui-input-inline" style="width: 150px;">
+                        <select id="user_bu" name="user_bu" lay-verify="" lay-search>
+                            <option value=''>请选择</option>
+                            {% for key, value in crm_process_sort.items() %}
+                            <option value="{{ key }}">{{ value.paras_desc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+                <td colspan="8" align="right">
+                    <button class="layui-btn layui-btn-oa layui-btn-sm" onclick="loadList('1');return false;" style="margin-left: 10px;">查询</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<div id="tableList" style="width:100%;text-align:center;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var userBu = '{{ user_bu }}';
+var userId = '{{ user_id }}';
+var isAdmin = {{ 'true' if is_admin else 'false' }};
+var systemAdmin = {{ 'true' if system_admin else 'false' }};
+var crmProcessType = '{{ crm_process_type }}';
+var crmProcessSort = {};
+{% for key, value in crm_process_sort.items() %}
+crmProcessSort['{{ key }}'] = {paras_desc: '{{ value.paras_desc }}'};
+{% endfor %}
+
+function loadList(page) {
+    console.log('loadList called with page:', page);
+    
+    // 检查必要的元素是否存在
+    if (!$('#tableList').length) {
+        console.error('tableList element not found');
+        return;
+    }
+    
+    // 显示加载提示
+    $('#tableList').html('<div style="text-align:center;padding:20px;">数据加载中...</div>');
+    
+    var formData = {
+        type: 'sales_contract_review',
+        page: page || '1',
+        page_size: $('#page_size').val() || '10',
+        form_id: $('#form_id').val() || '',
+        customer_order_no: $('#customer_order_no').val() || '',
+        project_name: $('#project_name').val() || '',
+        customer_name: $('#customer_name').val() || '',
+        status: $('#status').val() || '',
+        user_bu: $('#user_bu').val() || '',
+        business_user_id: $('#business_user_id').val() || '',
+        starting_time: $('#starting_time').val() || '',
+        ending_time: $('#ending_time').val() || '',
+        business_status: $('#business_status').val() || '',
+        sort_field: $('#sort_field').val() || '',
+        sort_way: $('#sort_way').val() || ''
+    };
+    
+    console.log('Sending request to /sales_contract_review/query with data:', formData);
+    
+    $.ajax({
+        url: '/sales_contract_review/query',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        timeout: 30000,
+        success: function(res) {
+            console.log('Response received:', res);
+            try {
+                // 检查响应格式
+                if (!res) {
+                    throw new Error('响应数据为空');
+                }
+                
+                // 检查响应码
+                var isSuccess = (res.code == '200' || res.code == 200 || res.code == '10000' || res.code == 10000 || res.status == 'success');
+                if (isSuccess) {
+                    // 检查数据是否存在
+                    if (res.data) {
+                        renderTable(res.data);
+                    } else {
+                        console.warn('响应数据中缺少data字段，使用空数据渲染');
+                        renderTable({
+                            list: [],
+                            total: 0,
+                            page: parseInt(page) || 1,
+                            page_size: parseInt(formData.page_size) || 10
+                        });
+                    }
+                } else {
+                    var errorMsg = res.msg || res.message || '查询失败';
+                    console.error('查询失败:', errorMsg);
+                    if (typeof layer !== 'undefined' && layer.msg) {
+                        layer.msg(errorMsg);
+                    } else {
+                        alert(errorMsg);
+                    }
+                    $('#tableList').html('<div style="text-align:center;padding:20px;color:red;">查询失败：' + errorMsg + '</div>');
+                }
+            } catch (e) {
+                console.error('处理响应数据时出错:', e);
+                var errorMsg = '处理数据时出错：' + e.message;
+                if (typeof layer !== 'undefined' && layer.msg) {
+                    layer.msg(errorMsg);
+                } else {
+                    alert(errorMsg);
+                }
+                $('#tableList').html('<div style="text-align:center;padding:20px;color:red;">' + errorMsg + '</div>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error);
+            console.error('Status code:', xhr.status);
+            console.error('Response text:', xhr.responseText);
+            
+            var errorMsg = '查询失败';
+            if (status === 'timeout') {
+                errorMsg = '请求超时，请稍后重试';
+            } else if (xhr.status === 0) {
+                errorMsg = '网络连接失败，请检查网络';
+            } else if (xhr.status === 404) {
+                errorMsg = '接口不存在，请检查URL';
+            } else if (xhr.status === 500) {
+                errorMsg = '服务器错误，请稍后重试';
+            } else if (xhr.responseText) {
+                try {
+                    var errorRes = JSON.parse(xhr.responseText);
+                    errorMsg = errorRes.msg || errorRes.message || error;
+                } catch (e) {
+                    errorMsg = error || '未知错误';
+                }
+            }
+            
+            if (typeof layer !== 'undefined' && layer.msg) {
+                layer.msg(errorMsg);
+            } else {
+                alert(errorMsg);
+            }
+            $('#tableList').html('<div style="text-align:center;padding:20px;color:red;">' + errorMsg + '</div>');
+        }
+    });
+}
+
+// 页面加载完成后初始化
+$(document).ready(function() {
+    console.log('Document ready, initializing...');
+    
+    // 确保jQuery已加载
+    if (typeof $ === 'undefined') {
+        console.error('jQuery未加载');
+        return;
+    }
+    
+    // 等待layui加载完成
+    if (typeof layui === 'undefined') {
+        console.error('Layui未加载');
+        // 如果layui未加载，直接调用loadList
+        setTimeout(function() {
+            loadList('1');
+        }, 100);
+        return;
+    }
+    
+    layui.use(['form', 'layer'], function() {
+        var layer = layui.layer,
+            form = layui.form;
+        
+        console.log('Layui loaded, calling loadList...');
+        
+        // 确保tableList元素存在
+        if ($('#tableList').length) {
+            loadList('1');
+        } else {
+            console.error('tableList element not found, retrying...');
+            setTimeout(function() {
+                if ($('#tableList').length) {
+                    loadList('1');
+                }
+            }, 100);
+        }
+        
+        form.render();
+    });
+});
+
+function renderTable(data) {
+    console.log('renderTable called with data:', data);
+    
+    // 验证数据格式
+    if (!data) {
+        console.error('renderTable: data is null or undefined');
+        $('#tableList').html('<div style="text-align:center;padding:20px;color:red;">数据格式错误：数据为空</div>');
+        return;
+    }
+    
+    // 确保必要字段存在
+    if (typeof data.list === 'undefined') {
+        data.list = [];
+    }
+    if (typeof data.total === 'undefined') {
+        data.total = 0;
+    }
+    if (typeof data.page === 'undefined') {
+        data.page = 1;
+    }
+    if (typeof data.page_size === 'undefined') {
+        data.page_size = 10;
+    }
+    
+    var html = '';
+    
+    // 操作按钮区域
+    var type = $('#type').val();
+    if (type && type.indexOf('_change') === -1) {
+        html += '<div style="text-align: right;width: 98%;margin:auto;">';
+        html += '<div style="float: left;">';
+        html += '<button class="layui-btn layui-btn-oa layui-btn-sm drop-btn" onclick="pageOperate(\'/sales_contract_review/add?company=INHE\',\'add\');return false;">新建</button>';
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    // 分页组件
+    var total = parseInt(data.total) || 0;
+    var page = parseInt(data.page) || 1;
+    var pageSize = parseInt(data.page_size) || 10;
+    
+    if (total > 0) {
+        var totalPages = Math.ceil(total / pageSize);
+        html += '<div style="text-align: right;width: 98%;margin:auto;">';
+        html += '<div id="pageArea" class="pageArea">';
+        html += '共 <span id="pageTotal" class="pageNumber">' + total + '</span> 条，';
+        html += '第 <span id="pageCurrent" class="pageNumber">' + page + '/' + totalPages + '</span> 页';
+        
+        if (page > 1) {
+            html += ' <a href="javascript:loadList(1);">首页</a>';
+            html += ' <a href="javascript:loadList(' + (page - 1) + ');">上一页</a>';
+        }
+        
+        html += ' <input type="text" id="page" size="3" value="' + page + '" onkeypress="if(event.keyCode==13) gotoPage();" style="text-align:center;">';
+        
+        if (page < totalPages) {
+            html += ' <a href="javascript:loadList(' + (page + 1) + ');">下一页</a>';
+            html += ' <a href="javascript:loadList(' + totalPages + ');">末页</a>';
+        }
+        
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    html += '<br />';
+    
+    // 表格
+    html += '<table id="tab1" class="layui-table table-auto" style="width: 98%;margin:auto;">';
+    html += '<tr class="layui-bg-head layui-bg-gray" id="tabHead">';
+    html += '<th nowrap style="text-align: center; width: 3%">选择</th>';
+    html += '<th nowrap style="text-align: center;">序号</th>';
+    html += '<th nowrap style="text-align: center;">';
+    html += '<span>编号</span>';
+    html += '<span class="layui-table-sort layui-inline" sort-field="form_id">';
+    html += '<i class="layui-edge layui-table-sort-asc" title="升序" sort-way="asc" onclick="sortList(this);"></i>';
+    html += '<i class="layui-edge layui-table-sort-desc" title="降序" sort-way="desc" onclick="sortList(this);"></i>';
+    html += '</span>';
+    html += '</th>';
+    html += '<th nowrap style="text-align: center;">合同号</th>';
+    html += '<th nowrap style="text-align: center;">';
+    html += '<span>项目代号</span>';
+    html += '<span class="layui-table-sort layui-inline" sort-field="project_number">';
+    html += '<i class="layui-edge layui-table-sort-asc" title="升序" sort-way="asc" onclick="sortList(this);"></i>';
+    html += '<i class="layui-edge layui-table-sort-desc" title="降序" sort-way="desc" onclick="sortList(this);"></i>';
+    html += '</span>';
+    html += '</th>';
+    html += '<th nowrap style="text-align: center;">客户名称</th>';
+    html += '<th nowrap style="text-align: center;">制单人</th>';
+    html += '<th nowrap style="text-align: center;">制单时间</th>';
+    html += '<th nowrap style="text-align: center;">办理状态</th>';
+    html += '<th nowrap style="text-align: center;">操作</th>';
+    html += '</tr>';
+    html += '<tbody id="tabBody" name="tabBody" class="layui-bg-body">';
+    
+    if (!data.list || data.list.length === 0) {
+        html += '<tr class="TableData">';
+        html += '<td colspan="10"><div style="text-align: center;">暂无数据</div></td>';
+        html += '</tr>';
+    } else {
+        var list = data.list || [];
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (!item) {
+                console.warn('renderTable: item at index ' + i + ' is null or undefined');
+                continue;
+            }
+            var line = i + 1 + (page - 1) * pageSize;
+            var lineClass = (line % 2 === 0) ? 'TableLine1' : 'TableLine2';
+            
+            html += '<tr class="' + lineClass + '">';
+            
+            // 复选框
+            var checked = '';
+            var checkedIds = $('#checkedIds').val();
+            if (checkedIds && checkedIds.indexOf(item.form_id) !== -1) {
+                checked = 'checked';
+            }
+            html += '<td align="center"><input type="checkbox" id="' + (item.form_id || '') + '" name="cb_list" title="' + (item.status || '') + '" ' + checked + '></td>';
+            
+            // 序号
+            html += '<td align="center" width="3%">' + line + '</td>';
+            
+            // 编号
+            html += '<td align="center">' + (item.form_id || '') + '</td>';
+            
+            // 合同号（根据user_bu显示不同字段）
+            var contractNo = '';
+            if (item.user_bu == 'INHENERGY' || item.user_bu == 'HKNERGY') {
+                contractNo = (item.related_id || item.form_id || '');
+            } else {
+                contractNo = (item.customer_order_no || '');
+            }
+            html += '<td align="center">' + contractNo + '</td>';
+            
+            // 项目代号
+            html += '<td align="center">' + (item.project_number || '') + '</td>';
+            
+            // 客户名称
+            html += '<td align="center">' + (item.customer_name || '') + '</td>';
+            
+            // 制单人
+            html += '<td align="center">' + (item.dept_name || '') + ' ' + (item.create_user_name || '') + '</td>';
+            
+            // 制单时间
+            html += '<td align="center">' + (item.write_time || '') + '</td>';
+            
+            // 流程状态
+            var statusText = getStatusText(item.status);
+            var statusClass = getStatusClass(item.status);
+            html += '<td align="center"><font class="' + statusClass + '">' + statusText + '</font></td>';
+            
+            // 操作列（本阶段操作按钮隐藏/禁用）
+            html += '<td align="center">';
+            html += '<span style="color: #999;">操作功能待实现</span>';
+            html += '</td>';
+            html += '</tr>';
+        }
+    }
+    
+    html += '</tbody>';
+    html += '</table>';
+    
+    $('#tableList').html(html);
+}
+
+// 全局函数，用于打开页面操作（如果不存在则定义）
+if (typeof pageOperate === 'undefined') {
+    function pageOperate(url, type) {
+        if (type === 'detail' || type === 'modify' || type === 'add') {
+            window.location.href = url;
+        } else if (type === 'smallModel') {
+            layer.open({
+                type: 2,
+                area: ['800px', '600px'],
+                content: url
+            });
+        } else if (type === 'delete') {
+            if (confirm('确认删除？')) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(res) {
+                        if (window.isRespSuccess ? window.isRespSuccess(res) : (res && (res.code == '200' || res.status == 'success'))) {
+                            layer.msg('删除成功');
+                            loadList($('#page').val() || '1');
+                        } else {
+                            layer.msg((res && (res.msg || res.message)) || '删除失败');
+                        }
+                    },
+                    error: function() {
+                        layer.msg('删除失败');
+                    }
+                });
+            }
+        } else {
+            window.location.href = url;
+        }
+    }
+}
+
+function getStatusText(status) {
+    var statusMap = {
+        'T': '待提交',
+        'P': '审核中',
+        'Y': '已通过',
+        'E': '结束',
+        'N': '退回',
+        'H': '暂停审核',
+        'U': '撤销',
+        'R': '已通过'
+    };
+    return statusMap[status] || status;
+}
+
+function getStatusClass(status) {
+    var statusClassMap = {
+        'T': 'unSubmit',
+        'P': 'underApproval',
+        'Y': 'approved',
+        'N': 'returnBack',
+        'E': 'finished',
+        'H': 'underApproval',
+        'U': 'finished',
+        'R': 'approved'
+    };
+    return statusClassMap[status] || '';
+}
+
+function sortList(obj) {
+    var sortWay = $(obj).attr('sort-way');
+    var sortField = $(obj).parent().attr('sort-field');
+    $('#sort_way').val(sortWay);
+    $('#sort_field').val(sortField);
+    loadList('1');
+}
+
+function gotoPage() {
+    var page = parseInt($('#page').val());
+    // 从分页信息中获取总页数
+    var pageInfo = $('#pageCurrent').text();
+    var totalPages = 1;
+    if (pageInfo && pageInfo.indexOf('/') !== -1) {
+        totalPages = parseInt(pageInfo.split('/')[1]) || 1;
+    }
+    if (isNaN(page) || page < 1 || page > totalPages) {
+        alert('页码范围应为1-' + totalPages);
+        return false;
+    }
+    loadList(page);
+}
+</script>
+{% endblock %}
+

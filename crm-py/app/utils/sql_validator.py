@@ -18,6 +18,13 @@ ALLOWED_TABLES = {
     'country_code',
     'user',
     'department',
+    # project_review module tables
+    'inhe_project_main',
+    'inhe_project_info',
+    'inhe_project_info_witlink',
+    'inhe_project_detail',
+    'inhe_bidding_strategy',
+    'inhe_customer_info',
 }
 
 # 允许的字段名模式（字母、数字、下划线）
@@ -78,6 +85,7 @@ def sanitize_field_name(field_name):
     if not validate_field_name(field_name):
         raise ValueError(f"无效的字段名: {field_name}")
     return field_name
+
 
 
 
