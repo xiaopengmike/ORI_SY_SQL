@@ -467,7 +467,7 @@
                     dataType: 'json',
                     success: function(response) {
                         layer.closeAll('loading');
-                        if (response.code === '10000') {
+                        if (isRespSuccess(response)) {
                             layer.msg(actionType === 'Submit' ? '提交成功' : '保存成功', {icon: 1}, function() {
                                 window.location.href = '/customer/list';
                             });

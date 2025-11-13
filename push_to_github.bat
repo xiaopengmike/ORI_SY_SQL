@@ -50,3 +50,5 @@ echo 4. 是否有推送权限
 echo.
 pause
 
+
+

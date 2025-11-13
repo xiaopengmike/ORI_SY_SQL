@@ -93,12 +93,17 @@
                     data: formData,
                     dataType: 'json',
                     success: function(response) {
-                        if (response.code === '10000') {
-                            layer.msg('操作成功', {icon: 1}, function() {
-                                window.location.href = '/customer/list';
+                        if (isRespSuccess(response)) {
+                            layer.alert(btnVal + "成功!", {
+                                icon: 1
+                            }, function (index, layero) {
+                                layer.close(index);
+                                window.location.href='/customer/list';
                             });
                         } else {
-                            layer.msg(response.msg || '操作失败', {icon: 2});
+                            layer.alert(response.msg || btnVal + '失败', {
+                                icon: 5
+                            });
                         }
                     }
                 });

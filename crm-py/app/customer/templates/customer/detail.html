@@ -98,12 +98,11 @@
                     data: formData,
                     dataType: 'json',
                     success: function(response) {
-                        if (response.code === '10000') {
-                            layer.msg(action === 'pass' ? '审批通过' : '已退回', {icon: 1}, function() {
-                                window.location.href = '/customer/list';
-                            });
+                        if (isRespSuccess(response)) {
+                            layer.msg('审批成功');
+                            setTimeout(function(){ window.location.href='/customer/list'; }, 800);
                         } else {
-                            layer.msg(response.msg || '操作失败', {icon: 2});
+                            layer.msg(response.msg || '审批失败');
                         }
                     }
                 });

@@ -382,19 +382,17 @@
                 dataType: 'json',
                 success: function(response) {
                     layer.closeAll('loading');
-                    if (response.code === '10000') {
-                        layer.msg(actionType === 'Submit' ? '提交成功' : '保存成功', {icon: 1}, function() {
-                            if (actionType === 'Submit') {
-                                window.location.href = '/customer/list';
-                            } else {
-                                // 保存后刷新页面，更新form_id
-                                if (response.data && response.data.form_id) {
-                                    $('#form_id').val(response.data.form_id);
-                                }
-                            }
+                    if (isRespSuccess(response)) {
+                        layer.alert(actionType === 'Submit' ? '提交成功' : '保存成功', {
+                            icon: 1
+                        }, function (index, layero) {
+                            layer.close(index);
+                            closePage();
                         });
                     } else {
-                        layer.msg(response.msg || '操作失败', {icon: 2});
+                        layer.alert(response.msg || (actionType === 'Submit' ? '提交失败' : '保存失败'), {
+                            icon: 5
+                        });
                     }
                 },
                 error: function() {

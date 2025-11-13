@@ -426,6 +426,17 @@
     <!-- 侧边栏脚本 -->
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     
+    <!-- 全局响应工具：200 与 10000 均视为成功 -->
+    <script>
+        window.isRespSuccess = function(res) {
+            try {
+                return !!(res && (res.code == '200' || res.code == 200 || res.code == '10000' || res.code == 10000 || res.status == 'success'));
+            } catch (e) {
+                return false;
+            }
+        };
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
