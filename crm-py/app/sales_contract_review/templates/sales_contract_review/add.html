@@ -169,7 +169,7 @@
                     <td class="TableContent">合同对方</td>
                     <td class="TableData" align="left">
                         <div class="layui-input-inline">
-                            <select id="contract_party" name="contract_party" lay-search lay-verify="required">
+                            <select id="contract_party" name="contract_party" lay-search>
                                 <option value="">请选择</option>
                                 {% if select_arr.get('contract_party') %}
                                     {% for val in select_arr['contract_party'] %}
