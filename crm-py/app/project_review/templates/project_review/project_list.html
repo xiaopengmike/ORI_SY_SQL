@@ -1,0 +1,109 @@
+{% extends "common/templates/common/base.html" %}
+
+{% block title %}项目列表{% endblock %}
+
+{% block content %}
+<div style="margin:1%">
+    <form class="layui-form">
+        <div class="demoTable" style="margin:5px;">
+            项目代号：
+            <div class="layui-inline">
+                <input class="layui-input" name="project_code" id="project_code" autocomplete="off" style="width: 160px;">
+            </div>
+            项目星级：
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 160px;">
+                    <select id="project_star" name="project_star" lay-search>
+                        <option value="">请选择</option>
+                        {% for val in project_star_list %}
+                            <option value="{{ val.paras_value }}">{{ val.paras_desc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <input lay-submit lay-filter="reload" id="reload" data-type="reload" value="查询" type="button" class="layui-btn" />
+        </div>
+    </form>
+    <!-- 数据表格 -->
+    <table class="layui-hide" id="LAY_table_user" lay-filter="tableList"></table>
+</div>
+
+<script>
+layui.use(['form', 'table'], function() {
+    var table = layui.table;
+    var form = layui.form;
+
+    // 渲染表格
+    var tableIns = table.render({
+        elem: '#LAY_table_user',
+        url: '/project_review/query',
+        where: {
+            type: 'project_review',
+            user_bu: '{{ company }}'
+        },
+        request: {
+            pageName: 'page',
+            limitName: 'page_size'
+        },
+        parseData: function(res){
+            // 统一响应结构 -> Layui
+            return {
+                code: (res && res.code == '200') ? 0 : (res && res.code) || 500,
+                msg: (res && res.msg) || '',
+                count: (res && res.data && res.data.total) || 0,
+                data: (res && res.data && res.data.list) || []
+            }
+        },
+        cellMinWidth: 90,
+        title: '项目列表',
+        cols: [[
+            { type: 'checkbox', fixed: 'left' },
+            { field: 'project_code', title: '项目代号', width: 180, align: 'center' },
+            { field: 'project_star_desc', title: '项目星级', align: 'center' },
+            { field: 'star_icon', title: '星级图标', align: 'center' }
+        ]],
+        id: 'tableReload',
+        page: true,
+        height: 'auto',
+        done: function(res, curr, count) {
+            // no-op
+        }
+    });
+
+    var $ = layui.$,
+        active = {
+            reload: function() {
+                // 执行重载
+                table.reload('tableReload', {
+                    page: { curr: 1 },
+                    where: {
+                        project_code: $('#project_code').val(),
+                        project_star: $('#project_star').val(),
+                        type: 'project_review',
+                        user_bu: '{{ company }}'
+                    }
+                }, 'data');
+            }
+        };
+
+    table.on('checkbox(tableList)', function(obj) {
+        // 勾选即回填
+        if (obj && obj.checked && obj.data) {
+            if (parent.returnProjectInfo) {
+                parent.returnProjectInfo(obj.data);
+            }
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        }
+    });
+
+    form.on('submit(reload)', function(data) {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+        return false;
+    });
+});
+</script>
+{% endblock %}
+
+

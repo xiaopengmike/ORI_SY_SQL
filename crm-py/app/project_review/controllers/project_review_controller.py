@@ -237,9 +237,8 @@ def project_list():
     """
     项目列表弹窗
     用于销售合同评审等模块选择项目代码
-    复用 get_project_code.html 模板
+    复刻 PHP 弹窗：列表+查询+勾选回填
     """
-    user_id = get_login_user_id()
     dept_id = get_login_dept_id()
     company = request.args.get('company', '')
     
@@ -250,14 +249,17 @@ def project_list():
     if not company:
         company = user_model.get_user_bu(dept_id)
     
-    # 获取临时项目代码
-    project_code_select = data_model.get_temp_code({'user_id': user_id})
-    if not project_code_select:
-        project_code_select = []
+    # 获取项目星级下拉
+    select_param = {
+        'is_used': '1',
+        'type': 'project_star'
+    }
+    select_arr = data_model.get_common_param(select_param)
+    project_star_list = select_arr.get('project_star', []) if select_arr else []
     
-    return render_template('project_review/templates/project_review/get_project_code.html',
+    return render_template('project_review/templates/project_review/project_list.html',
                          company=company,
-                         project_code_select=project_code_select)
+                         project_star_list=project_star_list)
 
 @project_review_bp.route('/detail')
 @login_required

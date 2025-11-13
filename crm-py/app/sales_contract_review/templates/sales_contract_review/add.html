@@ -139,7 +139,7 @@
                         <b><font style="color: red;">项目代号</font></b>
                     </td>
                     <td class="TableData">
-                        <input type="text" readonly name="project_name" id="project_name" class="layui-input mandatory" 
+                        <input type="text" name="project_name" id="project_name" class="layui-input mandatory" 
                                autocomplete="off" {% if company not in ['INHEGRID', 'INHENERGY', 'HKNERGY'] %}lay-verify="required"{% endif %} />
                     </td>
                     <td class="TableContent">
@@ -673,44 +673,48 @@ layui.use(['form', 'layer'], function() {
         $.initDate();
     }
     
-    // 项目代号点击事件
-    $("#project_name").click(function() {
-        layer.open({
-            title: "项目代号列表",
-            type: 2,
-            area: ['600px', '650px'],
-            content: "/project_review/project_list?company={{ company }}",
-            success: function(layero, index) {
-                setTimeout(function() {
-                    layui.layer.tips('点击此处选择项目', '.layui-layer-setwin .layui-layer-close', {
-                        tips: 3
-                    });
-                }, 500)
-            }
-        });
-    });
-    
-    // 编号点击事件
-    $("#form_id").click(function() {
-        var qs = [
-            "company={{ company }}",
-            "tableName=" + encodeURIComponent($("input[name='tableName']").val() || 'inhe_contract_review'),
-            "fieldName=" + encodeURIComponent($("input[name='fieldName']").val() || 'form_id'),
-            "flowType=" + encodeURIComponent($("input[name='flowType']").val() || 'INHESC'),
-            "reset=" + encodeURIComponent($("input[name='reset']").val() || 'day'),
-            "digit=" + encodeURIComponent($("input[name='digit']").val() || '2')
-        ].join("&");
-        layer.open({
-            title: "合同编号列表",
-            type: 2,
-            area: ['600px', '650px'],
-            content: "/sales_contract_review/contract_number_list?" + qs,
-            success: function(layero, index) {
-                setTimeout(function() {
-                    layui.layer.tips('点击此处选择合同编号', '.layui-layer-setwin .layui-layer-close', {
-                        tips: 3
-                    });
-                }, 500)
+    // 项目代号输入失焦后，根据项目代码回填合同归属公司与项目等级
+    $("#project_name").off('blur').on('blur', function() {
+        var code = $.trim($(this).val() || '');
+        if (!code) { return; }
+        var userBu = $("#user_bu").val();
+        $.ajax({
+            url: "/project_review/query",
+            type: "POST",
+            data: {
+                project_code: code,
+                user_bu: userBu,
+                page: 1,
+                page_size: 1
+            },
+            success: function(res){
+                try{
+                    // 统一响应结构：{ code: '200', data: { list: [], total: N } }
+                    if (res && res.code == '200' && res.data && res.data.list && res.data.list.length > 0){
+                        var item = res.data.list[0];
+                        // 合同归属公司（公司中文名）
+                        if (item.company){
+                            $("#contract_belong").val(item.company);
+                        }
+                        // 项目等级与图标
+                        if (item.project_star){
+                            $("#project_star").val(item.project_star);
+                        }
+                        if (item.project_star_desc){
+                            $("[data-type='project_star']").html('<font style="color: red;font-size:20px">' + item.project_star_desc + '</font>');
+                        }
+                        if (item.star_icon){
+                            $("#star_icon").html('<font style="color: red;font-size:20px">' + item.star_icon + '</font>');
+                        }
+                        layui.form && layui.form.render();
+                    } else {
+                        // 未查到也不报错，仅清空项目等级展示
+                        $("[data-type='project_star']").html('');
+                        $("#star_icon").html('');
+                    }
+                }catch(e){
+                    // 忽略解析错误
+                }
             }
         });
     });
@@ -888,6 +892,29 @@ layui.use(['form', 'layer'], function() {
 });
 </script>
 <script>
+// 弹窗回填（项目表格行数据）
+function returnProjectInfo(reData){
+    try{
+        if (!reData) return;
+        // 项目代号
+        if (reData.project_code){
+            $("#project_name").val(reData.project_code);
+        }
+        // 项目星级值
+        if (reData.project_star){
+            $("#project_star").val(reData.project_star);
+        }
+        // 项目星级展示
+        if (reData.project_star_desc){
+            $("[data-type='project_star']").html('<font style="color: red;font-size:20px">' + reData.project_star_desc + '</font>');
+        }
+        // 星级图标
+        if (reData.star_icon){
+            $("#star_icon").html('<font style="color: red;font-size:20px">' + reData.star_icon + '</font>');
+        }
+        layui.form && layui.form.render();
+    }catch(e){}
+}
 // 弹窗回填（项目）
 function returnProject(project_name, project_number){
 	$("#project_name").val(project_name || '');
